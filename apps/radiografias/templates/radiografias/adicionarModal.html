@@ -1,138 +1,132 @@
-<!--adicionarModal.html:-->
-<div
-  class="modal fade"
-  id="modalAdicionar"
-  tabindex="-1"
-  aria-labelledby="modalAdicionarLabel"
-  aria-hidden="true"
-  data-bs-backdrop="static"
-
->
+<!-- app/radiografias/templates/radiografias/adicionarModal.html -->
+<div class="modal fade" id="modalAdicionar" tabindex="-1" aria-labelledby="modalAdicionarLabel" aria-hidden="true" data-bs-backdrop="static">
   <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalAdicionarabel">
-          Adicionar Nova radiografia
-        </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <h5 class="modal-title" id="modalAdicionarLabel">Adicionar Nova Radiografia</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!--Corpo do modal -->
-        <form class="row" action="" method="POST" enctype="multipart/form-data">
-          <div class="col-md-6">
-            <div class="form-group mb-3">
-              <label for="nome">Paciente</label>
-              <input
-                type="text"
-                class="form-control"
-                id="nome"
-                name="nome"
-                required
-              />
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="tipo">Tipo</label>
-              <select
-                class="form-control"
-                id="tipo"
-                name="tipo"
-              />
-              <option class="">Raio x do tórax</option>
-              <option class="">Tomografia</option>
-
-            </select>
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="equipamento">Equipamento Usado</label>
-              <select
-                class="form-control"
-                id="equipamento"
-                name="equipamento"
-              />
-              <option class="">Equipamento 1</option>
-              <option class="">Equipamento 2</option>
-
-            </select>
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="dataDesaparecimento">Notas Técnicas</label>
-              <input
-                type="text"
-                class="form-control"
-                id="notas"
-                name="notas"
-                required
-              />
+        <form id="radiografiaForm" class="row" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <!-- Campo oculto para o ID do paciente -->
+          <input type="hidden" id="id_paciente" name="paciente">
+          
+          <!-- Informações do paciente selecionado -->
+          <div class="col-12 mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6>Paciente: <span id="pacienteSelecionado">Nenhum paciente selecionado</span></h6>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="abrirModalSelecaoPaciente()">
+                Selecionar Paciente
+              </button>
             </div>
           </div>
 
           <div class="col-md-6">
-            <div class="row h-100">
-              <div class="col-8">
-                <div class="form-group mb-3">
-                  <label for="qualidadeImagem">Qualidade da imagem</label>
-              <select
-                class="form-control"
-                id="qualidadeImagem"
-                name="qualidadeImagem"
-              />
-              <option class="">Boa</option>
-              <option class="">Ruim</option>
-              <option class="">Muito Boa</option>
-              <option class="">Muito Ruim</option>
+            <!-- Data do Exame -->
+            <div class="form-group mb-3">
+              <label for="data">Data do Exame</label>
+              <input type="date" class="form-control {% if form.data.errors %}is-invalid{% endif %}"
+                     id="data" name="data" required>
+              {% if form.data.errors %}
+                <div class="invalid-feedback">{{ form.data.errors|first }}</div>
+              {% endif %}
+            </div>
 
-            </select>
-                </div>
+            <!-- Tipo de Exame -->
+            <div class="form-group mb-3">
+              <label for="tipo">Tipo de Exame</label>
+              <select class="form-select {% if form.tipo.errors %}is-invalid{% endif %}"
+                      id="tipo" name="tipo" required>
+                <option value="">Selecione...</option>
+                {% for value, label in form.fields.tipo.choices %}
+                  <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+              {% if form.tipo.errors %}
+                <div class="invalid-feedback">{{ form.tipo.errors|first }}</div>
+              {% endif %}
+            </div>
 
-                <div class="form-group mb-3">
-                  <label for="radiacao">Dose de radiação</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="radiacao"
-                    name="radiacao"
-                  />
-                </div>
-              </div>
-              <div class="col-4">
-                <!-- Imagem do Perfil -->
-                {% include 'radiografias/imagemPessoa.html' %}
-                <!-- Fim Imagem do Perfil -->
-              </div>
-
-              <div class="form-group col-12">
-                <label for="descricao">Descrição</label>
-                <textarea
-                  class="form-control"
-                  name="descricao"
-                  id="descricao"
-                  placeholder="Insira a descrição da ocorrência"
-                  cols=""
-                  rows="4"
-                ></textarea>
-              </div>
+            <!-- Equipamento -->
+            <div class="form-group mb-3">
+              <label for="equipamento_usado">Equipamento Utilizado</label>
+              <select class="form-select {% if form.equipamento_usado.errors %}is-invalid{% endif %}"
+                      id="equipamento_usado" name="equipamento_usado" required>
+                <option value="">Selecione...</option>
+                {% for value, label in form.fields.equipamento_usado.choices %}
+                  <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+              {% if form.equipamento_usado.errors %}
+                <div class="invalid-feedback">{{ form.equipamento_usado.errors|first }}</div>
+              {% endif %}
             </div>
           </div>
 
-          <div class="modal-footer mt-3">
-            <button
-              type="button"
-              class="btn btn-secondary btn-sm"
-              data-bs-dismiss="modal"
-            >
-              Fechar
-            </button>
-            <button type="submit" class="btn btn-success btn-sm">
-              Adicionar
-            </button>
+          <div class="col-md-6">
+            <!-- Qualidade da Imagem -->
+            <div class="form-group mb-3">
+              <label for="qualidade_da_imagem">Qualidade da Imagem</label>
+              <select class="form-select {% if form.qualidade_da_imagem.errors %}is-invalid{% endif %}"
+                      id="qualidade_da_imagem" name="qualidade_da_imagem" required>
+                <option value="">Selecione...</option>
+                {% for value, label in form.fields.qualidade_da_imagem.choices %}
+                  <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+              {% if form.qualidade_da_imagem.errors %}
+                <div class="invalid-feedback">{{ form.qualidade_da_imagem.errors|first }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Dose de Radiação -->
+            <div class="form-group mb-3">
+              <label for="dose_de_radiacao">Dose de Radiação (mSv)</label>
+              <input type="number" step="0.01" class="form-control {% if form.dose_de_radiacao.errors %}is-invalid{% endif %}"
+                     id="dose_de_radiacao" name="dose_de_radiacao">
+              {% if form.dose_de_radiacao.errors %}
+                <div class="invalid-feedback">{{ form.dose_de_radiacao.errors|first }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Imagem -->
+            <div class="form-group mb-3">
+              <label for="imagem">Imagem</label>
+              <input type="file" class="form-control {% if form.imagem.errors %}is-invalid{% endif %}"
+                     id="imagem" name="imagem" accept="image/*" required>
+              {% if form.imagem.errors %}
+                <div class="invalid-feedback">{{ form.imagem.errors|first }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Descrição -->
+          <div class="col-12 mb-3">
+            <label for="descricao">Descrição</label>
+            <textarea class="form-control {% if form.descricao.errors %}is-invalid{% endif %}"
+                      id="descricao" name="descricao" rows="3"></textarea>
+            {% if form.descricao.errors %}
+              <div class="invalid-feedback">{{ form.descricao.errors|first }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Notas Técnicas -->
+          <div class="col-12 mb-3">
+            <label for="notas_tecnicas">Notas Técnicas</label>
+            <textarea class="form-control {% if form.notas_tecnicas.errors %}is-invalid{% endif %}"
+                      id="notas_tecnicas" name="notas_tecnicas" rows="3"></textarea>
+            {% if form.notas_tecnicas.errors %}
+              <div class="invalid-feedback">{{ form.notas_tecnicas.errors|first }}</div>
+            {% endif %}
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            <button type="submit" class="btn btn-success" id="submitRadiografia">Salvar</button>
           </div>
         </form>
       </div>

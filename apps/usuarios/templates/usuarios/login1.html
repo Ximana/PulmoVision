@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Discounted Labs - Sign Up</title>
+    <link href="/home/ximana/Projects/djangp/PulmoVision/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/home/ximana/Projects/djangp/PulmoVision/static/css/all.min.css" rel="stylesheet"/>
+   <style>
+        body {
+            background-color: #2b2d42;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-container {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            width: 90%;
+            max-width: 1000px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .left-side {
+            background: linear-gradient(45deg, #4361ee, #4895ef);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            position: relative;
+        }
+
+        .logo-image {
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .form-side {
+            padding: 3rem 2rem;
+            background: white;
+        }
+
+        .tab-buttons {
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            border: none;
+            background: none;
+            padding: 0.5rem 1rem;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: #28a745;
+            border-bottom: 2px solid #28a745;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-submit {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .social-icons {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .social-icons a {
+            width: 24px;
+            height: 24px;
+            opacity: 0.6;
+        }
+
+        .form-container {
+            display: none;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        .fade-enter {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="row g-0">
+            <div class="col-md-6 left-side">
+                <img src="/home/ximana/Projects/djangp/PulmoVision/static/img/logo.png" alt="Doctor" class="logo-image">
+                <div class="text-center mb-4">
+                    <h4 class="h5">Sistema de Detecção de Doenças Pulmonares</h4>
+                </div>
+                <small class="text-center opacity-75">Copyright © 2024 My Discounted Labs. All rights reserved.</small>
+            </div>
+            <div class="col-md-6 form-side">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-form="signup">Criar Conta</button>
+                    <button class="tab-btn" data-form="signin">Login</button>
+                </div>
+
+                <!-- Formulario Cadastro -->
+                <div id="signup" class="form-container active fade-enter">
+                    <form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Nome">
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Sobrenome">
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Email">
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" placeholder="Password">
+                        </div>
+                        <button type="submit" class="btn-submit">Criar Conta</button>
+                        
+                        <p class="text-center mt-3">
+                            <small class="text-muted"></small>
+                        </p>
+                    </form>
+                </div>
+
+                <!-- Formulario Login -->
+                <div id="signin" class="form-container">
+                    <form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Usuario">
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" placeholder="Password">
+                        </div>
+                        <button type="submit" class="btn-submit">Login</button>
+                        
+                        <p class="text-center mt-3">
+                            <small class="text-muted"></small>
+                        </p>
+                    </form>
+                </div>
+                
+                <div class="social-icons">
+                    <a href="#"><i class='text-success fa-brands fa-facebook-f' ></i></a>
+                    <a href="#"><i class='text-success fa-brands fa-twitter'></i></a>
+                    <a href="#"><i class='text-success fa-brands fa-instagram'></i></a>
+                    <a href="#"><i class='text-success fa-brands fa-youtube'></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const forms = document.querySelectorAll('.form-container');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remover a class active de todos os botoes e formularios
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    forms.forEach(form => {
+                        form.classList.remove('active');
+                        form.classList.remove('fade-enter');
+                    });
+
+                    // Adicionar a class active para botao clicado e o form
+                    button.classList.add('active');
+                    const formId = button.getAttribute('data-form');
+                    const activeForm = document.getElementById(formId);
+                    activeForm.classList.add('active');
+                    activeForm.classList.add('fade-enter');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -84,3 +84,7 @@ class PacienteDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Paciente
     success_url = reverse_lazy('pacientes:lista')
     success_message = "Paciente removido com sucesso!"
+    
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super().delete(request, *args, **kwargs)

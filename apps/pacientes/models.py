@@ -3,9 +3,9 @@ from django.urls import reverse
 
 class Paciente(models.Model):
     GENERO_CHOICES = (
-        ('M', 'Masculino'),
-        ('F', 'Feminino'),
-        ('O', 'Outro'),
+        ('Masculino', 'Masculino'),
+        ('Feminino', 'Feminino'),
+        ('Outro', 'Outro'),
     )
     
     TIPO_SANGUINEO_CHOICES = (

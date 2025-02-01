@@ -1,0 +1,22 @@
+<!-- apps/pacientes/templates/pacientes/removerModal.html -->
+<div class="modal fade" id="modalRemover" tabindex="-1" aria-labelledby="modalRemoverLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalRemoverLabel">Confirmar Remoção</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Tem certeza que deseja remover o paciente <strong><span id="pacienteNome"></span></strong>?</p>
+          <p class="text-danger">Esta ação não pode ser desfeita.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <form id="formRemover" method="POST" action="">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

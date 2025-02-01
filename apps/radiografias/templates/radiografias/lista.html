@@ -1,6 +1,6 @@
-<!--apps/radiografias/teamplates/lista.html:-->
+<!--apps/radiografias/teamplates/radiografias/lista.html:-->
 {% extends 'core/base.html' %} {% load static %} {% block title %}PulmoVision -
-Pacientes{% endblock %} {% block arquivos_css %}
+Radiografias{% endblock %} {% block arquivos_css %}
 <style>
   .expand-button {
     cursor: auto;
@@ -20,6 +20,16 @@ Pacientes{% endblock %} {% block arquivos_css %}
   .rotate-icon {
     transform: rotate(45deg);
     transition: transform 0.3s;
+  }
+
+    /* Garante que os modais possam sobrepor um ao outro */
+    .modal {
+      background: rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Ajusta o backdrop quando múltiplos modais estão abertos */
+  .modal-backdrop + .modal-backdrop {
+      display: none;
   }
 </style>
 {% endblock %}
@@ -71,7 +81,7 @@ Pacientes{% endblock %} {% block arquivos_css %}
           <th class="expand-button"></th>
           <th>Paciente</th>
           <th>Data</th>
-          <th>Tipo</th>
+          <th>Tipo de Exame</th>
           <th>Equipamento usado</th>
           <th>Qualidade da imagem</th>
           <th>Notas Tecnicas</th>
@@ -83,47 +93,44 @@ Pacientes{% endblock %} {% block arquivos_css %}
       <tbody>
         
         <!--Paciente 1-->
+        {% for radiografia in radiografias %}
         <tr>
           <td class="expand-button">
             <i class="fas fa-plus"></i>
           </td>
-          <td>Tiago Pedro</td>
-          <td>11.02.2002</td>
-          <td>Raio x do torax</td>
-          <td>Equipamento</td>
-          <td>Muito boa</td>
-          <td>...</td>
-          <td>...</td>
-          <td><a href="/media/exames/xray.png" target="blanc">Abrir</a></td>
+          <td>{{ radiografia.paciente.get_nome_completo }}</td>
+          <td>{{ radiografia.data|date:"d.m.Y" }}</td>
+          <td>{{ radiografia.tipo }}</td>
+          <td>{{ radiografia.equipamento_usado }}</td>
+          <td>{{ radiografia.qualidade_da_imagem }}</td>
+          <td>{{ radiografia.notas_tecnicas|truncatechars:20 }}</td>
+          <td>{{ radiografia.descricao|truncatechars:20 }}</td>
           <td>
-            <a
-              href=""
-              class="btn btn-primary btn-sm fa fa-eye"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Ver detalhes do paciente"
-            ></a>
-           <!-- LINK PARA EDITAR PACIENTE
-             <a
-              href=""
-              class="btn btn-warning btn-sm fa fa-edit"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Editar dados do paciente"
-            ></a>
-           -->
-
-            <form action="" method="POST" style="display: inline">
-              <button
-                type="submit"
-                class="btn btn-danger btn-sm fa fa-trash"
-                onclick="return confirm('Tem certeza que deseja remover esta pessoa?');"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Remover Paciente"
-              ></button>
-            </form>
+            {% if radiografia.imagem %}
+              <a href="{{ radiografia.imagem.url }}" target="_blank">Abrir</a>
+            {% else %}
+              -
+            {% endif %}
           </td>
+          <td>
+            
+           <a href="{% url 'radiografias:detalhe' pk=radiografia.pk %}"
+            class="btn btn-primary btn-sm fa fa-eye"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="Ver detalhes da radiografia"
+          ></a>
+
+          <button
+            type="button"
+            class="btn btn-danger btn-sm fas fa-trash"
+            onclick="confirmarRemocao('{{ radiografia.paciente.get_nome_completo }}', '{% url 'radiografias:remover' radiografia.pk %}')"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="Remover Radiografia">
+          </button>
+          </td>
+          
         </tr>
         <tr>
           <td colspan="10" class="p-0">
@@ -141,50 +148,156 @@ Pacientes{% endblock %} {% block arquivos_css %}
                 </thead>
                 <tbody>
                   <tr>
-                    <td>11.12.2024</td>
-                    <td>Maria da Costa</td>
-                    <td>93636523</td>
-                    <td>936365256</td>
-                    <td>Morro Bento</td>
-                    <td>Luanda</td>
+                    <td>{{ radiografia.paciente.data_nascimento|date:"d.m.Y" }}</td>
+                    <td>{{ radiografia.paciente.nome_da_mae }}</td>
+                    <td>{{ radiografia.paciente.telefone }}</td>
+                    <td>{{ radiografia.paciente.contato_emergencia }}</td>
+                    <td>{{ radiografia.paciente.municipio }}</td>
+                    <td>{{ radiografia.paciente.provincia }}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </td>
         </tr>
+        {% empty %}
+        <tr>
+          <td colspan="10" class="text-center">
+            {% if search_query %}
+              Nenhuma radiografia encontrada para "{{ search_query }}".
+              <a href="{% url 'radiografias:lista' %}" class="btn btn-sm btn-outline-secondary ml-2">
+                Limpar pesquisa
+              </a>
+            {% else %}
+              Nenhuma radiografia cadastrada.
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
 
     <!-- Paginação -->
-    <nav aria-label="Page navigation mt-4 " class="fixed-bottom">
+    <nav aria-label="Navegação de páginas" class="fixed-bottom">
       <ul class="pagination justify-content-center">
-        <li class="page-item">
-          <a class="page-link" href="">Anterior</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link">1</a>
-        </li>
-        <li class="page-item active">
-          <a class="page-link" href="">2</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" href="">3</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" href="">Próximo</a>
-        </li>
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" aria-label="Anterior">
+              <span aria-hidden="true">Anterior</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Anterior</span>
+          </li>
+        {% endif %}
+    
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <li class="page-item active" aria-current="page">
+              <span class="page-link">{{ num }}</span>
+            </li>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+            </li>
+          {% endif %}
+        {% endfor %}
+    
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" aria-label="Próximo">
+              <span aria-hidden="true">Próximo</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Próximo</span>
+          </li>
+        {% endif %}
       </ul>
     </nav>
 
     <!-- Modal Adicionar Pacientes-->
     {% include 'radiografias/adicionarModal.html' %}
+
+    <!-- Modal Selecionar Pacientes-->
+    {% include 'radiografias/selecionarPacienteModal.html' %}
   </div>
 </main>
 {% endblock %}
 
 <!--Arquivos Javascript-->
 {% block scriptJS %}
-<script></script>
+<script>
+ 
+  // Adicione este código ao seu bloco de script
+document.addEventListener('DOMContentLoaded', function() {
+  // Cache dos elementos dos modais
+  const modalAdicionar = document.getElementById('modalAdicionar');
+  const modalSelecionarPaciente = document.getElementById('modalSelecionarPaciente');
+
+  // Instâncias Bootstrap dos modais
+  let bsModalAdicionar = new bootstrap.Modal(modalAdicionar);
+  let bsModalSelecionarPaciente = new bootstrap.Modal(modalSelecionarPaciente);
+
+  // Função para abrir o modal de seleção de paciente
+  window.abrirModalSelecaoPaciente = function() {
+      // Salva o backdrop do modal principal
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop) {
+          // Aumenta o z-index do backdrop para ficar atrás dos dois modais
+          backdrop.style.zIndex = '1040';
+      }
+      
+      // Configura o z-index do modal de adicionar para ficar acima do backdrop
+      modalAdicionar.style.zIndex = '1041';
+      
+      // Configura o z-index do modal de seleção para ficar no topo
+      modalSelecionarPaciente.style.zIndex = '1042';
+      
+      // Abre o modal de seleção
+      bsModalSelecionarPaciente.show();
+
+      // Limpa o campo de pesquisa
+      document.getElementById('pesquisarPaciente').value = '';
+      
+      // Mostra todas as linhas da tabela
+      const rows = document.querySelectorAll('#modalSelecionarPaciente tbody tr');
+      rows.forEach(row => {
+          row.style.display = '';
+      });
+  };
+
+  // Função para selecionar paciente
+  window.selecionarPaciente = function(id, nome) {
+      document.getElementById('id_paciente').value = id;
+      document.getElementById('pacienteSelecionado').textContent = nome;
+      
+      // Fecha apenas o modal de seleção
+      bsModalSelecionarPaciente.hide();
+  };
+
+  // Filtrar pacientes na tabela
+  document.getElementById('pesquisarPaciente').addEventListener('input', function(e) {
+      const searchText = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#modalSelecionarPaciente tbody tr');
+      
+      rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(searchText) ? '' : 'none';
+      });
+  });
+  
+  // Validação do formulário
+  document.getElementById('radiografiaForm').addEventListener('submit', function(e) {
+      const pacienteId = document.getElementById('id_paciente').value;
+      if (!pacienteId) {
+          e.preventDefault();
+          alert('Por favor, selecione um paciente antes de prosseguir.');
+      }
+  });
+});
+</script>
 
 {% endblock %}
