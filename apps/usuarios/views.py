@@ -1,4 +1,4 @@
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect
@@ -16,7 +16,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'Login realizado com sucesso!')
-            return redirect('inicio')
+            return redirect('home')
         else:
             messages.error(request, 'Usuário ou senha inválidos')
     return render(request, 'usuarios/login.html')
@@ -25,7 +25,7 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     messages.success(request, 'Logout realizado com sucesso!')
-    return redirect('login')
+    return redirect('home')
 
 class UsuarioListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Usuario

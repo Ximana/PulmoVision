@@ -1,0 +1,85 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}PulmoVision - Sistema de Detecção de Doenças Pulmonares{% endblock %}
+
+{% block content %}
+<!--
+<div class="row justify-content-center">
+    <div class="col-md-10 text-center">
+        <h1 class="display-4 mb-4">Bem-vindo ao PulmoVision</h1>
+        <p class="lead mb-4">Sistema inteligente para detecção de doenças pulmonares através de imagens</p>
+    </div>
+</div>
+-->
+
+
+
+
+
+<div class="row justify-content-center">
+    <div class="col-md-10 text-center">
+        <img src="{% static 'img/logo.png'  %}" alt="" />
+         <p class="lead mb-4">Sistema inteligente para detecção de doenças pulmonares através de imagens</p>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h3 class="card-title">Tuberculose</h3>
+                <p class="card-text">Detecte casos de tuberculose através de radiografias de tórax com alta precisão.</p>
+                {% if user.is_authenticated %}
+                    <a href="#" class="btn btn-success">Iniciar Detecção</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h3 class="card-title">Pneumonia</h3>
+                <p class="card-text">Análise rápida e precisa para identificação de casos de pneumonia.</p>
+                
+                {% if user.is_authenticated %}
+                    <a href="#" class="btn btn-success">Iniciar Detecção</a>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h3 class="card-title">COVID-19</h3>
+                <p class="card-text">Detecção de padrões característicos da COVID-19 em exames de imagem.</p>
+                {% if user.is_authenticated %}
+                    <a href="#" class="btn btn-success">Iniciar Detecção</a>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-8 mx-auto text-center">
+        <h2>Como Funciona?</h2>
+        <p class="lead">
+            Nosso sistema utiliza algoritmos avançados de inteligência artificial para analisar 
+            imagens médicas e auxiliar no diagnóstico de doenças pulmonares.
+        </p>
+        <a href="#" class="btn btn-lg btn-outline-success mt-3">Saiba Mais</a>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class=" py-4 mt-5">
+    <div class="container text-center mt-3">
+        <p class="mb-0">© 2025 PulmoVision. Todos os direitos reservados. by Paulo Ximana</p>
+    </div>
+</footer>
+
+
+{% endblock %}
+

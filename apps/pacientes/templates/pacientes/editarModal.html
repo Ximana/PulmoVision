@@ -1,0 +1,193 @@
+<div
+  class="modal fade"
+  id="modalEditarPessoa"
+  tabindex="-1"
+  aria-labelledby="modalEditarLabel"
+  aria-hidden="true"
+  data-bs-backdrop="static"
+>
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditarLabel">
+          Editar Dados do Paciente
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form class="row" method="POST" action="{% url 'pacientes:editar' paciente.pk %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <div class="col-md-6">
+            <!-- Dados Pessoais -->
+            <div class="form-group mb-3">
+              <label for="nome">Nome</label>
+              <input
+                type="text"
+                class="form-control"
+                id="nome"
+                name="nome"
+                value="{{ paciente.nome }}"
+                required
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="sobrenome">Sobrenome</label>
+              <input
+                type="text"
+                class="form-control"
+                id="sobrenome"
+                name="sobrenome"
+                value="{{ paciente.sobrenome }}"
+                required
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="numero_bi">Número do BI</label>
+              <input
+                type="text"
+                class="form-control"
+                id="numero_bi"
+                name="numero_bi"
+                value="{{ paciente.numero_bi }}"
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="data_nascimento">Data Nascimento</label>
+              <input
+                type="date"
+                class="form-control"
+                id="data_nascimento"
+                name="data_nascimento"
+                value="{{ paciente.data_nascimento|date:'Y-m-d' }}"
+                required
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="genero">Gênero</label>
+              <select class="form-select" id="genero" name="genero" required>
+                {% for value, label in form.fields.genero.choices %}
+                  <option value="{{ value }}" {% if paciente.genero == value %}selected{% endif %}>
+                    {{ label }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="tipo_sanguineo">Tipo Sanguíneo</label>
+              <select class="form-select" id="tipo_sanguineo" name="tipo_sanguineo">
+                <option value="">Selecione...</option>
+                {% for value, label in form.fields.tipo_sanguineo.choices %}
+                  <option value="{{ value }}" {% if paciente.tipo_sanguineo == value %}selected{% endif %}>
+                    {{ label }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="row h-100">
+              <div class="col-8">
+                <div class="form-group mb-3">
+                  <label for="nome_da_mae">Nome da mãe</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="nome_da_mae"
+                    name="nome_da_mae"
+                    value="{{ paciente.nome_da_mae }}"
+                  />
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="telefone">Telefone</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="telefone"
+                    name="telefone"
+                    value="{{ paciente.telefone }}"
+                  />
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="contato_emergencia">Contato de Emergência</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="contato_emergencia"
+                    name="contato_emergencia"
+                    value="{{ paciente.contato_emergencia }}"
+                  />
+                </div>
+              </div>
+              
+              <div class="col-4">
+                <!-- Imagem do Perfil -->
+                <div class="form-group mb-3">
+                  <label for="foto">Foto</label>
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="foto"
+                    name="foto"
+                    accept="image/*"
+                  />
+                </div>
+                {% if paciente.foto %}
+                  <img src="{{ paciente.foto.url }}" class="img-fluid mb-2" alt="Foto do perfil">
+                {% endif %}
+              </div>
+
+              <div class="col-6 mb-3">
+                <label for="municipio">Município</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="municipio"
+                  name="municipio"
+                  value="{{ paciente.municipio }}"
+                />
+              </div>
+
+              <div class="col-6 mb-3">
+                <label for="provincia">Província</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="provincia"
+                  name="provincia"
+                  value="{{ paciente.provincia }}"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer mt-3">
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-success btn-sm">
+              Salvar Alterações
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

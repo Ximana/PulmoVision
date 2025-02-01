@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import path
+from . import views
 
-# Create your views here.
+
+def lista_view(request):
+    
+    return render(request, 'deteccoes/lista.html')

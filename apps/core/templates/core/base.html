@@ -1,0 +1,270 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}PulmoVision{% endblock %}</title>
+
+    <link href="{%  static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/all.min.css'  %}" rel="stylesheet" />
+    <link href="{% static 'css/estilo.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/foto_perfil.css' %}" rel="stylesheet" />
+
+    <!-- Links online
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
+-->
+    {% block arquivos_css %}{% endblock %}
+  </head>
+
+  <body>
+    <div class="d-flex" id="wrapper">
+      <!-- Menu Lateral -->
+      <nav class="bg-dark border-end" id="sidebar">
+        <div class="sidebar-heading text-center">
+          <a class="" href="{% url 'home' %}">
+            <img
+              src="{% static 'img/logo.png'%}"
+              alt=""
+              width="200"
+              height=""
+            />
+          </a>
+        </div>
+        <ul class="nav flex-column">
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'pacientes:lista' %}">
+              <i class="fas fa-plus"></i> Pacientes
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="fas fa-search"></i> Detecções
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'radiografias:lista' %}">
+              <i class="fas fa-bell"></i> Radiografias
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="fas fa-history"></i> Histórico de Detecções
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="fas fa-users"></i> Usuários
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="fas fa-info-circle"></i> Sobre
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="fas fa-question-circle"></i> Ajuda
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'usuarios:logout' %}">
+              <i class="fas fa-sign-out"></i> Sair
+            </a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'usuarios:login' %}">
+              <i class="fas fa-sign-out"></i> Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="fas fa-info-circle"></i> Sobre
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="fas fa-question-circle"></i> Ajuda
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+
+      <!-- Barra do topo -->
+      <div id="page-content-wrapper">
+        <!-- Topo -->
+        <nav
+          class="navbar navbar-expand-lg navbar-light bg-light border-bottom"
+        >
+          <div class="container-fluid">
+            <span class="me-2">
+              <strong>PulmoVision: </strong>Sistema de Detecção de Doenças
+              Pulmonares
+            </span>
+
+            <button
+              class="btn btn-success d-lg-none"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasMenu"
+              aria-controls="offcanvasMenu"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <span class="navbar-brand ms-auto">
+              <i class="fas fa-tachometer-alt fa-lg"></i>
+            </span>
+            {% if user.is_authenticated %}
+            <!-- Notificações -->
+            <div class="dropdown me-2">
+              <button
+                class="btn btn-outline-success dropdown-toggle"
+                type="button"
+                id="notificationDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="fas fa-bell"></i>
+              </button>
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="notificationDropdown"
+              >
+                <li><a class="dropdown-item" href="#"> Notificacao 1 </a></li>
+                <li><a class="dropdown-item" href="#"> Notificacao 2 </a></li>
+                <li><a class="dropdown-item" href="#"> Notificacao 3 </a></li>
+                <li><a class="dropdown-item" href="#"> Notificacao 4 </a></li>
+              </ul>
+            </div>
+
+            <!-- Icone e dropdown do usuario-->
+            <div class="dropdown me-2">
+              <button
+                class="btn btn-secondary dropdown-toggle"
+                type="button"
+                id="profileDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="fas fa-user"> </i> {{ user.get_nome_completo}}
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                <li>
+                  <a class="dropdown-item" href="{% url 'home' %}"
+                    >Configurações</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'home' %}">Perfil</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'usuarios:logout' %}">Sair</a>
+                </li>
+              </ul>
+            </div>
+            {% else %}
+            <a
+              class="btn btn-outline-secondary"
+              href="{% url 'usuarios:login' %}"
+            >
+              <i class="fas fa-user"></i>Login
+            </a>
+
+            {% endif %}
+          </div>
+        </nav>
+
+        <!-- Offcanvas Menu (para dispositivos móveis) -->
+        <div
+          class="offcanvas offcanvas-start bg-dark"
+          tabindex="-1"
+          id="offcanvasMenu"
+          aria-labelledby="offcanvasMenuLabel"
+        >
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-light" id="offcanvasMenuLabel">
+              FaceTrack
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="offcanvas"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="offcanvas-body">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="fas fa-plus"></i> Pacientes
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="fas fa-search"></i> Detecções
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="fas fa-bell"></i> Radiografias
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="fas fa-history"></i> Histórico de Detecções
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="fas fa-users"></i> Usuários
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="fas fa-info-circle"></i> Sobre
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="fas fa-question-circle"></i> Ajuda
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <main class="container-fluid mt-4">
+          
+          <!-- Mensagens -->
+          {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <i class="fas fa-info-circle"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+{% endif %}
+              
+
+          <!-- Corpo da página-->  
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/foto_perfil.js' %}"></script>
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+-->
+    {% block scriptJS %}{% endblock %}
+  </body>
+</html>

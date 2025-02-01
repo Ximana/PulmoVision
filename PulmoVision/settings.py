@@ -32,9 +32,10 @@ INSTALLED_APPS = [
     
     # Apps locais
     'apps.usuarios.apps.UsuariosConfig',
-    'apps.pacientes.apps.PacientesConfig',
+    'apps.pacientes',
     'apps.deteccoes',
     'apps.core',
+    'apps.radiografias',
     
 ]
 

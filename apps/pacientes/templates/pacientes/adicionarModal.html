@@ -1,0 +1,239 @@
+<div
+  class="modal fade"
+  id="modalAdicionar"
+  tabindex="-1"
+  aria-labelledby="modalAdicionarLabel"
+  aria-hidden="true"
+  data-bs-backdrop="static"
+>
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAdicionarLabel">
+          Adicionar Novo Paciente
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form class="row" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <div class="col-md-6">
+            <!-- Dados Pessoais -->
+            <div class="form-group mb-3">
+              <label for="nome">Nome</label>
+              <input
+                type="text"
+                class="form-control {% if form.nome.errors %}is-invalid{% endif %}"
+                id="nome"
+                name="nome"
+                value="{{ form.nome.value|default:'' }}"
+                required
+              />
+              {% if form.nome.errors %}
+                <div class="invalid-feedback">{{ form.nome.errors|first }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="sobrenome">Sobrenome</label>
+              <input
+                type="text"
+                class="form-control {% if form.sobrenome.errors %}is-invalid{% endif %}"
+                id="sobrenome"
+                name="sobrenome"
+                value="{{ form.sobrenome.value|default:'' }}"
+                required
+              />
+              {% if form.sobrenome.errors %}
+                <div class="invalid-feedback">{{ form.sobrenome.errors|first }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="numero_bi">Número do BI</label>
+              <input
+                type="text"
+                class="form-control {% if form.numero_bi.errors %}is-invalid{% endif %}"
+                id="numero_bi"
+                name="numero_bi"
+                value="{{ form.numero_bi.value|default:'' }}"
+              />
+              {% if form.numero_bi.errors %}
+                <div class="invalid-feedback">{{ form.numero_bi.errors|first }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="data_nascimento">Data Nascimento</label>
+              <input
+                type="date"
+                class="form-control {% if form.data_nascimento.errors %}is-invalid{% endif %}"
+                id="data_nascimento"
+                name="data_nascimento"
+                value="{{ form.data_nascimento.value|date:'Y-m-d'|default:'' }}"
+                required
+              />
+              {% if form.data_nascimento.errors %}
+                <div class="invalid-feedback">{{ form.data_nascimento.errors|first }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="genero">Gênero</label>
+              <select 
+                class="form-select {% if form.genero.errors %}is-invalid{% endif %}" 
+                id="genero" 
+                name="genero"
+                required
+              >
+                <option value="">Selecione...</option>
+                {% for value, label in form.fields.genero.choices %}
+                  <option value="{{ value }}" {% if form.genero.value == value %}selected{% endif %}>
+                    {{ label }}
+                  </option>
+                {% endfor %}
+              </select>
+              {% if form.genero.errors %}
+                <div class="invalid-feedback">{{ form.genero.errors|first }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="tipo_sanguineo">Tipo Sanguíneo</label>
+              <select 
+                class="form-select {% if form.tipo_sanguineo.errors %}is-invalid{% endif %}" 
+                id="tipo_sanguineo" 
+                name="tipo_sanguineo"
+              >
+                <option value="">Selecione...</option>
+                {% for value, label in form.fields.tipo_sanguineo.choices %}
+                  <option value="{{ value }}" {% if form.tipo_sanguineo.value == value %}selected{% endif %}>
+                    {{ label }}
+                  </option>
+                {% endfor %}
+              </select>
+              {% if form.tipo_sanguineo.errors %}
+                <div class="invalid-feedback">{{ form.tipo_sanguineo.errors|first }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="row h-100">
+              <div class="col-8">
+                <div class="form-group mb-3">
+                  <label for="nome_da_mae">Nome da mãe</label>
+                  <input
+                    type="text"
+                    class="form-control {% if form.nome_da_mae.errors %}is-invalid{% endif %}"
+                    id="nome_da_mae"
+                    name="nome_da_mae"
+                    value="{{ form.nome_da_mae.value|default:'' }}"
+                  />
+                  {% if form.nome_da_mae.errors %}
+                    <div class="invalid-feedback">{{ form.nome_da_mae.errors|first }}</div>
+                  {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="telefone">Telefone</label>
+                  <input
+                    type="text"
+                    class="form-control {% if form.telefone.errors %}is-invalid{% endif %}"
+                    id="telefone"
+                    name="telefone"
+                    value="{{ form.telefone.value|default:'' }}"
+                  />
+                  {% if form.telefone.errors %}
+                    <div class="invalid-feedback">{{ form.telefone.errors|first }}</div>
+                  {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="contato_emergencia">Contato de Emergência</label>
+                  <input
+                    type="text"
+                    class="form-control {% if form.contato_emergencia.errors %}is-invalid{% endif %}"
+                    id="contato_emergencia"
+                    name="contato_emergencia"
+                    value="{{ form.contato_emergencia.value|default:'' }}"
+                  />
+                  {% if form.contato_emergencia.errors %}
+                    <div class="invalid-feedback">{{ form.contato_emergencia.errors|first }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              
+              <div class="col-4">
+                <!-- Imagem do Perfil -->
+                <div class="form-group mb-3">
+                  <label for="foto">Foto</label>
+                  <input
+                    type="file"
+                    class="form-control {% if form.foto.errors %}is-invalid{% endif %}"
+                    id="foto"
+                    name="foto"
+                    accept="image/*"
+                  />
+                  {% if form.foto.errors %}
+                    <div class="invalid-feedback">{{ form.foto.errors|first }}</div>
+                  {% endif %}
+                </div>
+                {% if form.instance.foto %}
+                  <img src="{{ form.instance.foto.url }}" class="img-fluid mb-2" alt="Foto do perfil">
+                {% endif %}
+              </div>
+
+              <div class="col-6 mb-3">
+                <label for="municipio">Município</label>
+                <input
+                  type="text"
+                  class="form-control {% if form.municipio.errors %}is-invalid{% endif %}"
+                  id="municipio"
+                  name="municipio"
+                  value="{{ form.municipio.value|default:'' }}"
+                />
+                {% if form.municipio.errors %}
+                  <div class="invalid-feedback">{{ form.municipio.errors|first }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-6 mb-3">
+                <label for="provincia">Província</label>
+                <input
+                  type="text"
+                  class="form-control {% if form.provincia.errors %}is-invalid{% endif %}"
+                  id="provincia"
+                  name="provincia"
+                  value="{{ form.provincia.value|default:'' }}"
+                />
+                {% if form.provincia.errors %}
+                  <div class="invalid-feedback">{{ form.provincia.errors|first }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer mt-3">
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Fechar
+            </button>
+            <button type="submit" class="btn btn-success btn-sm">
+              Adicionar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

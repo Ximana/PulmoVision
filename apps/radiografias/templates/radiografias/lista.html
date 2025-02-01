@@ -1,0 +1,190 @@
+<!--apps/radiografias/teamplates/lista.html:-->
+{% extends 'core/base.html' %} {% load static %} {% block title %}PulmoVision -
+Pacientes{% endblock %} {% block arquivos_css %}
+<style>
+  .expand-button {
+    cursor: auto;
+    width: 30px;
+    text-align: center;
+    
+  }
+
+  .inner-table {
+    display: none;
+    margin-left: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    
+  }
+
+  .rotate-icon {
+    transform: rotate(45deg);
+    transition: transform 0.3s;
+  }
+</style>
+{% endblock %}
+
+<!--Corpo da pagina-->
+{% block content %}
+<header class="row">
+  <h1 class="h5">Radiografias</h1>
+
+  <div
+    class="btn-group col-md-6"
+    role="group"
+    aria-label="Basic outlined example"
+  >
+    <!-- Botao do modal de cadastro -->
+    <button
+      type="button"
+      class="btn btn-success"
+      data-bs-toggle="modal"
+      data-bs-target="#modalAdicionar"
+    >
+      Nova Radiografias
+    </button>
+  </div>
+  <div class="col-md-6">
+    <form class="row" action="">
+      <div class="col-sm-10">
+        <input
+          class="form-control border-success"
+          type="text"
+          placeholder="Insira o nome ou BI"
+        />
+      </div>
+      <button class="col-sm-1 btn btn-success">
+        <i class="fas fa-search"></i>
+      </button>
+    </form>
+  </div>
+</header>
+
+<main class="row">
+  <div class="col-12">
+    <table class="table table-striped table-hover table-responsive mt-2">
+      <thead>
+        <tr class="">
+          <td class="bg-dark text-light" colspan="10">Radiografias</td>
+        </tr>
+        <tr class="table-success">
+          <th class="expand-button"></th>
+          <th>Paciente</th>
+          <th>Data</th>
+          <th>Tipo</th>
+          <th>Equipamento usado</th>
+          <th>Qualidade da imagem</th>
+          <th>Notas Tecnicas</th>
+          <th>Descrição</th>
+          <th>Imagem</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <!--Paciente 1-->
+        <tr>
+          <td class="expand-button">
+            <i class="fas fa-plus"></i>
+          </td>
+          <td>Tiago Pedro</td>
+          <td>11.02.2002</td>
+          <td>Raio x do torax</td>
+          <td>Equipamento</td>
+          <td>Muito boa</td>
+          <td>...</td>
+          <td>...</td>
+          <td><a href="/media/exames/xray.png" target="blanc">Abrir</a></td>
+          <td>
+            <a
+              href=""
+              class="btn btn-primary btn-sm fa fa-eye"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Ver detalhes do paciente"
+            ></a>
+           <!-- LINK PARA EDITAR PACIENTE
+             <a
+              href=""
+              class="btn btn-warning btn-sm fa fa-edit"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Editar dados do paciente"
+            ></a>
+           -->
+
+            <form action="" method="POST" style="display: inline">
+              <button
+                type="submit"
+                class="btn btn-danger btn-sm fa fa-trash"
+                onclick="return confirm('Tem certeza que deseja remover esta pessoa?');"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Remover Paciente"
+              ></button>
+            </form>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="10" class="p-0">
+            <div class="inner-table">
+              <table class="table table-striped table-hover table-sm">
+                <thead>
+                  <tr class="table-dark">
+                    <th>Data de Nascimento</th>
+                    <th>Nome da mãe</th>
+                    <th>telefone</th>
+                    <th>contacto de emergência</th>
+                    <th>Endereço</th>
+                    <th>Provincia</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>11.12.2024</td>
+                    <td>Maria da Costa</td>
+                    <td>93636523</td>
+                    <td>936365256</td>
+                    <td>Morro Bento</td>
+                    <td>Luanda</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Paginação -->
+    <nav aria-label="Page navigation mt-4 " class="fixed-bottom">
+      <ul class="pagination justify-content-center">
+        <li class="page-item">
+          <a class="page-link" href="">Anterior</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link">1</a>
+        </li>
+        <li class="page-item active">
+          <a class="page-link" href="">2</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="">3</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="">Próximo</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Modal Adicionar Pacientes-->
+    {% include 'radiografias/adicionarModal.html' %}
+  </div>
+</main>
+{% endblock %}
+
+<!--Arquivos Javascript-->
+{% block scriptJS %}
+<script></script>
+
+{% endblock %}

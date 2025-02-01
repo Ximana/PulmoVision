@@ -1,0 +1,141 @@
+<!--adicionarModal.html:-->
+<div
+  class="modal fade"
+  id="modalAdicionar"
+  tabindex="-1"
+  aria-labelledby="modalAdicionarLabel"
+  aria-hidden="true"
+  data-bs-backdrop="static"
+
+>
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAdicionarabel">
+          Adicionar Nova radiografia
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!--Corpo do modal -->
+        <form class="row" action="" method="POST" enctype="multipart/form-data">
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label for="nome">Paciente</label>
+              <input
+                type="text"
+                class="form-control"
+                id="nome"
+                name="nome"
+                required
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="tipo">Tipo</label>
+              <select
+                class="form-control"
+                id="tipo"
+                name="tipo"
+              />
+              <option class="">Raio x do tórax</option>
+              <option class="">Tomografia</option>
+
+            </select>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="equipamento">Equipamento Usado</label>
+              <select
+                class="form-control"
+                id="equipamento"
+                name="equipamento"
+              />
+              <option class="">Equipamento 1</option>
+              <option class="">Equipamento 2</option>
+
+            </select>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="dataDesaparecimento">Notas Técnicas</label>
+              <input
+                type="text"
+                class="form-control"
+                id="notas"
+                name="notas"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="row h-100">
+              <div class="col-8">
+                <div class="form-group mb-3">
+                  <label for="qualidadeImagem">Qualidade da imagem</label>
+              <select
+                class="form-control"
+                id="qualidadeImagem"
+                name="qualidadeImagem"
+              />
+              <option class="">Boa</option>
+              <option class="">Ruim</option>
+              <option class="">Muito Boa</option>
+              <option class="">Muito Ruim</option>
+
+            </select>
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="radiacao">Dose de radiação</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="radiacao"
+                    name="radiacao"
+                  />
+                </div>
+              </div>
+              <div class="col-4">
+                <!-- Imagem do Perfil -->
+                {% include 'radiografias/imagemPessoa.html' %}
+                <!-- Fim Imagem do Perfil -->
+              </div>
+
+              <div class="form-group col-12">
+                <label for="descricao">Descrição</label>
+                <textarea
+                  class="form-control"
+                  name="descricao"
+                  id="descricao"
+                  placeholder="Insira a descrição da ocorrência"
+                  cols=""
+                  rows="4"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer mt-3">
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Fechar
+            </button>
+            <button type="submit" class="btn btn-success btn-sm">
+              Adicionar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,213 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Detalhes do Paciente{% endblock %}
+
+{% block arquivos_css %}
+<style>
+    .nav-tabs .nav-link {
+        color: #495057;
+    }
+    .nav-tabs .nav-link.active {
+        background-color: #f8f9fa;
+        border-color: #dee2e6 #dee2e6 #f8f9fa;
+    }
+    .patient-avatar {
+        max-width: 200px;
+        border-radius: 50%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-2 text-center">
+
+            {% if paciente.foto %}
+                <img src="/media/{{ paciente.foto }}" alt="Foto do Paciente" class="patient-avatar mb-3">
+            {% else %}
+                <img src="/media/pacientes/pessoa.png" alt="Foto do Paciente" class="patient-avatar mb-3">
+            {% endif %}
+            <h2>{{ paciente.get_nome_completo }}</h2>
+            <p>ID: {{ paciente.id }}</p>
+        </div>
+        <div class="col-md-10">
+            <ul class="nav nav-tabs" id="patientTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" 
+                            data-bs-target="#personal" type="button" role="tab">
+                        Dados Pessoais
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="detections-tab" data-bs-toggle="tab" 
+                            data-bs-target="#detections" type="button" role="tab">
+                        Histórico de Detecções
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="radiographs-tab" data-bs-toggle="tab" 
+                            data-bs-target="#radiographs" type="button" role="tab">
+                        Radiografias
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-3" id="patientTabsContent">
+                <!-- Dados Pessoais -->
+                <div class="tab-pane fade show active" id="personal" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Informações Pessoais</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Nome Completo:</strong> {{ paciente.get_nome_completo }}</p>
+                                    <p><strong>Data de Nascimento:</strong> {{ paciente.data_nascimento|date:"d.m.Y" }}</p>
+                                    <p><strong>Genero:</strong> {{ paciente.genero }}</p>
+                                    <p><strong>Nome da mãe:</strong> {{ paciente.nome_da_mae }}</p>
+                                    <p><strong>Tipo Sanguineo:</strong> {{ paciente.tipo_sanguineo }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>BI:</strong> {{ paciente.numero_bi }}</p>
+                                    <p><strong>Telefone:</strong> {{ paciente.telefone }}</p>
+                                    <p><strong>Contacto de Emergencia:</strong> {{ paciente.contato_emergencia }}</p>
+                                    <p><strong>Municipio:</strong> {{ paciente.municipio }}</p>
+
+                                    <p><strong>Provincia:</strong> {{ paciente.provincia }}</p>
+                                </div>
+                            </div>
+                            <!--Botao para o modal editar-->
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#modalEditarPessoa" class="btn btn-secondary btn-sm">
+                              Editar
+                          </button>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+
+                <!-- Histórico de Detecções -->
+                <div class="tab-pane fade" id="detections" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Histórico de Detecções</h5>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Tipo de Exame</th>
+                                        <th>Resultado</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                    <tr>
+                                        <td>10.10.2023</td>
+                                        <td>Pneumonia</td>
+                                        <td>
+                                            <span class="badge 
+                                            {% if detection.result == 'negative' %}bg-success
+                                            {% elif detection.result == 'positive' %}bg-danger
+                                            {% else %}bg-warning{% endif %} bg-danger">
+                                                Positivo
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#detalhesModal" class="btn btn-secondary btn-sm">
+                                              Detalhes</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Radiografias -->
+                <div class="tab-pane fade" id="radiographs" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Radiografias</h5>
+                            <div class="row">
+                                
+                              
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <img src="/media/exames/xray.png" class="card-img-top" alt="Radiografia">
+                                        <div class="card-body">
+                                            <p class="card-text">
+                                                <strong>Data:</strong> 10.10.2024
+                                                <br>
+                                                <strong>Tipo:</strong> Radiografia do Torax
+                                            </p>
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#detalhesModal" class="btn btn-secondary btn-sm">
+                                                Visualizar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para visualizar a Imagem do raio x com alguns detalhes da detecao -->
+<div class="modal fade" id="detalhesModal" tabindex="-1" aria-labelledby="detalhesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detalhesModalLabel">Detalhes</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" >
+        <div clas="container-fluid">
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <img src="/media/exames/xray.png" class="img-thumbnail" style=""; " alt="imagem da radiografia">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Fim modal -->
+
+<!-- Modal Editar dados do Pacientes-->
+{% include 'pacientes/editarModal.html' %}
+
+{% endblock %}
+
+{% block scriptJS %}
+<script>
+    // Manter a aba ativa após o reload da página
+    document.addEventListener('DOMContentLoaded', function() {
+        const activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            const tabTrigger = document.querySelector(`button[data-bs-target="${activeTab}"]`);
+            if (tabTrigger) tabTrigger.click();
+        }
+
+        const tabElements = document.querySelectorAll('button[data-bs-toggle="tab"]');
+        tabElements.forEach(tabElement => {
+            tabElement.addEventListener('shown.bs.tab', event => {
+                localStorage.setItem('activeTab', event.target.getAttribute('data-bs-target'));
+            });
+        });
+    });
+</script>
+{% endblock %}

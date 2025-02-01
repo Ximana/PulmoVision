@@ -6,6 +6,7 @@ class Usuario(AbstractUser):
         ('admin', 'Administrador'),
         ('medico', 'Médico'),
         ('tecnico', 'Técnico'),
+        ('pesquisador', 'Pesquisador'),
     )
     
     funcao = models.CharField('Função', max_length=20, choices=FUNCAO_CHOICES)
