@@ -59,12 +59,10 @@ class RadiografiaDetailView(LoginRequiredMixin, DetailView):
         context['form'] = RadiografiaCadastroForm(instance=self.object)
         return context
 
-
-
 class RadiografiaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Radiografia
     form_class = RadiografiaCadastroForm
-    template_name = 'radiografia/detalhe.html'  # Aponta para detalhe.html já que o modal está lá
+    template_name = 'radiografias/detalhe.html'  # Aponta para detalhe.html já que o modal está lá
     success_message = "Os Dados da radiografia foram atualizados com sucesso!"
     
     def get_success_url(self):
@@ -79,9 +77,10 @@ class RadiografiaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
 
 class RadiografiaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Radiografia
-    success_url = reverse_lazy('radiografia:lista')
+    success_url = reverse_lazy('radiografias:lista')
     success_message = "radiografia removida com sucesso!"
     
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
+    

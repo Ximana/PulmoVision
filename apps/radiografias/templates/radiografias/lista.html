@@ -55,13 +55,15 @@ Radiografias{% endblock %} {% block arquivos_css %}
     </button>
   </div>
   <div class="col-md-6">
-    <form class="row" action="">
+    <form class="row" action="{% url 'radiografias:lista' %}" method="GET">
       <div class="col-sm-10">
         <input
-          class="form-control border-success"
-          type="text"
-          placeholder="Insira o nome ou BI"
-        />
+            class="form-control border-success"
+            type="text"
+            name="search"
+            placeholder="Pesquisar por nome, BI ou nome da mãe"
+            value="{{ search_query }}"
+          />
       </div>
       <button class="col-sm-1 btn btn-success">
         <i class="fas fa-search"></i>
@@ -92,7 +94,7 @@ Radiografias{% endblock %} {% block arquivos_css %}
       </thead>
       <tbody>
         
-        <!--Paciente 1-->
+        <!-- Radiografias -->
         {% for radiografia in radiografias %}
         <tr>
           <td class="expand-button">
@@ -223,6 +225,9 @@ Radiografias{% endblock %} {% block arquivos_css %}
 
     <!-- Modal Selecionar Pacientes-->
     {% include 'radiografias/selecionarPacienteModal.html' %}
+
+    <!-- Modal Remover Radiografia -->
+    {% include 'radiografias/removerModal.html' %}
   </div>
 </main>
 {% endblock %}
@@ -298,6 +303,40 @@ document.addEventListener('DOMContentLoaded', function() {
       }
   });
 });
+
+  // Codigo para a pesquisa
+  document.addEventListener('DOMContentLoaded', function() {
+    // Referência aos elementos de pesquisa
+    const searchForm = document.querySelector('form[method="GET"]');
+    const searchInput = searchForm.querySelector('input[name="search"]');
+    
+    // Limpa a pesquisa quando o campo estiver vazio
+    searchInput.addEventListener('input', function(e) {
+        if (this.value.trim() === '' && window.location.search) {
+            window.location.href = window.location.pathname;
+        }
+    });
+    
+    // Previne submissão do formulário se o campo estiver vazio
+    searchForm.addEventListener('submit', function(e) {
+        if (searchInput.value.trim() === '') {
+            e.preventDefault();
+            window.location.href = window.location.pathname;
+        }
+    });
+});
+
+// Codigo para Remover Radiografia
+function confirmarRemocao(nome, url) {
+  // Atualiza o nome do paciente no modal
+  document.getElementById('pacienteNome').textContent = nome;
+  
+  // Atualiza o action do formulário com a URL correta
+  document.getElementById('formRemover').action = url;
+  
+  // Abre o modal
+  new bootstrap.Modal(document.getElementById('modalRemover')).show();
+}
 </script>
 
 {% endblock %}

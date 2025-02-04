@@ -143,9 +143,19 @@
                                                 <br>
                                                 <strong>Tipo:</strong> Radiografia do Torax
                                             </p>
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#detalhesModal" class="btn btn-secondary btn-sm">
-                                                Visualizar
-                                            </button>
+                                            <!-- Depois trocar a variavel do paciente e colocar a variavel da radiologia para ver detalhes -->
+                                            <a href="{% url 'radiografias:detalhe' pk=paciente.pk %}"
+                                                class="btn btn-primary btn-sm fa fa-eye"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Ver detalhes da radiografia"
+                                            >
+                                            Visualizar
+                                        </a>
+
+
+
+                                            
                                         </div>
                                     </div>
                                 </div>

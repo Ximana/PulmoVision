@@ -4,5 +4,8 @@ from . import views
 app_name = 'deteccoes'
 
 urlpatterns = [
-    path('lista/', views.lista_view, name='lista'),
+    
+    path('lista', views.DeteccaoListView.as_view(), name='lista'),
+    
+    
 ]
