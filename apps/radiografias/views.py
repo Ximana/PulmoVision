@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from .models import Radiografia
-from .forms import RadiografiaCadastroForm
+from .forms import RadiografiaCadastroForm, RadiografiaEdicaoForm
 from apps.pacientes.models import Paciente
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
@@ -55,25 +55,34 @@ class RadiografiaDetailView(LoginRequiredMixin, DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Adiciona o formulário no contexto
+        # Adiciona o formulário no contexto com a instância atual
         context['form'] = RadiografiaCadastroForm(instance=self.object)
         return context
 
 class RadiografiaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Radiografia
-    form_class = RadiografiaCadastroForm
-    template_name = 'radiografias/detalhe.html'  # Aponta para detalhe.html já que o modal está lá
-    success_message = "Os Dados da radiografia foram atualizados com sucesso!"
+    form_class = RadiografiaEdicaoForm
+    template_name = 'radiografias/detalhe.html'
+    success_message = "Os dados da radiografia foram atualizados com sucesso!"
     
     def get_success_url(self):
         return reverse_lazy('radiografias:detalhe', kwargs={'pk': self.object.pk})
     
     def form_invalid(self, form):
-        # Em caso de erro, retorna para a página de detalhes com o formulário e erros
+        # Para debug - imprimir os erros no console
+        #print("Erros do formulário:", form.errors)
+        #messages.error(self.request, "Erro ao atualizar os dados da radiografia. Verifique os campos.")
         return render(self.request, self.template_name, {
             'radiografia': self.get_object(),
             'form': form
         })
+        
+    def form_valid(self, form):
+        # Preservar o paciente atual
+        form.instance.paciente = self.get_object().paciente
+        response = super().form_valid(form)
+        #messages.success(self.request, self.success_message)
+        return response
 
 class RadiografiaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Radiografia

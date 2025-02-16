@@ -1,3 +1,4 @@
+<!-- apps/pacientes/templates/pacientes/detalhe.html -->
 {% extends 'core/base.html' %}
 
 {% block title %}Detalhes do Paciente{% endblock %}
@@ -26,10 +27,10 @@
             {% if paciente.foto %}
                 <img src="/media/{{ paciente.foto }}" alt="Foto do Paciente" class="patient-avatar mb-3">
             {% else %}
-                <img src="/media/pacientes/pessoa.png" alt="Foto do Paciente" class="patient-avatar mb-3">
+                <img src="/media/pacientes/fotos/pessoa.png" alt="Foto do Paciente" class="patient-avatar mb-3">
             {% endif %}
             <h2>{{ paciente.get_nome_completo }}</h2>
-            <p>ID: {{ paciente.id }}</p>
+            <p>ID: {{ paciente.numero_processo }}</p>
         </div>
         <div class="col-md-10">
             <ul class="nav nav-tabs" id="patientTabs" role="tablist">
@@ -95,31 +96,56 @@
                                 <thead>
                                     <tr>
                                         <th>Data</th>
-                                        <th>Tipo de Exame</th>
+                                        <th>Doença</th>
                                         <th>Resultado</th>
+                                        <th>Probabilidade</th>
+                                        <th>Estado</th>
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+                                    {% for deteccao in deteccoes %}
                                     <tr>
-                                        <td>10.10.2023</td>
-                                        <td>Pneumonia</td>
+                                        <td>{{ deteccao.criado_em|date:"d.m.Y" }}</td>
+                                        <td>{{ deteccao.doenca }}</td>
+                                        <td>{{ deteccao.resultado }}</td>
                                         <td>
-                                            <span class="badge 
-                                            {% if detection.result == 'negative' %}bg-success
-                                            {% elif detection.result == 'positive' %}bg-danger
-                                            {% else %}bg-warning{% endif %} bg-danger">
-                                                Positivo
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar {% if deteccao.probabilidade >= 70 %}bg-danger
+                                                            {% elif deteccao.probabilidade >= 40 %}bg-warning
+                                                            {% else %}bg-success{% endif %}"
+                                                     role="progressbar"
+                                                     style="width: {{ deteccao.probabilidade }}%"
+                                                     aria-valuenow="{{ deteccao.probabilidade }}"
+                                                     aria-valuemin="0"
+                                                     aria-valuemax="100">
+                                                    {{ deteccao.probabilidade }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
+                                                           {% elif deteccao.estado == 'Em Análise' %}bg-primary
+                                                           {% elif deteccao.estado == 'Revisão Necessária' %}bg-warning
+                                                           {% else %}bg-secondary{% endif %}">
+                                                {{ deteccao.estado }}
                                             </span>
                                         </td>
                                         <td>
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#detalhesModal" class="btn btn-secondary btn-sm">
-                                              Detalhes</button>
+                                            <a href="{% url 'deteccoes:detalhe' pk=deteccao.pk %}" 
+                                               class="btn btn-primary btn-sm"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="top"
+                                               title="Ver detalhes da detecção">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
                                         </td>
                                     </tr>
-                                    
-                                    
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">Nenhuma detecção registrada para este paciente.</td>
+                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -132,36 +158,39 @@
                         <div class="card-body">
                             <h5 class="card-title">Radiografias</h5>
                             <div class="row">
-                                
-                              
+                                {% for radiografia in radiografias %}
                                 <div class="col-md-4 mb-3">
                                     <div class="card">
-                                        <img src="/media/exames/xray.png" class="card-img-top" alt="Radiografia">
+                                        {% if radiografia.imagem %}
+                                            <img src="{{ radiografia.imagem.url }}" class="card-img-top" alt="Radiografia">
+                                        {% else %}
+                                            <img src="/media/exames/xray.png" class="card-img-top" alt="Radiografia padrão">
+                                        {% endif %}
                                         <div class="card-body">
                                             <p class="card-text">
-                                                <strong>Data:</strong> 10.10.2024
+                                                <strong>Data:</strong> {{ radiografia.data|date:"d.m.Y" }}
                                                 <br>
-                                                <strong>Tipo:</strong> Radiografia do Torax
+                                                <strong>Tipo:</strong> {{ radiografia.tipo }}
+                                                <br>
+                                                <strong>Equipamento:</strong> {{ radiografia.equipamento_usado }}
+                                                <br>
+                                                <strong>Qualidade:</strong> {{ radiografia.qualidade_da_imagem }}
                                             </p>
-                                            <!-- Depois trocar a variavel do paciente e colocar a variavel da radiologia para ver detalhes -->
-                                            <a href="{% url 'radiografias:detalhe' pk=paciente.pk %}"
-                                                class="btn btn-primary btn-sm fa fa-eye"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="top"
-                                                title="Ver detalhes da radiografia"
-                                            >
-                                            Visualizar
-                                        </a>
-
-
-
-                                            
+                                            <a href="{% url 'radiografias:detalhe' pk=radiografia.pk %}"
+                                               class="btn btn-primary btn-sm"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="top"
+                                               title="Ver detalhes da radiografia">
+                                                <i class="fa fa-eye"></i> Visualizar
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
-
-                                
-                                
+                                {% empty %}
+                                <div class="col-12">
+                                    <p class="text-center">Nenhuma radiografia registrada para este paciente.</p>
+                                </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

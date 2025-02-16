@@ -1,5 +1,15 @@
+#apps/pacientes/models.py
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
+import uuid
+import os
+
+def paciente_foto_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4().hex}.{ext}'
+    return os.path.join('pacientes/fotos', filename)
+
 
 class Paciente(models.Model):
     GENERO_CHOICES = (
@@ -13,6 +23,14 @@ class Paciente(models.Model):
         ('B+', 'B+'), ('B-', 'B-'),
         ('AB+', 'AB+'), ('AB-', 'AB-'),
         ('O+', 'O+'), ('O-', 'O-'),
+    )
+    # Número de Processo
+    numero_processo = models.CharField(
+        'Número de Processo',
+        max_length=12,
+        unique=True,
+        editable=False,
+        help_text='Formato: pv[ano][número sequencial]'
     )
     
     # Dados Pessoais
@@ -33,7 +51,7 @@ class Paciente(models.Model):
     provincia = models.CharField('Província', max_length=100, blank=True, null=True)
     
     # Sistema
-    foto = models.ImageField('Foto', upload_to='pacientes/fotos', blank=True, null=True)
+    foto = models.ImageField('Foto', upload_to=paciente_foto_path, blank=True, null=True)
     data_criacao = models.DateTimeField('Data de Criação', auto_now_add=True)
     data_atualizacao = models.DateTimeField('Data de Atualização', auto_now=True)
     
@@ -55,3 +73,30 @@ class Paciente(models.Model):
 
     def get_nome_completo(self):
         return f"{self.nome} {self.sobrenome}"
+    
+    
+    @classmethod
+    def _gerar_numero_processo(cls):
+        ano_atual = timezone.now().year
+        
+        # Busca o último número de processo do ano atual
+        ultimo_processo = cls.objects.filter(
+            numero_processo__startswith=f'pv{ano_atual}'
+        ).order_by('-numero_processo').first()
+        
+        if ultimo_processo:
+            # Extrai o número sequencial do último processo
+            ultimo_numero = int(ultimo_processo.numero_processo[-6:])
+            proximo_numero = ultimo_numero + 1
+        else:
+            # Se não houver processo no ano atual, começa do 1
+            proximo_numero = 1
+        
+        # Formata o novo número de processo
+        novo_numero = f'pv{ano_atual}{proximo_numero:06d}'
+        return novo_numero
+    
+    def save(self, *args, **kwargs):
+        if not self.numero_processo:
+            self.numero_processo = self._gerar_numero_processo()
+        super().save(*args, **kwargs)

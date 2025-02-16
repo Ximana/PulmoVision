@@ -1,0 +1,253 @@
+<!--apps/radiografias/teamplates/radiografias/detalhe.html:-->
+
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}PulmoVision - Detalhes da Detecção{% endblock %}
+
+{% block content %}
+
+
+<div class="container-fluid">
+  
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Detalhes da Detecção</h1>
+        <div>
+            <a href="{% url 'deteccoes:lista' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <a href="{% url 'deteccoes:avaliacoes' pk=deteccao.pk %}" class="btn btn-success">
+                <i class="fas fa-star"></i> Ver Avaliações
+            </a>
+            
+            <button type="button" 
+            class="btn btn-success btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#modalAvaliarDeteccao"
+            onclick="prepararAvaliacao('{{ deteccao.pk }}')"
+            title="Avaliar detecção">
+      <i class="fas fa-star"></i>
+    </button>
+
+        </div>
+    </div>
+
+    <!-- Informações principais da detecção -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-microscope me-2"></i>Informações da Detecção
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Doença:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-info fs-6">{{ deteccao.doenca }}</span>
+                        </dd>
+
+                        <dt class="col-sm-4">Resultado:</dt>
+                        <dd class="col-sm-8">{{ deteccao.resultado }}</dd>
+
+                        <dt class="col-sm-4">Probabilidade:</dt>
+                        <dd class="col-sm-8">
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar {% if deteccao.probabilidade >= 70 %}bg-danger
+                                            {% elif deteccao.probabilidade >= 40 %}bg-warning
+                                            {% else %}bg-success{% endif %}"
+                                     role="progressbar"
+                                     style="width: {{ deteccao.probabilidade }}%"
+                                     aria-valuenow="{{ deteccao.probabilidade }}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                    {{ deteccao.probabilidade }}%
+                                </div>
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Estado:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
+                                           {% elif deteccao.estado == 'Em Análise' %}bg-primary
+                                           {% elif deteccao.estado == 'Revisão Necessária' %}bg-warning
+                                           {% else %}bg-secondary{% endif %} fs-6">
+                                {{ deteccao.estado }}
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-4">Data de Criação:</dt>
+                        <dd class="col-sm-8">{{ deteccao.criado_em|date:"d/m/Y H:i" }}</dd>
+
+                        <dt class="col-sm-4">Última Atualização:</dt>
+                        <dd class="col-sm-8">{{ deteccao.atualizado_em|date:"d/m/Y H:i" }}</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6 class="border-bottom pb-2">Descobertas Detalhadas:</h6>
+                    <p class="px-3">{{ deteccao.descobertas }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informações da Radiografia -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-x-ray me-2"></i>Informações da Radiografia
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Data do Exame:</dt>
+                        <dd class="col-sm-8">{{ deteccao.radiografia.data|date:"d/m/Y" }}</dd>
+
+                        <dt class="col-sm-4">Tipo de Exame:</dt>
+                        <dd class="col-sm-8">{{ deteccao.radiografia.tipo }}</dd>
+
+                        <dt class="col-sm-4">Equipamento:</dt>
+                        <dd class="col-sm-8">{{ deteccao.radiografia.equipamento_usado }}</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Qualidade:</dt>
+                        <dd class="col-sm-8">{{ deteccao.radiografia.qualidade_da_imagem }}</dd>
+
+                        <dt class="col-sm-4">Dose de Radiação:</dt>
+                        <dd class="col-sm-8">
+                            {% if deteccao.radiografia.dose_de_radiacao %}
+                                {{ deteccao.radiografia.dose_de_radiacao }} mSv
+                            {% else %}
+                                Não informado
+                            {% endif %}
+                        </dd>
+                        <dt class="col-sm-4">Imagem:</dt>
+                        <dd class="col-sm-8">
+                            <a href="{{ deteccao.radiografia.imagem.url }}" class="btn btn-sm btn-primary" target="_blank">
+                                <i class="fas fa-expand"></i> Ver em tamanho completo
+                            </a>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+{% comment "" %}
+            {% if deteccao.radiografia.imagem %}
+            <div class="row mt-3">
+                <div class="col-12 text-center">
+                    <img src="{{ deteccao.radiografia.imagem.url }}" 
+                         alt="Imagem da Radiografia" 
+                         class="img-fluid"
+                         style="max-height: 400px;">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endcomment %}
+
+    <!-- Informações do Paciente -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-user me-2"></i>Informações do Paciente
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    {% if deteccao.radiografia.paciente.foto %}
+                        <img src="{{ deteccao.radiografia.paciente.foto.url }}" 
+                             alt="Foto do Paciente"
+                             class="img-fluid rounded-circle mb-3"
+                             style="max-width: 150px;">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Nome:</dt>
+                                <dd class="col-sm-8">{{ deteccao.radiografia.paciente.get_nome_completo }}</dd>
+
+                                <dt class="col-sm-4">Data de Nascimento:</dt>
+                                <dd class="col-sm-8">{{ deteccao.radiografia.paciente.data_nascimento|date:"d/m/Y" }}</dd>
+
+                                <dt class="col-sm-4">Idade:</dt>
+                                <dd class="col-sm-8">{{ deteccao.radiografia.paciente.get_idade }} anos</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Gênero:</dt>
+                                <dd class="col-sm-8">{{ deteccao.radiografia.paciente.genero }}</dd>
+
+                                <dt class="col-sm-4">Tipo Sanguíneo:</dt>
+                                <dd class="col-sm-8">
+                                    {% if deteccao.radiografia.paciente.tipo_sanguineo %}
+                                        {{ deteccao.radiografia.paciente.tipo_sanguineo }}
+                                    {% else %}
+                                        Não informado
+                                    {% endif %}
+                                </dd>
+
+                                <dt class="col-sm-4">Nº do BI:</dt>
+                                <dd class="col-sm-8">{{ deteccao.radiografia.paciente.numero_bi|default:"Não informado" }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+    <!-- Modal Avaliar Detecção -->
+{% include 'deteccoes/avaliarDeteccaoModal.html' %}
+{% endblock %}
+
+<!--Arquivos Javascript-->
+{% block scriptJS %}
+<script>
+// Função para mostrar mensagens usando Bootstrap toast
+function showMessage(message, type = 'success') {
+  const toast = new bootstrap.Toast(document.getElementById('messageToast'));
+  document.getElementById('messageText').textContent = message;
+  document.getElementById('messageToast').classList.remove('bg-success', 'bg-danger');
+  document.getElementById('messageToast').classList.add(`bg-${type}`);
+  toast.show();
+}
+
+// Se houver erros no formulário, abre o modal automaticamente
+{% if form.errors %}
+  document.addEventListener('DOMContentLoaded', function() {
+      new bootstrap.Modal(document.getElementById('modalAvaliarDeteccao')).show();
+  });
+{% endif %}
+
+// Se houver mensagens de sucesso, fecha o modal
+{% if messages %}
+  document.addEventListener('DOMContentLoaded', function() {
+      const modal = bootstrap.Modal.getInstance(document.getElementById('modalAvaliarDeteccao'));
+      if (modal) {
+          modal.hide();
+      }
+  });
+{% endif %}
+</script>
+{% endblock %}
+

@@ -1,0 +1,65 @@
+{# avaliarDeteccaoModal.html #}
+<div class="modal fade" id="modalAvaliarDeteccao" tabindex="-1" aria-labelledby="modalAvaliarDeteccaoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title" id="modalAvaliarDeteccaoLabel">
+                  <i class="fas fa-star me-2"></i>Avaliar Detecção
+              </h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          
+          <form method="post" action="{{ request.path }}">
+              {% csrf_token %}
+              <div class="modal-body">
+                  {% if form.errors %}
+                  <div class="alert alert-danger">
+                      Por favor, corrija os erros abaixo.
+                  </div>
+                  {% endif %}
+                  
+                  <div class="mb-3">
+                      <label for="{{ form.avaliacao.id_for_label }}" class="form-label">Avaliação Geral *</label>
+                      {{ form.avaliacao }}
+                      {% if form.avaliacao.errors %}
+                      <div class="text-danger">
+                          {{ form.avaliacao.errors }}
+                      </div>
+                      {% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="{{ form.criticas.id_for_label }}" class="form-label">Críticas Construtivas</label>
+                      {{ form.criticas }}
+                      <div class="form-text">Opcional - Forneça feedback específico sobre os pontos que podem ser melhorados.</div>
+                      {% if form.criticas.errors %}
+                      <div class="text-danger">
+                          {{ form.criticas.errors }}
+                      </div>
+                      {% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="{{ form.sugestoes.id_for_label }}" class="form-label">Sugestões de Melhoria</label>
+                      {{ form.sugestoes }}
+                      <div class="form-text">Opcional - Compartilhe ideias para aprimorar o processo de detecção.</div>
+                      {% if form.sugestoes.errors %}
+                      <div class="text-danger">
+                          {{ form.sugestoes.errors }}
+                      </div>
+                      {% endif %}
+                  </div>
+              </div>
+
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save me-2"></i>Salvar Avaliação
+                  </button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+

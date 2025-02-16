@@ -3,6 +3,13 @@ from django.db import models
 from django.urls import reverse
 from django.conf import settings
 from apps.pacientes.models import Paciente
+import uuid
+import os
+
+def radiografia_imagem_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4().hex}.{ext}'
+    return os.path.join('exames', filename)
 
 class Radiografia(models.Model):
     TIPOS_EXAME_CHOICES = (
@@ -59,9 +66,10 @@ class Radiografia(models.Model):
     )
     imagem = models.ImageField(
         'Imagem',
-        upload_to='exames',
+        upload_to=radiografia_imagem_path,
         help_text='Formatos aceitos: .jpg, .jpeg, .png'
     )
+    
     dose_de_radiacao = models.DecimalField(
         'Dose de Radiação (mSv)',
         max_digits=5,
@@ -70,6 +78,7 @@ class Radiografia(models.Model):
         null=True,
         help_text='Dose de radiação em millisieverts (mSv)'
     )
+    
     
     # Campos de Sistema
     criado_em = models.DateTimeField('Criado em', auto_now_add=True)

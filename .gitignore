@@ -1,0 +1,36 @@
+# Ambiente virtual
+venv/
+
+# Arquivos Python compilados
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Configurações locais
+*.env
+.env
+config.json
+pulmovision/settings_local.py
+
+# Backups do MySQL
+*.sql
+*.sql.gz
+dump.sql
+backup/
+
+# Arquivos de configuração do MySQL
+my.cnf
+mysql-config.json
+config/db_settings.py
+
+# Logs e arquivos temporários
+*.log
+logs/
+
+# Arquivos de mídia
+media/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db

@@ -1,3 +1,4 @@
+#apps/pacientes/views.py
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
@@ -7,6 +8,8 @@ from .models import Paciente
 from .forms import PacienteRegistroForm
 from django.contrib import messages
 from django.db.models import Q
+from apps.radiografias.models import Radiografia
+from apps.deteccoes.models import Deteccao
 
 class PacienteListView(ListView):
     model = Paciente
@@ -55,6 +58,12 @@ class PacienteDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         # Adiciona o formulário no contexto
         context['form'] = PacienteRegistroForm(instance=self.object)
+        
+        # Obtém todas as radiografias do paciente
+        context['radiografias'] = Radiografia.objects.filter(paciente=self.object)
+        # Obtém todas as detecções associadas às radiografias do paciente
+        context['deteccoes'] = Deteccao.objects.filter(radiografia__paciente=self.object)
+        
         return context
 
 class PacienteCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):

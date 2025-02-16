@@ -1,0 +1,141 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}PulmoVision - Avaliações da Detecção{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Avaliações da Detecção #{{ deteccao.id }}</h1>
+        <div>
+            <a href="{% url 'deteccoes:detalhe' pk=deteccao.pk %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar para Detecção
+            </a>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAvaliarDeteccao">
+                <i class="fas fa-plus"></i> Nova Avaliação
+            </button>
+        </div>
+    </div>
+
+    <!-- Informações da Detecção -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-info-circle me-2"></i>Informações da Detecção
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Paciente:</strong> {{ deteccao.radiografia.paciente.get_nome_completo }}
+                </div>
+                <div class="col-md-3">
+                    <strong>Doença:</strong> {{ deteccao.doenca }}
+                </div>
+                <div class="col-md-3">
+                    <strong>Probabilidade:</strong> {{ deteccao.probabilidade }}%
+                </div>
+                <div class="col-md-3">
+                    <strong>Estado:</strong> 
+                    <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
+                                   {% elif deteccao.estado == 'Em Análise' %}bg-primary
+                                   {% elif deteccao.estado == 'Revisão Necessária' %}bg-warning
+                                   {% else %}bg-secondary{% endif %}">
+                        {{ deteccao.estado }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Avaliações -->
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-star me-2"></i>Avaliações Realizadas
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if avaliacoes %}
+                {% for avaliacao in avaliacoes %}
+                    <div class="card mb-3 {% if forloop.counter|divisibleby:2 %}bg-light{% endif %}">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <strong>Avaliador:</strong><br>
+                                    {{ avaliacao.usuario.get_full_name }}
+                                </div>
+                                <div class="col-md-2">
+                                    <strong>Avaliação:</strong><br>
+                                    <span class="badge {% if avaliacao.avaliacao == 'Correto' %}bg-success
+                                                   {% elif avaliacao.avaliacao == 'Parcialmente Correto' %}bg-warning
+                                                   {% else %}bg-danger{% endif %}">
+                                        {{ avaliacao.avaliacao }}
+                                    </span>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Críticas:</strong><br>
+                                    {{ avaliacao.criticas|default:"Nenhuma crítica registrada" }}
+                                </div>
+                                <div class="col-md-3">
+                                    <strong>Data:</strong><br>
+                                    {{ avaliacao.criado_em|date:"d/m/Y H:i" }}
+                                </div>
+                            </div>
+                            {% if avaliacao.sugestoes %}
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <strong>Sugestões:</strong><br>
+                                        {{ avaliacao.sugestoes }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <!-- Paginação -->
+                <nav aria-label="Navegação de páginas">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Anterior">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Próximo">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% else %}
+                <div class="alert alert-info">
+                    Nenhuma avaliação registrada para esta detecção.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Avaliar Detecção -->
+{% include 'deteccoes/avaliarDeteccaoModal.html' %}
+{% endblock %}
