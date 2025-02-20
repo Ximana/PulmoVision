@@ -1,0 +1,257 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Usuários - PulmoVision{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Cabeçalho com Card -->
+    <div class="card bg-success text-white shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0 d-flex align-items-center">
+                        <i class="fas fa-users fa-fw me-3"></i>
+                        Usuários
+                    </h2>
+                    <p class="mb-0 mt-2 text-white-50">Gerenciamento de usuários do sistema</p>
+                </div>
+                <a href="{% url 'usuarios:novo' %}" class="btn btn-light">
+                    <i class="fas fa-plus-circle me-2"></i>Novo Usuário
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-user-md text-success fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Médicos</h6>
+                            <h3 class="mb-0 text-success">{{ medicos_count|default:"0" }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-user-cog text-success fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Técnicos</h6>
+                            <h3 class="mb-0 text-success">{{ tecnicos_count|default:"0" }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-user-graduate text-success fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Pesquisadores</h6>
+                            <h3 class="mb-0 text-success">{{ pesquisadores_count|default:"0" }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-users-cog text-success fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Administradores</h6>
+                            <h3 class="mb-0 text-success">{{ admins_count|default:"0" }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros e Busca -->
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-body">
+            <form class="row g-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text border-success bg-success text-white">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" name="q" class="form-control border-success" placeholder="Buscar por nome, email ou registro...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="funcao" class="form-select border-success">
+                        <option value="">Todas as funções</option>
+                        <option value="admin">Administrador</option>
+                        <option value="medico">Médico</option>
+                        <option value="tecnico">Técnico</option>
+                        <option value="pesquisador">Pesquisador</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="status" class="form-select border-success">
+                        <option value="">Status</option>
+                        <option value="1">Ativo</option>
+                        <option value="0">Inativo</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-filter me-2"></i>Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de Usuários -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-success text-white">
+                        <tr>
+                            <th scope="col" class="ps-3">Usuário</th>
+                            <th scope="col">Função</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Registro</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end pe-3">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td class="ps-3">
+                                <div class="d-flex align-items-center">
+                                    {% if usuario.foto_perfil %}
+                                    <img src="{{ usuario.foto_perfil.url }}" class="rounded-circle me-3" width="45" height="45" style="object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-success bg-opacity-10 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px">
+                                        <i class="fas fa-user text-success"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <div class="fw-bold text-dark">{{ usuario.get_nome_completo }}</div>
+                                        <small class="text-muted">@{{ usuario.username }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2">
+                                    {{ usuario.get_funcao_display }}
+                                </span>
+                            </td>
+                            <td>{{ usuario.email }}</td>
+                            <td>{{ usuario.registro_profissional|default:"-" }}</td>
+                            <td>
+                                {% if usuario.is_active %}
+                                <span class="badge bg-success-subtle text-success px-3 py-2">
+                                    <i class="fas fa-check-circle me-1"></i>Ativo
+                                </span>
+                                {% else %}
+                                <span class="badge bg-danger-subtle text-danger px-3 py-2">
+                                    <i class="fas fa-times-circle me-1"></i>Inativo
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-3">
+                                <div class="btn-group">
+                                    <a href="{% url 'usuarios:editar' usuario.pk %}" 
+                                       class="btn btn-sm btn-light border-success text-success"
+                                       data-bs-toggle="tooltip"
+                                       title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'usuarios:excluir' usuario.pk %}" 
+                                       class="btn btn-sm btn-light border-danger text-danger"
+                                       data-bs-toggle="tooltip"
+                                       title="Excluir">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fas fa-users fa-3x mb-3"></i>
+                                    <p class="h5">Nenhum usuário encontrado</p>
+                                    <p class="text-muted">Tente ajustar os filtros ou criar um novo usuário</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paginação -->
+    {% if is_paginated %}
+    <nav class="mt-4" aria-label="Navegação de páginas">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link text-success border-success" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.funcao %}&funcao={{ request.GET.funcao }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <span class="page-link bg-success border-success">{{ num }}</span>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link text-success border-success" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.funcao %}&funcao={{ request.GET.funcao }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link text-success border-success" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.funcao %}&funcao={{ request.GET.funcao }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+{% block scriptJS %}
+<script>
+    // Inicializa todos os tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>
+{% endblock %}
+{% endblock %}

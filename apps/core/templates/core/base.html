@@ -9,251 +9,167 @@
 
     <link href="{%  static 'css/bootstrap.min.css' %}" rel="stylesheet" />
     <link href="{% static 'css/all.min.css'  %}" rel="stylesheet" />
-    <link href="{% static 'css/estilo.css' %}" rel="stylesheet" />
     <link href="{% static 'css/foto_perfil.css' %}" rel="stylesheet" />
-
-    <!-- Links online
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
--->
+    <link href="{% static 'css/estilo.css' %}" rel="stylesheet" />
+    <style>
+     
+    </style>
     {% block arquivos_css %}{% endblock %}
   </head>
 
   <body>
     <div class="d-flex" id="wrapper">
-      <!-- Menu Lateral -->
-      <nav class="bg-dark border-end" id="sidebar">
-        <div class="sidebar-heading text-center">
-          <a class="" href="{% url 'home' %}">
-            <img
-              src="{% static 'img/logo.png'%}"
-              alt=""
-              width="200"
-              height=""
-            />
+      <!-- Sidebar -->
+      <nav class="border-end" id="sidebar">
+        <div class="sidebar-heading">
+          <a href="{% url 'home' %}">
+            <img src="{% static 'img/logo.png'%}" alt="Logo" height="40">
           </a>
         </div>
-        <ul class="nav flex-column">
+        <ul class="nav flex-column mt-3">
           {% if user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'pacientes:lista' %}">
-              <i class="fas fa-plus"></i> Pacientes
+              <i class="fas fa-user-injured"></i>Pacientes
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'deteccoes:lista' %}">
-              <i class="fas fa-search"></i> Detecções
+              <i class="fas fa-microscope"></i>Detecções
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'radiografias:lista' %}">
-              <i class="fas fa-bell"></i> Radiografias
+              <i class="fas fa-x-ray"></i>Radiografias
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'home' %}">
-              <i class="fas fa-history"></i> Histórico de Detecções
+              <i class="fas fa-history"></i>Histórico
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'usuarios:lista' %}">
+              <i class="fas fa-users"></i>Usuários
+            </a>
+          </li>
+          <li class="nav-item mt-4">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="fas fa-info-circle"></i>Sobre
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'home' %}">
-              <i class="fas fa-users"></i> Usuários
+              <i class="fas fa-question-circle"></i>Ajuda
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">
-              <i class="fas fa-info-circle"></i> Sobre
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">
-              <i class="fas fa-question-circle"></i> Ajuda
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'usuarios:logout' %}">
-              <i class="fas fa-sign-out"></i> Sair
+          <li class="nav-item mt-4">
+            <a class="nav-link text-danger" href="{% url 'usuarios:logout' %}">
+              <i class="fas fa-sign-out-alt"></i>Sair
             </a>
           </li>
           {% else %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'usuarios:login' %}">
-              <i class="fas fa-sign-out"></i> Login
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">
-              <i class="fas fa-info-circle"></i> Sobre
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">
-              <i class="fas fa-question-circle"></i> Ajuda
+              <i class="fas fa-sign-in-alt"></i>Login
             </a>
           </li>
           {% endif %}
         </ul>
       </nav>
 
-      <!-- Barra do topo -->
+      <!-- Page Content -->
       <div id="page-content-wrapper">
-        <!-- Topo -->
-        <nav
-          class="navbar navbar-expand-lg navbar-light bg-light border-bottom"
-        >
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light">
           <div class="container-fluid">
-            <span class="me-2">
-              <strong>PulmoVision: </strong>Sistema de Detecção de Doenças
-              Pulmonares
+            <span class="d-none d-lg-inline">
+              <strong class="text-success">PulmoVision</strong>
+              <span class="text-muted ms-2">Sistema de Detecção de Doenças Pulmonares</span>
             </span>
 
-            <button
-              class="btn btn-success d-lg-none"
-              type="button"
-              data-bs-toggle="offcanvas"
-              data-bs-target="#offcanvasMenu"
-              aria-controls="offcanvasMenu"
-            >
+            <button class="btn btn-success d-lg-none" type="button" data-bs-toggle="offcanvas" 
+                    data-bs-target="#offcanvasMenu">
               <i class="fas fa-bars"></i>
             </button>
-            <span class="navbar-brand ms-auto">
-              <i class="fas fa-tachometer-alt fa-lg"></i>
-            </span>
-            {% if user.is_authenticated %}
-            <!-- Notificações -->
-            <div class="dropdown me-2">
-              <button
-                class="btn btn-outline-success dropdown-toggle"
-                type="button"
-                id="notificationDropdown"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <i class="fas fa-bell"></i>
-              </button>
-              <ul
-                class="dropdown-menu dropdown-menu-end"
-                aria-labelledby="notificationDropdown"
-              >
-                <li><a class="dropdown-item" href="#"> Notificacao 1 </a></li>
-                <li><a class="dropdown-item" href="#"> Notificacao 2 </a></li>
-                <li><a class="dropdown-item" href="#"> Notificacao 3 </a></li>
-                <li><a class="dropdown-item" href="#"> Notificacao 4 </a></li>
-              </ul>
-            </div>
 
-            <!-- Icone e dropdown do usuario-->
-            <div class="dropdown me-2">
-              <button
-                class="btn btn-secondary dropdown-toggle"
-                type="button"
-                id="profileDropdown"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <i class="fas fa-user"> </i> {{ user.get_nome_completo}}
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                <li>
-                  <a class="dropdown-item" href="{% url 'home' %}"
-                    >Configurações</a
-                  >
-                </li>
-                <li>
-                  <a class="dropdown-item" href="{% url 'home' %}">Perfil</a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="{% url 'usuarios:logout' %}">Sair</a>
-                </li>
-              </ul>
+            {% if user.is_authenticated %}
+            <div class="ms-auto d-flex align-items-center">
+              <!-- Notifications -->
+              <div class="dropdown me-3">
+                <button class="btn btn-light position-relative" type="button" id="notificationDropdown" 
+                        data-bs-toggle="dropdown">
+                  <i class="fas fa-bell"></i>
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    4
+                  </span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                  <li><a class="dropdown-item" href="#">Notificação 1</a></li>
+                  <li><a class="dropdown-item" href="#">Notificação 2</a></li>
+                  <li><a class="dropdown-item" href="#">Notificação 3</a></li>
+                  <li><a class="dropdown-item" href="#">Notificação 4</a></li>
+                </ul>
+              </div>
+
+              <!-- User Profile -->
+              <div class="dropdown">
+                <button class="btn btn-light d-flex align-items-center gap-2" type="button" 
+                        id="profileDropdown" data-bs-toggle="dropdown">
+                  <div class="d-flex align-items-center">
+                    <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" 
+                         style="width: 32px; height: 32px">
+                      <i class="fas fa-user-md"></i>
+                    </div>
+                    <span class="ms-2 d-none d-lg-inline">{{ user.get_nome_completo }}</span>
+                  </div>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                  <li><a class="dropdown-item" href="{% url 'home' %}">
+                    <i class="fas fa-cog me-2"></i>Configurações</a></li>
+                  <li><a class="dropdown-item" href="{% url 'home' %}">
+                    <i class="fas fa-user me-2"></i>Perfil</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item text-danger" href="{% url 'usuarios:logout' %}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                </ul>
+              </div>
             </div>
             {% else %}
-            <a
-              class="btn btn-outline-secondary"
-              href="{% url 'usuarios:login' %}"
-            >
-              <i class="fas fa-user"></i>Login
+            <a class="btn btn-success ms-auto" href="{% url 'usuarios:login' %}">
+              <i class="fas fa-sign-in-alt me-2"></i>Login
             </a>
-
             {% endif %}
           </div>
         </nav>
 
-        <!-- Offcanvas Menu (para dispositivos móveis) -->
-        <div
-          class="offcanvas offcanvas-start bg-dark"
-          tabindex="-1"
-          id="offcanvasMenu"
-          aria-labelledby="offcanvasMenuLabel"
-        >
-          <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-light" id="offcanvasMenuLabel">
-              FaceTrack
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="offcanvas"
-              aria-label="Close"
-            ></button>
+        <!-- Mobile Menu -->
+        <div class="offcanvas offcanvas-start bg-dark" tabindex="-1" id="offcanvasMenu">
+          <div class="offcanvas-header border-bottom border-secondary">
+            <h5 class="offcanvas-title text-white">PulmoVision</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
           </div>
           <div class="offcanvas-body">
             <ul class="nav flex-column">
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <i class="fas fa-plus"></i> Pacientes
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <i class="fas fa-search"></i> Detecções
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <i class="fas fa-bell"></i> Radiografias
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <i class="fas fa-history"></i> Histórico de Detecções
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <i class="fas fa-users"></i> Usuários
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <i class="fas fa-info-circle"></i> Sobre
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <i class="fas fa-question-circle"></i> Ajuda
-                </a>
-              </li>
+              {% if user.is_authenticated %}
+              <!-- Mesmo conteúdo do sidebar principal -->
+              {% endif %}
             </ul>
           </div>
         </div>
 
-        <!-- Conteúdo Principal -->
-        <main class="container-fluid mt-4">
-          
-          <!-- Mensagens -->
+        <!-- Main Content -->
+        <main>
           {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                <i class="fas fa-info-circle"></i>
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
                 {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-{% endif %}
-              
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
 
-          <!-- Corpo da página-->  
           {% block content %}{% endblock %}
         </main>
       </div>
@@ -262,9 +178,6 @@
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
     <script src="{% static 'js/foto_perfil.js' %}"></script>
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
--->
     {% block scriptJS %}{% endblock %}
   </body>
 </html>

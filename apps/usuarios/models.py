@@ -2,6 +2,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
+import uuid
+import os
+
+def usuario_foto_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4().hex}.{ext}'
+    return os.path.join('usuarios/perfil', filename)
+
 
 class Usuario(AbstractUser):
     FUNCAO_CHOICES = (
@@ -46,7 +54,7 @@ class Usuario(AbstractUser):
     # Mídia
     foto_perfil = models.ImageField(
         'Foto de Perfil',
-        upload_to='usuarios/perfil',
+        upload_to=usuario_foto_path,
         blank=True,
         null=True,
         help_text='Foto de perfil do usuário'

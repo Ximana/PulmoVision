@@ -1,221 +1,224 @@
-{% extends 'core/base.html' %} {% load static %} {% block title %}PulmoVision -
-Pacientes{% endblock %} {% block arquivos_css %}
-<style>
-  
-</style>
-{% endblock %}
+<!--apps/radiografias/teamplates/radiografias/lista.html -->
 
-<!--Corpo da pagina-->
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Pacientes - PulmoVision{% endblock %}
+
 {% block content %}
-<header class="row">
-  <h1 class="h5">Pacientes</h1>
+<div class="container-fluid">
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-success mb-0">
+                <i class="fas fa-user-injured me-2"></i>Pacientes
+            </h2>
+            <p class="text-muted">Gerenciamento de pacientes do sistema</p>
+        </div>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionar">
+            <i class="fas fa-plus me-2"></i>Novo Paciente
+        </button>
+    </div>
 
-  <div
-    class="btn-group col-md-6"
-    role="group"
-    aria-label="Basic outlined example"
-  >
-    <!-- Botao do modal de cadastro -->
-    <button
-      type="button"
-      class="btn btn-success"
-      data-bs-toggle="modal"
-      data-bs-target="#modalAdicionar"
-    >
-      Novo Paciente
-    </button>
-  </div>
-  <div class="col-md-6">
-    <form class="row" action="{% url 'pacientes:lista' %}" method="GET">
-      <div class="col-sm-10">
-          <input
-              class="form-control border-success"
-              type="text"
-              name="search"
-              placeholder="Pesquisar por nome, BI ou nome da mãe"
-              value="{{ search_query }}"
-          />
-      </div>
-      <button type="submit" class="col-sm-1 btn btn-success">
-          <i class="fas fa-search"></i>
-      </button>
-  </form>
-  </div>
-</header>
+    <!-- Filtros e Busca -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form class="row g-3" action="{% url 'pacientes:lista' %}" method="GET">
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <span class="input-group-text bg-success text-white">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            name="search"
+                            placeholder="Pesquisar por nome, BI ou nome da mãe"
+                            value="{{ search_query }}"
+                        >
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-search me-2"></i>Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-<main class="row">
-  <div class="col-12">
-    <table class="table table-striped table-hover table-responsive mt-2">
-      <thead>
-        <tr class="">
-          <td class="bg-dark text-light" colspan="10">Pacientes <a href="" data-bs-toggle="tooltip" data-bs-placement="top" title="Imprimir Lista de Pacientes" class="float-end text-light"><i class="fas fa-solid fa-print"></a></td>
-        </tr>
-        <tr class="table-success">
-          
-          <th>Nome</th>
-          <th>Data Nascimento</th>
-          <th>Nome da mãe</th>
-          <th>BI</th>
-          <th>Telefone</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        
-        <!--Paciente 1-->
-        {% for paciente in pacientes %}
-        
-          <td>{{ paciente.get_nome_completo }}</td>
-          <td>{{ paciente.data_nascimento|date:"d.m.Y" }}</td>
-          <td>{{ paciente.nome_da_mae }}</td>
-          <td>{{ paciente.numero_bi }}</td>
-          <td>{{ paciente.telefone }}</td>
-          <td>
-            <a
-              href="{% url 'pacientes:detalhe' pk=paciente.pk %}"
-              class=""
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Ver detalhes do paciente"
-            ><i class="fa fa-eye"></i></a>
-           <!-- LINK PARA EDITAR PACIENTE
-             <a
-              href=""
-              class="btn btn-warning btn-sm fa fa-edit"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Editar dados do paciente"
-            ></a>
-           -->
+    <!-- Lista de Pacientes -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr class="bg-dark text-white">
+                            <th colspan="7" class="ps-3">
+                                Pacientes
+                                <a href="" class="float-end text-success me-3" data-bs-toggle="tooltip" data-bs-placement="top" title="Imprimir Lista de Pacientes">
+                                    <i class="fas fa-print"></i>
+                                </a>
+                            </th>
+                        </tr>
+                        <tr class="bg-success text-white">
+                            <th scope="col" class="ps-3">Nome</th>
+                            <th scope="col">Data Nascimento</th>
+                            <th scope="col">Nome da mãe</th>
+                            <th scope="col">BI</th>
+                            <th scope="col">Telefone</th>
+                            <th scope="col" class="text-end pe-3">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for paciente in pacientes %}
+                        <tr>
+                            <td class="ps-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-success text-white rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">{{ paciente.get_nome_completo }}</div>
+                                        <small class="text-muted">Paciente #{{ paciente.pk }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ paciente.data_nascimento|date:"d.m.Y" }}</td>
+                            <td>{{ paciente.nome_da_mae }}</td>
+                            <td>{{ paciente.numero_bi }}</td>
+                            <td>{{ paciente.telefone }}</td>
+                            <td class="text-end pe-3">
+                                <div class="btn-group">
+                                    <a href="{% url 'pacientes:detalhe' pk=paciente.pk %}" 
+                                       class="btn btn-sm btn-outline-success"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-placement="top"
+                                       title="Ver detalhes do paciente">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="confirmarRemocao('{{ paciente.get_nome_completo }}', '{% url 'pacientes:remover' paciente.pk %}')"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top"
+                                            title="Remover paciente">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="fas fa-user-injured fa-2x mb-3"></i>
+                                    <p>
+                                        {% if search_query %}
+                                            Nenhum paciente encontrado para "{{ search_query }}".
+                                            <a href="{% url 'pacientes:lista' %}" class="btn btn-sm btn-outline-secondary ml-2">
+                                                Limpar pesquisa
+                                            </a>
+                                        {% else %}
+                                            Nenhum paciente cadastrado.
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-            <button
-                type="submit"
-                class="text-danger btn btn-link p-0"
-                onclick="confirmarRemocao('{{ paciente.get_nome_completo }}', '{% url 'pacientes:remover' paciente.pk %}')"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Remover Paciente">
-                <i class="fas fa-trash"></i>
-            </button>
-          </td>
-        </tr>
-      
-        
-        
-      
-    {% endfor %}
-
-    {% if pacientes|length == 0 and search_query %}
-        <tr>
-            <td colspan="7" class="text-center">
-                Nenhum paciente encontrado para "{{ search_query }}".
-                <a href="{% url 'pacientes:lista' %}" class="btn btn-sm btn-outline-secondary ml-2">
-                    Limpar pesquisa
-                </a>
-            </td>
-        </tr>
-    {% elif pacientes|length == 0 %}
-        <tr>
-            <td colspan="7" class="text-center">Nenhum paciente cadastrado.</td>
-        </tr>
-    {% endif %}
-
-      </tbody>
-    </table>
-
-    <nav aria-label="Navegação de páginas" class="fixed-bottom">
-      <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" aria-label="Anterior">
-              <span aria-hidden="true">Anterior</span>
-            </a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <span class="page-link">Anterior</span>
-          </li>
-        {% endif %}
-    
-        {% for num in page_obj.paginator.page_range %}
-          {% if page_obj.number == num %}
-            <li class="page-item active" aria-current="page">
-              <span class="page-link">{{ num }}</span>
-            </li>
-          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+    <!-- Paginação -->
+    {% if is_paginated %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                <a class="page-link text-success" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
             </li>
-          {% endif %}
-        {% endfor %}
-    
-        {% if page_obj.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" aria-label="Próximo">
-              <span aria-hidden="true">Próximo</span>
-            </a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <span class="page-link">Próximo</span>
-          </li>
-        {% endif %}
-      </ul>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <span class="page-link bg-success border-success">{{ num }}</span>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link text-success" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link text-success" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
     </nav>
+    {% endif %}
+</div>
 
-    <!-- Modal Adicionar Pacientes-->
-    {% include 'pacientes/adicionarModal.html' %}
+<!-- Modal Adicionar Paciente -->
+{% include 'pacientes/adicionarModal.html' %}
 
-    <!-- Modal Remover pacientes -->
-    {% include 'pacientes/removerModal.html' %}
+<!-- Modal Remover Paciente -->
+{% include 'pacientes/removerModal.html' %}
 
-      
-
-  </div>
-</main>
 {% endblock %}
 
-<!--Arquivos Javascript-->
 {% block scriptJS %}
 <script>
-  // Codigo do Modal 
-  document.addEventListener('DOMContentLoaded', function() {
-      // Referência ao modal
-      const modal = document.getElementById('modalAdicionar');
-      const modalInstance = new bootstrap.Modal(modal);
-      
-      // Se houver erros no formulário, mostra o modal
-      {% if form.errors %}
-          modalInstance.show();
-      {% endif %}
-      
-      // Limpa o formulário quando o modal for fechado
-      modal.addEventListener('hidden.bs.modal', function () {
-          const form = modal.querySelector('form');
-          form.reset();
-          // Remove as mensagens de erro
-          const invalidFeedbacks = form.querySelectorAll('.invalid-feedback');
-          invalidFeedbacks.forEach(feedback => feedback.remove());
-          const invalidInputs = form.querySelectorAll('.is-invalid');
-          invalidInputs.forEach(input => input.classList.remove('is-invalid'));
-      });
-      
-      // Adiciona tratamento para mensagens de sucesso
-      {% if messages %}
-          const messages = document.querySelectorAll('.alert');
-          messages.forEach(message => {
-              setTimeout(() => {
-                  message.style.transition = 'opacity 0.5s ease';
-                  message.style.opacity = '0';
-                  setTimeout(() => message.remove(), 500);
-              }, 3000);
-          });
-      {% endif %}
-  });
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
 
-  // Codigo para a pesquisa
-  document.addEventListener('DOMContentLoaded', function() {
-    // Referência aos elementos de pesquisa
+    // Referência ao modal
+    const modal = document.getElementById('modalAdicionar');
+    const modalInstance = new bootstrap.Modal(modal);
+    
+    // Se houver erros no formulário, mostra o modal
+    {% if form.errors %}
+        modalInstance.show();
+    {% endif %}
+    
+    // Limpa o formulário quando o modal for fechado
+    modal.addEventListener('hidden.bs.modal', function () {
+        const form = modal.querySelector('form');
+        form.reset();
+        // Remove as mensagens de erro
+        const invalidFeedbacks = form.querySelectorAll('.invalid-feedback');
+        invalidFeedbacks.forEach(feedback => feedback.remove());
+        const invalidInputs = form.querySelectorAll('.is-invalid');
+        invalidInputs.forEach(input => input.classList.remove('is-invalid'));
+    });
+    
+    // Adiciona tratamento para mensagens de sucesso
+    {% if messages %}
+        const messages = document.querySelectorAll('.alert');
+        messages.forEach(message => {
+            setTimeout(() => {
+                message.style.transition = 'opacity 0.5s ease';
+                message.style.opacity = '0';
+                setTimeout(() => message.remove(), 500);
+            }, 3000);
+        });
+    {% endif %}
+
+    // Código para a pesquisa
     const searchForm = document.querySelector('form[method="GET"]');
     const searchInput = searchForm.querySelector('input[name="search"]');
     
@@ -235,17 +238,16 @@ Pacientes{% endblock %} {% block arquivos_css %}
     });
 });
 
-// Codigo para Remover paciente
+// Função para confirmar remoção de paciente
 function confirmarRemocao(nome, url) {
-  // Atualiza o nome do paciente no modal
-  document.getElementById('pacienteNome').textContent = nome;
-  
-  // Atualiza o action do formulário com a URL correta
-  document.getElementById('formRemover').action = url;
-  
-  // Abre o modal
-  new bootstrap.Modal(document.getElementById('modalRemover')).show();
+    // Atualiza o nome do paciente no modal
+    document.getElementById('pacienteNome').textContent = nome;
+    
+    // Atualiza o action do formulário com a URL correta
+    document.getElementById('formRemover').action = url;
+    
+    // Abre o modal
+    new bootstrap.Modal(document.getElementById('modalRemover')).show();
 }
-  </script>
-
+</script>
 {% endblock %}

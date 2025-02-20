@@ -1,4 +1,3 @@
-<!-- apps/pacientes/templates/pacientes/detalhe.html -->
 {% extends 'core/base.html' %}
 
 {% block title %}Detalhes do Paciente{% endblock %}
@@ -6,234 +5,302 @@
 {% block arquivos_css %}
 <style>
     .nav-tabs .nav-link {
-        color: #495057;
+        color: #198754;
+        border: none;
+        margin-right: 1rem;
+        padding: 0.8rem 1.5rem;
+        transition: all 0.3s ease;
+        border-radius: 0.5rem;
     }
+    
+    .nav-tabs .nav-link:hover {
+        background-color: #e8f5e9;
+    }
+    
     .nav-tabs .nav-link.active {
-        background-color: #f8f9fa;
-        border-color: #dee2e6 #dee2e6 #f8f9fa;
+        color: white;
+        background-color: #198754;
+        border: none;
     }
+    
     .patient-avatar {
-        max-width: 200px;
-        border-radius: 50%;
+        width: 150px;
+        height: 150px;
+        border-radius: 1rem;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .patient-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .patient-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    
+    .info-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .info-value {
+        color: #2c3e50;
+        font-weight: 500;
+    }
+    
+    .detection-card {
+        border-radius: 0.8rem;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .radiograph-card {
+        border-radius: 1rem;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .radiograph-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-md-2 text-center">
-
-            {% if paciente.foto %}
-                <img src="/media/{{ paciente.foto }}" alt="Foto do Paciente" class="patient-avatar mb-3">
-            {% else %}
-                <img src="/media/pacientes/fotos/pessoa.png" alt="Foto do Paciente" class="patient-avatar mb-3">
-            {% endif %}
-            <h2>{{ paciente.get_nome_completo }}</h2>
-            <p>ID: {{ paciente.numero_processo }}</p>
+<div class="container py-4">
+    <!-- Patient Header -->
+    <div class="patient-card p-4 mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                {% if paciente.foto %}
+                    <img src="/media/{{ paciente.foto }}" alt="Foto do Paciente" class="patient-avatar mb-3">
+                {% else %}
+                    <img src="/media/pacientes/fotos/pessoa.png" alt="Foto do Paciente" class="patient-avatar mb-3">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <h2 class="text-success mb-1">{{ paciente.get_nome_completo }}</h2>
+                <p class="text-muted mb-2">ID: {{ paciente.numero_processo }}</p>
+                <div class="d-flex gap-3">
+                    <span class="badge bg-success">{{ paciente.genero }}</span>
+                    <span class="badge bg-success">{{ paciente.tipo_sanguineo }}</span>
+                    <span class="badge bg-success">{{ paciente.data_nascimento|date:"d.m.Y" }}</span>
+                </div>
+            </div>
+            <div class="col-md-2 text-end">
+                <button type="button" data-bs-toggle="modal" data-bs-target="#modalEditarPessoa" 
+                        class="btn btn-outline-success">
+                    <i class="fas fa-edit me-2"></i>Editar
+                </button>
+            </div>
         </div>
-        <div class="col-md-10">
-            <ul class="nav nav-tabs" id="patientTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" 
-                            data-bs-target="#personal" type="button" role="tab">
-                        Dados Pessoais
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="detections-tab" data-bs-toggle="tab" 
-                            data-bs-target="#detections" type="button" role="tab">
-                        Histórico de Detecções
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="radiographs-tab" data-bs-toggle="tab" 
-                            data-bs-target="#radiographs" type="button" role="tab">
-                        Radiografias
-                    </button>
-                </li>
-            </ul>
+    </div>
 
-            <div class="tab-content mt-3" id="patientTabsContent">
-                <!-- Dados Pessoais -->
-                <div class="tab-pane fade show active" id="personal" role="tabpanel">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Informações Pessoais</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p><strong>Nome Completo:</strong> {{ paciente.get_nome_completo }}</p>
-                                    <p><strong>Data de Nascimento:</strong> {{ paciente.data_nascimento|date:"d.m.Y" }}</p>
-                                    <p><strong>Genero:</strong> {{ paciente.genero }}</p>
-                                    <p><strong>Nome da mãe:</strong> {{ paciente.nome_da_mae }}</p>
-                                    <p><strong>Tipo Sanguineo:</strong> {{ paciente.tipo_sanguineo }}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p><strong>BI:</strong> {{ paciente.numero_bi }}</p>
-                                    <p><strong>Telefone:</strong> {{ paciente.telefone }}</p>
-                                    <p><strong>Contacto de Emergencia:</strong> {{ paciente.contato_emergencia }}</p>
-                                    <p><strong>Municipio:</strong> {{ paciente.municipio }}</p>
+    <!-- Tabs -->
+    <ul class="nav nav-tabs border-0 mb-4" id="patientTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" 
+                    data-bs-target="#personal" type="button" role="tab">
+                <i class="fas fa-user me-2"></i>Dados Pessoais
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="detections-tab" data-bs-toggle="tab" 
+                    data-bs-target="#detections" type="button" role="tab">
+                <i class="fas fa-microscope me-2"></i>Histórico de Detecções
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="radiographs-tab" data-bs-toggle="tab" 
+                    data-bs-target="#radiographs" type="button" role="tab">
+                <i class="fas fa-x-ray me-2"></i>Radiografias
+            </button>
+        </li>
+    </ul>
 
-                                    <p><strong>Provincia:</strong> {{ paciente.provincia }}</p>
-                                </div>
-                            </div>
-                            <!--Botao para o modal editar-->
-                            <button type="button" data-bs-toggle="modal" data-bs-target="#modalEditarPessoa" class="btn btn-secondary btn-sm">
-                              Editar
-                          </button>
+    <div class="tab-content" id="patientTabsContent">
+        <!-- Personal Data -->
+        <div class="tab-pane fade show active" id="personal" role="tabpanel">
+            <div class="patient-card p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="info-label">Nome Completo</div>
+                            <div class="info-value">{{ paciente.get_nome_completo }}</div>
                         </div>
-                        
+                        <div class="mb-3">
+                            <div class="info-label">Data de Nascimento</div>
+                            <div class="info-value">{{ paciente.data_nascimento|date:"d.m.Y" }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="info-label">Nome da mãe</div>
+                            <div class="info-value">{{ paciente.nome_da_mae }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="info-label">Tipo Sanguíneo</div>
+                            <div class="info-value">{{ paciente.tipo_sanguineo }}</div>
+                        </div>
                     </div>
-                    
-                </div>
-
-                <!-- Histórico de Detecções -->
-                <div class="tab-pane fade" id="detections" role="tabpanel">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Histórico de Detecções</h5>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Data</th>
-                                        <th>Doença</th>
-                                        <th>Resultado</th>
-                                        <th>Probabilidade</th>
-                                        <th>Estado</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for deteccao in deteccoes %}
-                                    <tr>
-                                        <td>{{ deteccao.criado_em|date:"d.m.Y" }}</td>
-                                        <td>{{ deteccao.doenca }}</td>
-                                        <td>{{ deteccao.resultado }}</td>
-                                        <td>
-                                            <div class="progress" style="height: 20px;">
-                                                <div class="progress-bar {% if deteccao.probabilidade >= 70 %}bg-danger
-                                                            {% elif deteccao.probabilidade >= 40 %}bg-warning
-                                                            {% else %}bg-success{% endif %}"
-                                                     role="progressbar"
-                                                     style="width: {{ deteccao.probabilidade }}%"
-                                                     aria-valuenow="{{ deteccao.probabilidade }}"
-                                                     aria-valuemin="0"
-                                                     aria-valuemax="100">
-                                                    {{ deteccao.probabilidade }}%
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
-                                                           {% elif deteccao.estado == 'Em Análise' %}bg-primary
-                                                           {% elif deteccao.estado == 'Revisão Necessária' %}bg-warning
-                                                           {% else %}bg-secondary{% endif %}">
-                                                {{ deteccao.estado }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="{% url 'deteccoes:detalhe' pk=deteccao.pk %}" 
-                                               class="btn btn-primary btn-sm"
-                                               data-bs-toggle="tooltip"
-                                               data-bs-placement="top"
-                                               title="Ver detalhes da detecção">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    {% empty %}
-                                    <tr>
-                                        <td colspan="6" class="text-center">Nenhuma detecção registrada para este paciente.</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="info-label">BI</div>
+                            <div class="info-value">{{ paciente.numero_bi }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="info-label">Telefone</div>
+                            <div class="info-value">{{ paciente.telefone }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="info-label">Contato de Emergência</div>
+                            <div class="info-value">{{ paciente.contato_emergencia }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="info-label">Localização</div>
+                            <div class="info-value">{{ paciente.municipio }}, {{ paciente.provincia }}</div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Radiografias -->
-                <div class="tab-pane fade" id="radiographs" role="tabpanel">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Radiografias</h5>
-                            <div class="row">
-                                {% for radiografia in radiografias %}
-                                <div class="col-md-4 mb-3">
-                                    <div class="card">
-                                        {% if radiografia.imagem %}
-                                            <img src="{{ radiografia.imagem.url }}" class="card-img-top" alt="Radiografia">
-                                        {% else %}
-                                            <img src="/media/exames/xray.png" class="card-img-top" alt="Radiografia padrão">
-                                        {% endif %}
-                                        <div class="card-body">
-                                            <p class="card-text">
-                                                <strong>Data:</strong> {{ radiografia.data|date:"d.m.Y" }}
-                                                <br>
-                                                <strong>Tipo:</strong> {{ radiografia.tipo }}
-                                                <br>
-                                                <strong>Equipamento:</strong> {{ radiografia.equipamento_usado }}
-                                                <br>
-                                                <strong>Qualidade:</strong> {{ radiografia.qualidade_da_imagem }}
-                                            </p>
-                                            <a href="{% url 'radiografias:detalhe' pk=radiografia.pk %}"
-                                               class="btn btn-primary btn-sm"
-                                               data-bs-toggle="tooltip"
-                                               data-bs-placement="top"
-                                               title="Ver detalhes da radiografia">
-                                                <i class="fa fa-eye"></i> Visualizar
-                                            </a>
+        <!-- Detections History -->
+        <div class="tab-pane fade" id="detections" role="tabpanel">
+            <div class="detection-card">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Data</th>
+                                <th>Doença</th>
+                                <th>Resultado</th>
+                                <th>Probabilidade</th>
+                                <th>Estado</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for deteccao in deteccoes %}
+                            <tr>
+                                <td>{{ deteccao.criado_em|date:"d.m.Y" }}</td>
+                                <td>{{ deteccao.doenca }}</td>
+                                <td>{{ deteccao.resultado }}</td>
+                                <td>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar {% if deteccao.probabilidade >= 70 %}bg-danger
+                                                    {% elif deteccao.probabilidade >= 40 %}bg-warning
+                                                    {% else %}bg-success{% endif %}"
+                                             role="progressbar"
+                                             style="width: {{ deteccao.probabilidade|floatformat:0 }}%">
                                         </div>
                                     </div>
-                                </div>
-                                {% empty %}
-                                <div class="col-12">
-                                    <p class="text-center">Nenhuma radiografia registrada para este paciente.</p>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
+                                    <small class="text-muted">{{ deteccao.probabilidade }}%</small>
+                                </td>
+                                <td>
+                                    <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
+                                                   {% elif deteccao.estado == 'Em Análise' %}bg-primary
+                                                   {% elif deteccao.estado == 'Revisão Necessária' %}bg-warning
+                                                   {% else %}bg-secondary{% endif %} rounded-pill">
+                                        {{ deteccao.estado }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'deteccoes:detalhe' pk=deteccao.pk %}" 
+                                       class="btn btn-outline-success btn-sm rounded-circle"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-placement="top"
+                                       title="Ver detalhes">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="fas fa-clipboard-check text-muted fa-2x mb-3"></i>
+                                    <p class="text-muted">Nenhuma detecção registrada para este paciente.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-
-<!-- Modal para visualizar a Imagem do raio x com alguns detalhes da detecao -->
-<div class="modal fade" id="detalhesModal" tabindex="-1" aria-labelledby="detalhesModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="detalhesModalLabel">Detalhes</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" >
-        <div clas="container-fluid">
-          <div class="row">
-            <div class="col-md-12 text-center">
-              <img src="/media/exames/xray.png" class="img-thumbnail" style=""; " alt="imagem da radiografia">
+        <!-- Radiographs -->
+        <div class="tab-pane fade" id="radiographs" role="tabpanel">
+            <div class="row g-4">
+                {% for radiografia in radiografias %}
+                <div class="col-md-4">
+                    <div class="radiograph-card">
+                        {% if radiografia.imagem %}
+                            <img src="{{ radiografia.imagem.url }}" class="card-img-top" alt="Radiografia"
+                                 style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <img src="/media/exames/xray.png" class="card-img-top" alt="Radiografia padrão"
+                                 style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-success">{{ radiografia.tipo }}</span>
+                                <small class="text-muted">{{ radiografia.data|date:"d.m.Y" }}</small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Equipamento:</small>
+                                <span class="fw-medium">{{ radiografia.equipamento_usado }}</span>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Qualidade:</small>
+                                <span class="fw-medium">{{ radiografia.qualidade_da_imagem }}</span>
+                            </div>
+                            <a href="{% url 'radiografias:detalhe' pk=radiografia.pk %}"
+                               class="btn btn-success btn-sm w-100">
+                                <i class="fa fa-eye me-2"></i>Visualizar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-x-ray text-muted fa-3x mb-3"></i>
+                    <p class="text-muted">Nenhuma radiografia registrada para este paciente.</p>
+                </div>
+                {% endfor %}
             </div>
-          </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-      </div>
     </div>
-  </div>
 </div>
-<!-- Fim modal -->
 
-<!-- Modal Editar dados do Pacientes-->
+<!-- Image Preview Modal -->
+<div class="modal fade" id="detalhesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0">
+            <div class="modal-header border-0 bg-success text-white">
+                <h5 class="modal-title">Detalhes da Radiografia</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <img src="/media/exames/xray.png" class="img-fluid w-100" alt="Radiografia">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Patient Edit Modal -->
 {% include 'pacientes/editarModal.html' %}
 
 {% endblock %}
 
 {% block scriptJS %}
 <script>
-    // Manter a aba ativa após o reload da página
     document.addEventListener('DOMContentLoaded', function() {
         const activeTab = localStorage.getItem('activeTab');
         if (activeTab) {
@@ -246,6 +313,12 @@
             tabElement.addEventListener('shown.bs.tab', event => {
                 localStorage.setItem('activeTab', event.target.getAttribute('data-bs-target'));
             });
+        });
+        
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
         });
     });
 </script>

@@ -1,4 +1,4 @@
-#/app/radiografias/views.py
+#/app/usuarios/views.py
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -30,8 +30,9 @@ def logout_view(request):
 
 class UsuarioListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Usuario
-    template_name = 'usuarios/usuario_lista.html'
+    template_name = 'usuarios/lista.html'
     context_object_name = 'usuarios'
+    paginate_by = 10
 
     def test_func(self):
         return self.request.user.funcao == 'admin'

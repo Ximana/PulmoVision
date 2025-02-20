@@ -1,4 +1,4 @@
-<!--apps/radiografias/teamplates/radiografias/detalhe.html:-->
+<!--apps/radiografias/teamplates/radiografias/detalhe.html -->
 
 {% extends 'core/base.html' %}
 {% load static %}
@@ -6,205 +6,191 @@
 {% block title %}PulmoVision - Detalhes da Detecção{% endblock %}
 
 {% block content %}
-
-
-<div class="container-fluid">
-  
-    <!-- Cabeçalho -->
+<div class="container-fluid py-4">
+    <!-- Header with Actions -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Detalhes da Detecção</h1>
         <div>
-            <a href="{% url 'deteccoes:lista' %}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Voltar
+            <h1 class="h3 text-success mb-1">Detalhes da Detecção</h1>
+            <p class="text-muted mb-0">Visualização completa dos resultados da análise</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'deteccoes:lista' %}" class="btn btn-outline-success">
+                <i class="fas fa-arrow-left me-2"></i>Voltar
             </a>
             <a href="{% url 'deteccoes:avaliacoes' pk=deteccao.pk %}" class="btn btn-success">
-                <i class="fas fa-star"></i> Ver Avaliações
+                <i class="fas fa-star me-2"></i>Ver Avaliações
             </a>
-            
             <button type="button" 
-            class="btn btn-success btn-sm"
-            data-bs-toggle="modal"
-            data-bs-target="#modalAvaliarDeteccao"
-            onclick="prepararAvaliacao('{{ deteccao.pk }}')"
-            title="Avaliar detecção">
-      <i class="fas fa-star"></i>
-    </button>
-
+                    class="btn btn-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalAvaliarDeteccao"
+                    onclick="prepararAvaliacao('{{ deteccao.pk }}')">
+                <i class="fas fa-plus me-2"></i>Nova Avaliação
+            </button>
+            <a href="{% url 'deteccoes:avaliacoes' pk=deteccao.pk %}" class="btn btn-outline-success">
+                <i class="fas fa-print me-2"></i>Imprimir
+            </a>
         </div>
     </div>
 
-    <!-- Informações principais da detecção -->
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">
-                <i class="fas fa-microscope me-2"></i>Informações da Detecção
-            </h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <dl class="row">
-                        <dt class="col-sm-4">Doença:</dt>
-                        <dd class="col-sm-8">
-                            <span class="badge bg-info fs-6">{{ deteccao.doenca }}</span>
-                        </dd>
-
-                        <dt class="col-sm-4">Resultado:</dt>
-                        <dd class="col-sm-8">{{ deteccao.resultado }}</dd>
-
-                        <dt class="col-sm-4">Probabilidade:</dt>
-                        <dd class="col-sm-8">
-                            <div class="progress" style="height: 25px;">
-                                <div class="progress-bar {% if deteccao.probabilidade >= 70 %}bg-danger
-                                            {% elif deteccao.probabilidade >= 40 %}bg-warning
-                                            {% else %}bg-success{% endif %}"
-                                     role="progressbar"
-                                     style="width: {{ deteccao.probabilidade }}%"
-                                     aria-valuenow="{{ deteccao.probabilidade }}"
-                                     aria-valuemin="0"
-                                     aria-valuemax="100">
-                                    {{ deteccao.probabilidade }}%
+    <div class="row g-4">
+        <!-- Detection Information Card -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-microscope me-2"></i>Informações da Detecção
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex flex-column gap-3">
+                                <div>
+                                    <small class="text-muted d-block mb-1">Doença</small>
+                                    <span class="badge bg-success fs-6 px-3 py-2">{{ deteccao.doenca }}</span>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block mb-1">Resultado</small>
+                                    <h6 class="mb-0">{{ deteccao.resultado }}</h6>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block mb-1">Probabilidade</small>
+                                    <div class="progress" style="height: 25px; border-radius: 12px;">
+                                        <div class="progress-bar {% if deteccao.probabilidade >= 70 %}bg-danger
+                                                    {% elif deteccao.probabilidade >= 40 %}bg-warning
+                                                    {% else %}bg-success{% endif %}"
+                                             role="progressbar"
+                                             style="width: {{ deteccao.probabilidade|floatformat:0 }}%; border-radius: 12px;"
+                                             aria-valuenow="{{ deteccao.probabilidade|floatformat:0 }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                            {{ deteccao.probabilidade }}%
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </dd>
-                    </dl>
-                </div>
-                <div class="col-md-6">
-                    <dl class="row">
-                        <dt class="col-sm-4">Estado:</dt>
-                        <dd class="col-sm-8">
-                            <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
-                                           {% elif deteccao.estado == 'Em Análise' %}bg-primary
-                                           {% elif deteccao.estado == 'Revisão Necessária' %}bg-warning
-                                           {% else %}bg-secondary{% endif %} fs-6">
-                                {{ deteccao.estado }}
-                            </span>
-                        </dd>
-
-                        <dt class="col-sm-4">Data de Criação:</dt>
-                        <dd class="col-sm-8">{{ deteccao.criado_em|date:"d/m/Y H:i" }}</dd>
-
-                        <dt class="col-sm-4">Última Atualização:</dt>
-                        <dd class="col-sm-8">{{ deteccao.atualizado_em|date:"d/m/Y H:i" }}</dd>
-                    </dl>
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-12">
-                    <h6 class="border-bottom pb-2">Descobertas Detalhadas:</h6>
-                    <p class="px-3">{{ deteccao.descobertas }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Informações da Radiografia -->
-    <div class="card mb-4">
-        <div class="card-header bg-success text-white">
-            <h5 class="card-title mb-0">
-                <i class="fas fa-x-ray me-2"></i>Informações da Radiografia
-            </h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <dl class="row">
-                        <dt class="col-sm-4">Data do Exame:</dt>
-                        <dd class="col-sm-8">{{ deteccao.radiografia.data|date:"d/m/Y" }}</dd>
-
-                        <dt class="col-sm-4">Tipo de Exame:</dt>
-                        <dd class="col-sm-8">{{ deteccao.radiografia.tipo }}</dd>
-
-                        <dt class="col-sm-4">Equipamento:</dt>
-                        <dd class="col-sm-8">{{ deteccao.radiografia.equipamento_usado }}</dd>
-                    </dl>
-                </div>
-                <div class="col-md-6">
-                    <dl class="row">
-                        <dt class="col-sm-4">Qualidade:</dt>
-                        <dd class="col-sm-8">{{ deteccao.radiografia.qualidade_da_imagem }}</dd>
-
-                        <dt class="col-sm-4">Dose de Radiação:</dt>
-                        <dd class="col-sm-8">
-                            {% if deteccao.radiografia.dose_de_radiacao %}
-                                {{ deteccao.radiografia.dose_de_radiacao }} mSv
-                            {% else %}
-                                Não informado
-                            {% endif %}
-                        </dd>
-                        <dt class="col-sm-4">Imagem:</dt>
-                        <dd class="col-sm-8">
-                            <a href="{{ deteccao.radiografia.imagem.url }}" class="btn btn-sm btn-primary" target="_blank">
-                                <i class="fas fa-expand"></i> Ver em tamanho completo
-                            </a>
-                        </dd>
-                    </dl>
-                </div>
-            </div>
-{% comment "" %}
-            {% if deteccao.radiografia.imagem %}
-            <div class="row mt-3">
-                <div class="col-12 text-center">
-                    <img src="{{ deteccao.radiografia.imagem.url }}" 
-                         alt="Imagem da Radiografia" 
-                         class="img-fluid"
-                         style="max-height: 400px;">
-                </div>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-    {% endcomment %}
-
-    <!-- Informações do Paciente -->
-    <div class="card mb-4">
-        <div class="card-header bg-info text-white">
-            <h5 class="card-title mb-0">
-                <i class="fas fa-user me-2"></i>Informações do Paciente
-            </h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4">
-                    {% if deteccao.radiografia.paciente.foto %}
-                        <img src="{{ deteccao.radiografia.paciente.foto.url }}" 
-                             alt="Foto do Paciente"
-                             class="img-fluid rounded-circle mb-3"
-                             style="max-width: 150px;">
-                    {% endif %}
-                </div>
-                <div class="col-md-8">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <dl class="row">
-                                <dt class="col-sm-4">Nome:</dt>
-                                <dd class="col-sm-8">{{ deteccao.radiografia.paciente.get_nome_completo }}</dd>
-
-                                <dt class="col-sm-4">Data de Nascimento:</dt>
-                                <dd class="col-sm-8">{{ deteccao.radiografia.paciente.data_nascimento|date:"d/m/Y" }}</dd>
-
-                                <dt class="col-sm-4">Idade:</dt>
-                                <dd class="col-sm-8">{{ deteccao.radiografia.paciente.get_idade }} anos</dd>
-                            </dl>
                         </div>
                         <div class="col-md-6">
-                            <dl class="row">
-                                <dt class="col-sm-4">Gênero:</dt>
-                                <dd class="col-sm-8">{{ deteccao.radiografia.paciente.genero }}</dd>
+                            <div class="d-flex flex-column gap-3">
+                                <div>
+                                    <small class="text-muted d-block mb-1">Estado</small>
+                                    <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
+                                               {% elif deteccao.estado == 'Em Análise' %}bg-primary
+                                               {% elif deteccao.estado == 'Revisão Necessária' %}bg-warning
+                                               {% else %}bg-secondary{% endif %} fs-6 px-3 py-2">
+                                        {{ deteccao.estado }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block mb-1">Data de Criação</small>
+                                    <h6 class="mb-0">{{ deteccao.criado_em|date:"d/m/Y H:i" }}</h6>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block mb-1">Última Atualização</small>
+                                    <h6 class="mb-0">{{ deteccao.atualizado_em|date:"d/m/Y H:i" }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <small class="text-muted d-block mb-2">Descobertas Detalhadas</small>
+                            <p class="mb-0 bg-light p-3 rounded">{{ deteccao.descobertas }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                                <dt class="col-sm-4">Tipo Sanguíneo:</dt>
-                                <dd class="col-sm-8">
-                                    {% if deteccao.radiografia.paciente.tipo_sanguineo %}
-                                        {{ deteccao.radiografia.paciente.tipo_sanguineo }}
-                                    {% else %}
-                                        Não informado
-                                    {% endif %}
-                                </dd>
+        <!-- X-Ray Information -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-x-ray me-2"></i>Informações da Radiografia
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex flex-column gap-3">
+                                <div>
+                                    <small class="text-muted d-block mb-1">Data do Exame</small>
+                                    <h6 class="mb-0">{{ deteccao.radiografia.data|date:"d/m/Y" }}</h6>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block mb-1">Tipo de Exame</small>
+                                    <h6 class="mb-0">{{ deteccao.radiografia.tipo }}</h6>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block mb-1">Equipamento</small>
+                                    <h6 class="mb-0">{{ deteccao.radiografia.equipamento_usado }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex flex-column gap-3">
+                                <div>
+                                    <small class="text-muted d-block mb-1">Qualidade</small>
+                                    <h6 class="mb-0">{{ deteccao.radiografia.qualidade_da_imagem }}</h6>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block mb-1">Dose de Radiação</small>
+                                    <h6 class="mb-0">
+                                        {% if deteccao.radiografia.dose_de_radiacao %}
+                                            {{ deteccao.radiografia.dose_de_radiacao }} mSv
+                                        {% else %}
+                                            Não informado
+                                        {% endif %}
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                                <dt class="col-sm-4">Nº do BI:</dt>
-                                <dd class="col-sm-8">{{ deteccao.radiografia.paciente.numero_bi|default:"Não informado" }}</dd>
-                            </dl>
+        <!-- Patient Information -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>Informações do Paciente
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        {% if deteccao.radiografia.paciente.foto %}
+                            <img src="{{ deteccao.radiografia.paciente.foto.url }}" 
+                                 alt="Foto do Paciente"
+                                 class="rounded-circle mb-3"
+                                 style="width: 120px; height: 120px; object-fit: cover;">
+                        {% endif %}
+                        <h5 class="mb-1">{{ deteccao.radiografia.paciente.get_nome_completo }}</h5>
+                        <p class="text-muted mb-0">{{ deteccao.radiografia.paciente.get_idade }} anos</p>
+                    </div>
+                    <div class="d-flex flex-column gap-3">
+                        <div>
+                            <small class="text-muted d-block mb-1">Data de Nascimento</small>
+                            <h6 class="mb-0">{{ deteccao.radiografia.paciente.data_nascimento|date:"d/m/Y" }}</h6>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block mb-1">Gênero</small>
+                            <h6 class="mb-0">{{ deteccao.radiografia.paciente.genero }}</h6>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block mb-1">Tipo Sanguíneo</small>
+                            <h6 class="mb-0">
+                                {% if deteccao.radiografia.paciente.tipo_sanguineo %}
+                                    {{ deteccao.radiografia.paciente.tipo_sanguineo }}
+                                {% else %}
+                                    Não informado
+                                {% endif %}
+                            </h6>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block mb-1">Nº do BI</small>
+                            <h6 class="mb-0">{{ deteccao.radiografia.paciente.numero_bi|default:"Não informado" }}</h6>
                         </div>
                     </div>
                 </div>
@@ -213,41 +199,35 @@
     </div>
 </div>
 
-
-
-
-    <!-- Modal Avaliar Detecção -->
+<!-- Evaluation Modal -->
 {% include 'deteccoes/avaliarDeteccaoModal.html' %}
+
 {% endblock %}
 
-<!--Arquivos Javascript-->
+
 {% block scriptJS %}
 <script>
-// Função para mostrar mensagens usando Bootstrap toast
 function showMessage(message, type = 'success') {
-  const toast = new bootstrap.Toast(document.getElementById('messageToast'));
-  document.getElementById('messageText').textContent = message;
-  document.getElementById('messageToast').classList.remove('bg-success', 'bg-danger');
-  document.getElementById('messageToast').classList.add(`bg-${type}`);
-  toast.show();
+    const toast = new bootstrap.Toast(document.getElementById('messageToast'));
+    document.getElementById('messageText').textContent = message;
+    document.getElementById('messageToast').classList.remove('bg-success', 'bg-danger');
+    document.getElementById('messageToast').classList.add(`bg-${type}`);
+    toast.show();
 }
 
-// Se houver erros no formulário, abre o modal automaticamente
 {% if form.errors %}
-  document.addEventListener('DOMContentLoaded', function() {
-      new bootstrap.Modal(document.getElementById('modalAvaliarDeteccao')).show();
-  });
+    document.addEventListener('DOMContentLoaded', function() {
+        new bootstrap.Modal(document.getElementById('modalAvaliarDeteccao')).show();
+    });
 {% endif %}
 
-// Se houver mensagens de sucesso, fecha o modal
 {% if messages %}
-  document.addEventListener('DOMContentLoaded', function() {
-      const modal = bootstrap.Modal.getInstance(document.getElementById('modalAvaliarDeteccao'));
-      if (modal) {
-          modal.hide();
-      }
-  });
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalAvaliarDeteccao'));
+        if (modal) {
+            modal.hide();
+        }
+    });
 {% endif %}
 </script>
 {% endblock %}
-
