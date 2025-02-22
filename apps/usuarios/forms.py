@@ -28,3 +28,21 @@ class UsuarioEdicaoForm(UserChangeForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+            
+class UsuarioPerfilForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['first_name', 'last_name', 'email', 'telefone', 'especializacao']
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Tornar campos obrigatórios
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
+        self.fields['email'].required = True
+        
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and Usuario.objects.exclude(pk=self.instance.pk).filter(email=email).exists():
+            raise forms.ValidationError('Este email já está em uso.')
+        return email

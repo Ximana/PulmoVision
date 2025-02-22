@@ -6,9 +6,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-#_________________________TESTE_____________________
-#sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
-
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = 'sua-chave-secreta-aqui'
 
@@ -99,8 +96,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-LANGUAGE_CODE = 'pt-br'
-TIME_ZONE = 'America/Sao_Paulo'
+LANGUAGE_CODE = 'pt-pt'
+TIME_ZONE = 'Africa/Luanda'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -108,7 +105,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [
+    #os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'apps', 'core', 'static'),
+    ]
 
 # Media files
 MEDIA_URL = '/media/'

@@ -10,7 +10,16 @@ from .models import Deteccao, AvaliacaoDeteccao
 from django.contrib import messages
 from django.db.models import Q
 from .forms import DeteccaoCadastroForm, AvaliacaoDeteccaoCadastroForm
+from django.http import HttpResponse
+from .utils import gerar_deteccao_pdf
 
+def download_deteccao_pdf(request, pk):
+    deteccao = get_object_or_404(Deteccao, pk=pk)
+    pdf = gerar_deteccao_pdf(deteccao)
+    
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="deteccao_{pk}.pdf"'
+    return response
 
 class DeteccaoListView(LoginRequiredMixin, ListView):
     model = Deteccao

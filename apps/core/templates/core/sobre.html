@@ -1,0 +1,179 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}PulmoVision - Sobre o Sistema{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Cabecalho -->
+    
+
+    <!-- Main Content -->
+    <div class="row g-4">
+        <!-- About Section -->
+        <div class="col-md-8">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2 text-success"></i>Sobre o Projeto
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="lead text-success mb-4">Um sistema revolucionário para diagnóstico assistido de doenças pulmonares</p>
+                    
+                    <p class="mb-4">O <strong>PulmoVision</strong> é um sistema avançado baseado em redes neurais convolucionais (CNN) desenvolvido para auxiliar profissionais de saúde na detecção automática de doenças pulmonares através da análise de imagens de raio-X do tórax.</p>
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <div class="p-4 rounded-3 text-center" style="background-color: #f8f9fa;">
+                                <i class="fas fa-brain fa-3x text-success mb-3"></i>
+                                <h5>Deep Learning</h5>
+                                <p class="mb-0 text-muted">Utiliza técnicas avançadas de IA para análise precisa de imagens</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-4 rounded-3 text-center" style="background-color: #f8f9fa;">
+                                <i class="fas fa-lungs fa-3x text-success mb-3"></i>
+                                <h5>Multiplas Doenças</h5>
+                                <p class="mb-0 text-muted">Detecta tuberculose, pneumonia e COVID-19</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-4 rounded-3 text-center" style="background-color: #f8f9fa;">
+                                <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                                <h5>Alta Precisão</h5>
+                                <p class="mb-0 text-muted">Resultados confiáveis e diagnóstico assistido</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seccao funcionalidades -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-star me-2 text-success"></i>Funcionalidades
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="bg-success bg-opacity-10 rounded p-2 me-3">
+                            <i class="fas fa-upload text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Upload de Imagens</h6>
+                            <p class="text-muted small mb-0">Carregue facilmente imagens de raio-X para análise</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="bg-success bg-opacity-10 rounded p-2 me-3">
+                            <i class="fas fa-robot text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Detecção Automática</h6>
+                            <p class="text-muted small mb-0">Análise rápida e precisa com CNN</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="bg-success bg-opacity-10 rounded p-2 me-3">
+                            <i class="fas fa-users text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Gestão de Usuários</h6>
+                            <p class="text-muted small mb-0">Controle de acesso e autenticação segura</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start">
+                        <div class="bg-success bg-opacity-10 rounded p-2 me-3">
+                            <i class="fas fa-history text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Histórico Completo</h6>
+                            <p class="text-muted small mb-0">Acompanhamento detalhado dos exames</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secao Tecnologias -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-code me-2 text-success"></i>Tecnologias
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                            <i class="fab fa-python text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Python & Django</h6>
+                            <p class="text-muted small mb-0">Framework web robusto e escalável</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="bg-warning bg-opacity-10 rounded p-2 me-3">
+                            <i class="fas fa-network-wired text-warning"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">TensorFlow/Keras</h6>
+                            <p class="text-muted small mb-0">Bibliotecas de Deep Learning</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start">
+                        <div class="bg-info bg-opacity-10 rounded p-2 me-3">
+                            <i class="fas fa-database text-info"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">MySQL & Bootstrap</h6>
+                            <p class="text-muted small mb-0">Banco de dados e interface responsiva</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secao Desemvolvedor -->
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-circle me-2 text-success"></i>Desenvolvedor
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                            <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 150px; height: 150px;">
+                                <i class="fas fa-user-circle fa-5x text-success"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            <h4 class="mb-2">Paulo Ximana</h4>
+                            <p class="text-muted mb-3">Desenvolvedor Full Stack & Especialista em Machine Learning</p>
+                            
+                            <p class="mb-4">Apaixonado por tecnologia e inovação na área da saúde, com experiência em desenvolvimento de soluções baseadas em Inteligência Artificial. Focado em criar ferramentas que possam auxiliar profissionais de saúde e melhorar a vida dos pacientes.</p>
+                            
+                            <div class="d-flex gap-2">
+                                <a href="mailto:pauloximana@gmail.com" class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-envelope me-2"></i>Email
+                                </a>
+                                <a href="https://github.com/Ximana" target="_blank" class="btn btn-sm btn-outline-success">
+                                    <i class="fab fa-github me-2"></i>GitHub
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline-success">
+                                    <i class="fab fa-linkedin me-2"></i>LinkedIn
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

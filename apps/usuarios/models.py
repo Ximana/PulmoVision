@@ -75,6 +75,7 @@ class Usuario(AbstractUser):
         verbose_name_plural = 'Usuários'
         ordering = ['first_name', 'last_name']
         
+        
     def __str__(self):
         return f"{self.get_full_name()} ({self.get_funcao_display()})"
     

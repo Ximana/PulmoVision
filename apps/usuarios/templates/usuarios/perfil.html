@@ -1,0 +1,287 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Perfil - PulmoVision{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-success mb-0">
+                <i class="fas fa-user me-2"></i>Perfil do Usuário
+            </h2>
+            <p class="text-muted">Gerencie suas informações pessoais e profissionais</p>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalEditarPerfil">
+                <i class="fas fa-edit me-2"></i>Editar Perfil
+            </button>
+            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalAlterarSenha">
+                <i class="fas fa-key me-2"></i>Alterar Senha
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Cartão de Perfil -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="position-relative mb-4 mx-auto" style="width: 150px; height: 150px;">
+                        {% if user.foto_perfil %}
+                            <img src="{{ user.foto_perfil.url }}" alt="Foto de Perfil" 
+                                 class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 150px; height: 150px;">
+                                <i class="fas fa-user fa-4x"></i>
+                            </div>
+                        {% endif %}
+                        <button class="btn btn-sm btn-success position-absolute bottom-0 end-0 rounded-circle" 
+                                style="width: 35px; height: 35px;"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#modalFoto">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    <h4 class="mb-1">{{ user.get_nome_completo }}</h4>
+                    <p class="text-muted mb-3">{{ user.get_funcao_display }}</p>
+                    <div class="d-flex justify-content-center gap-2 mb-3">
+                        <span class="badge bg-success">
+                            <i class="fas fa-user-md me-1"></i>{{ user.registro_profissional }}
+                        </span>
+                        <span class="badge bg-primary">
+                            <i class="fas fa-graduation-cap me-1"></i>{{ user.especializacao }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações Detalhadas -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Informações Pessoais</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small">Nome Completo</label>
+                            <p class="mb-3">{{ user.get_nome_completo }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Username</label>
+                            <p class="mb-3">{{ user.username }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Email</label>
+                            <p class="mb-3">{{ user.email }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Telefone</label>
+                            <p class="mb-3">{{ user.telefone|default:"Não informado" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Data de Cadastro</label>
+                            <p class="mb-3">{{ user.data_criacao|date:"d/m/Y" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Última Atualização</label>
+                            <p class="mb-3">{{ user.data_atualizacao|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estatísticas -->
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-2">Radiografias Realizadas</h6>
+                                    <h2 class="mb-0">{{ user.get_total_radiografias }}</h2>
+                                </div>
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                    <i class="fas fa-x-ray fa-2x text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-2">Detecções</h6>
+                                    <h2 class="mb-0">{{ total_deteccoes }}</h2>
+                                </div>
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                                    <i class="fas fa-microscope fa-2x text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-2">Taxa de Precisão</h6>
+                                    <h2 class="mb-0">{{ taxa_precisao }}%</h2>
+                                </div>
+                                <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                                    <i class="fas fa-chart-line fa-2x text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Perfil -->
+<div class="modal fade" id="modalEditarPerfil" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{% url 'usuarios:atualizar_perfil' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nome</label>
+                        <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Sobrenome</label>
+                        <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" value="{{ user.email }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Telefone</label>
+                        <input type="text" class="form-control" name="telefone" value="{{ user.telefone }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Especialização</label>
+                        <input type="text" class="form-control" name="especializacao" value="{{ user.especializacao }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Alterar Foto -->
+<div class="modal fade" id="modalFoto" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Alterar Foto de Perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{% url 'usuarios:atualizar_foto' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nova Foto</label>
+                        <input type="file" class="form-control" name="foto_perfil" accept="image/*">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar Foto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Alterar Senha -->
+<div class="modal fade" id="modalAlterarSenha" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Alterar Senha</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{% url 'usuarios:alterar_senha' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Senha Atual</label>
+                        <input type="password" class="form-control" name="senha_atual" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nova Senha</label>
+                        <input type="password" class="form-control" name="nova_senha" required>
+                        <div class="form-text">
+                            A senha deve ter pelo menos 8 caracteres e incluir letras e números.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirmar Nova Senha</label>
+                        <input type="password" class="form-control" name="confirmar_senha" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Alterar Senha</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scriptJS %}
+<script>
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+
+    // Tratamento de mensagens
+    {% if messages %}
+        const messages = document.querySelectorAll('.alert');
+        messages.forEach(message => {
+            setTimeout(() => {
+                message.style.transition = 'opacity 0.5s ease';
+                message.style.opacity = '0';
+                setTimeout(() => message.remove(), 500);
+            }, 3000);
+        });
+    {% endif %}
+
+     // Limpar formulário de senha quando o modal for fechado
+     const modalSenha = document.getElementById('modalAlterarSenha');
+     if (modalSenha) {
+         modalSenha.addEventListener('hidden.bs.modal', function () {
+             const form = modalSenha.querySelector('form');
+             form.reset();
+         });
+     }
+});
+</script>
+{% endblock %}
