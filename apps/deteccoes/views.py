@@ -46,7 +46,7 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['radiografias'] = Radiografia.objects.all()
         context['search_query'] = self.request.GET.get('search', '')
-        context['form'] = DeteccaoCadastroForm()  # Adicione esta linha
+        context['form'] = DeteccaoCadastroForm() 
         return context
 
     def post(self, request, *args, **kwargs):
@@ -55,8 +55,8 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
             deteccao = form.save(commit=False)
             deteccao.usuario = request.user
             deteccao.save()
-            messages.success(request, 'Detecção registrada com sucesso!')
-            return redirect('deteccoes:lista')
+            #messages.success(request, 'Detecção registrada com sucesso!')
+            return redirect(deteccao.get_absolute_url())
         else:
             context = self.get_context_data()
             context['form'] = form
@@ -94,14 +94,14 @@ class DeteccaoDetailView(LoginRequiredMixin, DetailView):
                     for field in form.cleaned_data:
                         setattr(avaliacao_existente, field, form.cleaned_data[field])
                     avaliacao_existente.save()
-                    messages.success(request, 'Avaliação atualizada com sucesso!')
+                    messages.success(request, 'Avaliação atualizada!')
                 else:
                     # Cria nova avaliação
                     avaliacao = form.save(commit=False)
                     avaliacao.usuario = request.user
                     avaliacao.deteccao = self.object
                     avaliacao.save()
-                    messages.success(request, 'Avaliação registrada com sucesso!')
+                    #messages.success(request, 'Avaliação registrada com sucesso!')
                 
                 return redirect('deteccoes:detalhe', pk=self.object.pk)
             

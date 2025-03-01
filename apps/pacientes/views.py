@@ -40,9 +40,9 @@ class PacienteListView(ListView):
     def post(self, request, *args, **kwargs):
         form = PacienteRegistroForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Paciente cadastrado com sucesso!')
-            return redirect('pacientes:lista')
+            paciente = form.save()
+            #messages.success(request, 'Paciente cadastrado com sucesso!')
+            return redirect(paciente.get_absolute_url())
         
         # Se o formulário não for válido, retorna à lista com os erros
         self.object_list = self.get_queryset()

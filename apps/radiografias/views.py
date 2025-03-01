@@ -41,8 +41,8 @@ class RadiografiaListView(LoginRequiredMixin, ListView):
             radiografia = form.save(commit=False)
             radiografia.usuario = request.user
             radiografia.save()
-            messages.success(request, 'Radiografia cadastrada com sucesso!')
-            return redirect('radiografias:lista')
+            #messages.success(request, 'Radiografia cadastrada com sucesso!')
+            return redirect(radiografia.get_absolute_url())
         
         self.object_list = self.get_queryset()
         context = self.get_context_data(form=form)
@@ -63,7 +63,7 @@ class RadiografiaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
     model = Radiografia
     form_class = RadiografiaEdicaoForm
     template_name = 'radiografias/detalhe.html'
-    success_message = "Os dados da radiografia foram atualizados com sucesso!"
+    success_message = "Os dados da radiografia foram atualizados!"
     
     def get_success_url(self):
         return reverse_lazy('radiografias:detalhe', kwargs={'pk': self.object.pk})
