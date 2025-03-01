@@ -6,7 +6,7 @@
 ### 🌍 Um sistema de Deep Learning para detecção de doenças pulmonares a partir de raios-X  
 
 ## 📌 Sobre o projeto  
-O **PulmoVision** é um sistema baseado em **redes neurais convolucionais (CNN)** para a **detecção automática de doenças pulmonares** — **tuberculose, pneumonia e COVID-19** — por meio da análise de **imagens de raio-X do tórax**.  
+O **PulmoVision** é um sistema que usa em **redes neurais convolucionais (CNN)** para a **detecção automática de doenças pulmonares** — **tuberculose, pneumonia e COVID-19** — por meio da análise de **imagens de raio-X do tórax**.  
 
 Ele foi desenvolvido utilizando **Django** como framework web e integra um modelo de **Deep Learning** para processar e classificar exames, proporcionando um suporte rápido e eficiente para diagnósticos médicos.  
 
