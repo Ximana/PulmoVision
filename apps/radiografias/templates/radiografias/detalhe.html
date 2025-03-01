@@ -1,175 +1,204 @@
-<!-- apps/radiografias/templates/radiografias/detalhe.html -->
 {% extends 'core/base.html' %}
 {% load static %}
 
 {% block title %}PulmoVision - Detalhes da Radiografia{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <!-- Cabeçalho -->
+<div class="container-fluid py-4">
+    <!-- Header with Actions -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Detalhes da Radiografia</h1>
         <div>
-            <a href="{% url 'radiografias:lista' %}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Voltar
+            <h1 class="h3 text-success mb-1">Detalhes da Radiografia</h1>
+            <p class="text-muted mb-0">Visualização completa dos dados do exame</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'radiografias:lista' %}" class="btn btn-outline-success">
+                <i class="fas fa-arrow-left me-2"></i>Voltar
             </a>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditar">
-                <i class="fas fa-edit"></i> Editar
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalEditar">
+                <i class="fas fa-edit me-2"></i>Editar
             </button>
+            <a href="{{ radiografia.imagem.url }}" class="btn btn-outline-success" target="_blank">
+                <i class="fas fa-print me-2"></i>Imprimir
+            </a>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Coluna da Imagem -->
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="card-title mb-0">Imagem da Radiografia</h5>
+    <div class="row g-4">
+        <!-- X-Ray Image Card -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-x-ray me-2"></i>Imagem da Radiografia
+                    </h5>
                 </div>
-                <div class="card-body text-center">
+                <div class="card-body p-4 text-center">
                     {% if radiografia.imagem %}
-                        <img src="{{ radiografia.imagem.url }}" alt="Radiografia" class="img-fluid rounded" 
-                             style="max-height: 400px; width: auto;">
+                        <img src="{{ radiografia.imagem.url }}" 
+                             alt="Radiografia" 
+                             class="img-fluid rounded shadow-sm" 
+                             style="max-height: 500px; width: auto;">
                         <div class="mt-3">
-                            <a href="{{ radiografia.imagem.url }}" class="btn btn-sm btn-primary" target="_blank">
-                                <i class="fas fa-expand"></i> Ver em tamanho completo
+                            <a href="{{ radiografia.imagem.url }}" 
+                               class="btn btn-sm btn-success" 
+                               target="_blank">
+                                <i class="fas fa-expand me-2"></i>Ver em tamanho completo
                             </a>
                         </div>
                     {% else %}
-                        <p class="text-muted">Imagem não disponível</p>
+                        <div class="text-muted py-5">
+                            <i class="fas fa-image fa-3x mb-3"></i>
+                            <p class="mb-0">Imagem não disponível</p>
+                        </div>
                     {% endif %}
                 </div>
             </div>
         </div>
 
-        <!-- Coluna dos Detalhes -->
+        <!-- Patient Information -->
         <div class="col-md-6">
-            <!-- Informações do Paciente -->
-            <div class="card mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="card-title mb-0">Informações do Paciente</h5>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>Informações do Paciente
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="row">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        {% if radiografia.paciente.foto %}
+                            <img src="{{ radiografia.paciente.foto.url }}" 
+                                 alt="Foto do Paciente"
+                                 class="rounded-circle mb-3"
+                                 style="width: 120px; height: 120px; object-fit: cover;">
+                        {% endif %}
+                        <h5 class="mb-1">{{ radiografia.paciente.get_nome_completo }}</h5>
+                        <p class="text-muted mb-0">{{ radiografia.paciente.get_idade }} anos</p>
+                    </div>
+                    <div class="row g-3">
                         <div class="col-sm-6">
-                            <p><strong>Nome:</strong><br>
-                                {{ radiografia.paciente.get_nome_completo }}</p>
+                            <small class="text-muted d-block mb-1">Data de Nascimento</small>
+                            <h6 class="mb-0">{{ radiografia.paciente.data_nascimento|date:"d/m/Y" }}</h6>
                         </div>
                         <div class="col-sm-6">
-                            <p><strong>Data de Nascimento:</strong><br>
-                                {{ radiografia.paciente.data_nascimento|date:"d/m/Y" }}</p>
+                            <small class="text-muted d-block mb-1">Nº do BI</small>
+                            <h6 class="mb-0">{{ radiografia.paciente.numero_bi|default:"Não informado" }}</h6>
                         </div>
                         <div class="col-sm-6">
-                            <p><strong>Nº BI:</strong><br>
-                                {{ radiografia.paciente.numero_bi }}</p>
+                            <small class="text-muted d-block mb-1">Telefone</small>
+                            <h6 class="mb-0">{{ radiografia.paciente.telefone|default:"Não informado" }}</h6>
                         </div>
                         <div class="col-sm-6">
-                            <p><strong>Telefone:</strong><br>
-                                {{ radiografia.paciente.telefone }}</p>
+                            <small class="text-muted d-block mb-1">Gênero</small>
+                            <h6 class="mb-0">{{ radiografia.paciente.genero }}</h6>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Informações do Exame -->
-            <div class="card mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="card-title mb-0">Informações do Exame</h5>
+            <!-- Exam Information -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-clipboard-list me-2"></i>Informações do Exame
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="row">
+                <div class="card-body p-4">
+                    <div class="row g-3">
                         <div class="col-sm-6">
-                            <p><strong>Data do Exame:</strong><br>
-                                {{ radiografia.data|date:"d/m/Y" }}</p>
+                            <small class="text-muted d-block mb-1">Data do Exame</small>
+                            <h6 class="mb-0">{{ radiografia.data|date:"d/m/Y" }}</h6>
                         </div>
                         <div class="col-sm-6">
-                            <p><strong>Tipo de Exame:</strong><br>
-                                {{ radiografia.get_tipo_display }}</p>
+                            <small class="text-muted d-block mb-1">Tipo de Exame</small>
+                            <h6 class="mb-0">{{ radiografia.get_tipo_display }}</h6>
                         </div>
                         <div class="col-sm-6">
-                            <p><strong>Equipamento:</strong><br>
-                                {{ radiografia.get_equipamento_usado_display }}</p>
+                            <small class="text-muted d-block mb-1">Equipamento</small>
+                            <h6 class="mb-0">{{ radiografia.get_equipamento_usado_display }}</h6>
                         </div>
                         <div class="col-sm-6">
-                            <p><strong>Qualidade:</strong><br>
-                                {{ radiografia.get_qualidade_da_imagem_display }}</p>
+                            <small class="text-muted d-block mb-1">Qualidade</small>
+                            <h6 class="mb-0">{{ radiografia.get_qualidade_da_imagem_display }}</h6>
                         </div>
                         {% if radiografia.dose_de_radiacao %}
                         <div class="col-sm-6">
-                            <p><strong>Dose de Radiação:</strong><br>
-                                {{ radiografia.dose_de_radiacao }} mSv</p>
+                            <small class="text-muted d-block mb-1">Dose de Radiação</small>
+                            <h6 class="mb-0">{{ radiografia.dose_de_radiacao }} mSv</h6>
                         </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Notas e Descrições -->
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h5 class="card-title mb-0">Notas e Descrições</h5>
+        <!-- Notes and Descriptions -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-file-alt me-2"></i>Notas e Descrições
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <h6 class="fw-bold">Descrição</h6>
-                        <p class="mb-3">{{ radiografia.descricao|default:"Sem descrição" }}</p>
-                    </div>
-                    <div>
-                        <h6 class="fw-bold">Notas Técnicas</h6>
-                        <p class="mb-0">{{ radiografia.notas_tecnicas|default:"Sem notas técnicas" }}</p>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <small class="text-muted d-block mb-2">Descrição</small>
+                            <p class="mb-0 bg-light p-3 rounded">{{ radiografia.descricao|default:"Sem descrição" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block mb-2">Notas Técnicas</small>
+                            <p class="mb-0 bg-light p-3 rounded">{{ radiografia.notas_tecnicas|default:"Sem notas técnicas" }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Informações do Sistema -->
-    <div class="card mt-4">
-        <div class="card-header bg-secondary text-white">
-            <h5 class="card-title mb-0">Informações do Sistema</h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3">
-                    <p><strong>Registrado por:</strong><br>
-                        {{ radiografia.get_usuario_nome }}</p>
+        <!-- System Information -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Informações do Sistema
+                    </h5>
                 </div>
-                <div class="col-md-3">
-                    <p><strong>Função:</strong><br>
-                        {{ radiografia.get_usuario_funcao }}</p>
-                </div>
-                <div class="col-md-3">
-                    <p><strong>Criado em:</strong><br>
-                        {{ radiografia.criado_em|date:"d/m/Y H:i" }}</p>
-                </div>
-                <div class="col-md-3">
-                    <p><strong>Atualizado em:</strong><br>
-                        {{ radiografia.atualizado_em|date:"d/m/Y H:i" }}</p>
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <small class="text-muted d-block mb-1">Registrado por</small>
+                            <h6 class="mb-0">{{ radiografia.get_usuario_nome }}</h6>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block mb-1">Função</small>
+                            <h6 class="mb-0">{{ radiografia.get_usuario_funcao }}</h6>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block mb-1">Criado em</small>
+                            <h6 class="mb-0">{{ radiografia.criado_em|date:"d/m/Y H:i" }}</h6>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block mb-1">Atualizado em</small>
+                            <h6 class="mb-0">{{ radiografia.atualizado_em|date:"d/m/Y H:i" }}</h6>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal de Edição -->
+<!-- Edit Modal -->
 {% include 'radiografias/editarModal.html' %}
 
 {% endblock %}
 
 {% block scriptJS %}
 <script>
-    // Inicializa tooltips do Bootstrap
+    // Initialize Bootstrap tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
-
-    // Exibe mensagens de sucesso/erro após submissão do formulário
-   /* {% if messages %}
-        {% for message in messages %}
-            alert('{{ message }}');
-        {% endfor %}
-    {% endif %}
-    */
 </script>
 {% endblock %}

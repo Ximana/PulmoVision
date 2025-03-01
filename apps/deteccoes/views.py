@@ -10,7 +10,16 @@ from .models import Deteccao, AvaliacaoDeteccao
 from django.contrib import messages
 from django.db.models import Q
 from .forms import DeteccaoCadastroForm, AvaliacaoDeteccaoCadastroForm
+from django.http import HttpResponse
+from .utils import gerar_deteccao_pdf
 
+def download_deteccao_pdf(request, pk):
+    deteccao = get_object_or_404(Deteccao, pk=pk)
+    pdf = gerar_deteccao_pdf(deteccao)
+    
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="deteccao_{pk}.pdf"'
+    return response
 
 class DeteccaoListView(LoginRequiredMixin, ListView):
     model = Deteccao
@@ -37,7 +46,7 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['radiografias'] = Radiografia.objects.all()
         context['search_query'] = self.request.GET.get('search', '')
-        context['form'] = DeteccaoCadastroForm()  # Adicione esta linha
+        context['form'] = DeteccaoCadastroForm() 
         return context
 
     def post(self, request, *args, **kwargs):
@@ -46,8 +55,8 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
             deteccao = form.save(commit=False)
             deteccao.usuario = request.user
             deteccao.save()
-            messages.success(request, 'Detecção registrada com sucesso!')
-            return redirect('deteccoes:lista')
+            #messages.success(request, 'Detecção registrada com sucesso!')
+            return redirect(deteccao.get_absolute_url())
         else:
             context = self.get_context_data()
             context['form'] = form
@@ -85,14 +94,14 @@ class DeteccaoDetailView(LoginRequiredMixin, DetailView):
                     for field in form.cleaned_data:
                         setattr(avaliacao_existente, field, form.cleaned_data[field])
                     avaliacao_existente.save()
-                    messages.success(request, 'Avaliação atualizada com sucesso!')
+                    messages.success(request, 'Avaliação atualizada!')
                 else:
                     # Cria nova avaliação
                     avaliacao = form.save(commit=False)
                     avaliacao.usuario = request.user
                     avaliacao.deteccao = self.object
                     avaliacao.save()
-                    messages.success(request, 'Avaliação registrada com sucesso!')
+                    #messages.success(request, 'Avaliação registrada com sucesso!')
                 
                 return redirect('deteccoes:detalhe', pk=self.object.pk)
             

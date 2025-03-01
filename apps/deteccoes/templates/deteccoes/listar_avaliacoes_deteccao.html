@@ -4,138 +4,172 @@
 {% block title %}PulmoVision - Avaliações da Detecção{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Cabeçalho -->
+<div class="container-fluid py-4">
+    <!-- Cabecalho -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Avaliações da Detecção #{{ deteccao.id }}</h1>
         <div>
-            <a href="{% url 'deteccoes:detalhe' pk=deteccao.pk %}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Voltar para Detecção
+            <h1 class="h3 text-success mb-1">Avaliações da Detecção #{{ deteccao.id }}</h1>
+            <p class="text-muted mb-0">Histórico completo de avaliações e feedback</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'deteccoes:detalhe' pk=deteccao.pk %}" class="btn btn-outline-success">
+                <i class="fas fa-arrow-left me-2"></i>Voltar para Detecção
             </a>
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAvaliarDeteccao">
-                <i class="fas fa-plus"></i> Nova Avaliação
+                <i class="fas fa-plus me-2"></i>Nova Avaliação
             </button>
+            <a href="#" class="btn btn-outline-success" onclick="window.print()">
+                <i class="fas fa-print me-2"></i>Imprimir
+            </a>
         </div>
     </div>
 
-    <!-- Informações da Detecção -->
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">
-                <i class="fas fa-info-circle me-2"></i>Informações da Detecção
-            </h5>
+    <div class="row g-4">
+        <!-- Informações da deteção -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-microscope me-2"></i>Informações da Detecção
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div>
+                                <small class="text-muted d-block mb-1">Paciente</small>
+                                <h6 class="mb-0">{{ deteccao.radiografia.paciente.get_nome_completo }}</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <small class="text-muted d-block mb-1">Doença</small>
+                                <span class="badge bg-success fs-6 px-3 py-2">{{ deteccao.doenca }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <small class="text-muted d-block mb-1">Probabilidade</small>
+                                <div class="progress" style="height: 25px; border-radius: 12px;">
+                                    <div class="progress-bar {% if deteccao.probabilidade >= 70 %}bg-danger
+                                                {% elif deteccao.probabilidade >= 40 %}bg-warning
+                                                {% else %}bg-success{% endif %}"
+                                         role="progressbar"
+                                         style="width: {{ deteccao.probabilidade|floatformat:0 }}%; border-radius: 12px;"
+                                         aria-valuenow="{{ deteccao.probabilidade|floatformat:0 }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                        {{ deteccao.probabilidade }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <small class="text-muted d-block mb-1">Estado</small>
+                                <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
+                                           {% elif deteccao.estado == 'Em Análise' %}bg-primary
+                                           {% elif deteccao.estado == 'Revisão Necessária' %}bg-warning
+                                           {% else %}bg-secondary{% endif %} fs-6 px-3 py-2">
+                                    {{ deteccao.estado }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3">
-                    <strong>Paciente:</strong> {{ deteccao.radiografia.paciente.get_nome_completo }}
+
+        <!-- Lista de avaliações -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-star me-2"></i>Avaliações Realizadas
+                    </h5>
                 </div>
-                <div class="col-md-3">
-                    <strong>Doença:</strong> {{ deteccao.doenca }}
-                </div>
-                <div class="col-md-3">
-                    <strong>Probabilidade:</strong> {{ deteccao.probabilidade }}%
-                </div>
-                <div class="col-md-3">
-                    <strong>Estado:</strong> 
-                    <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
-                                   {% elif deteccao.estado == 'Em Análise' %}bg-primary
-                                   {% elif deteccao.estado == 'Revisão Necessária' %}bg-warning
-                                   {% else %}bg-secondary{% endif %}">
-                        {{ deteccao.estado }}
-                    </span>
+                <div class="card-body p-4">
+                    {% if avaliacoes %}
+                        <div class="d-flex flex-column gap-4">
+                            {% for avaliacao in avaliacoes %}
+                                <div class="card border {% if forloop.counter|divisibleby:2 %}bg-light{% endif %}">
+                                    <div class="card-body p-4">
+                                        <div class="row g-4">
+                                            <div class="col-md-3">
+                                                <small class="text-muted d-block mb-1">Avaliador</small>
+                                                <h6 class="mb-0">{{ avaliacao.usuario.get_full_name }}</h6>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <small class="text-muted d-block mb-1">Avaliação</small>
+                                                <span class="badge {% if avaliacao.avaliacao == 'Correto' %}bg-success
+                                                           {% elif avaliacao.avaliacao == 'Parcialmente Correto' %}bg-warning
+                                                           {% else %}bg-danger{% endif %} fs-6 px-3 py-2">
+                                                    {{ avaliacao.avaliacao }}
+                                                </span>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <small class="text-muted d-block mb-1">Críticas</small>
+                                                <p class="mb-0 bg-light p-2 rounded">{{ avaliacao.criticas|default:"Nenhuma crítica registrada" }}</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <small class="text-muted d-block mb-1">Data</small>
+                                                <h6 class="mb-0">{{ avaliacao.criado_em|date:"d/m/Y H:i" }}</h6>
+                                            </div>
+                                        </div>
+                                        {% if avaliacao.sugestoes %}
+                                            <div class="mt-3">
+                                                <small class="text-muted d-block mb-1">Sugestões</small>
+                                                <p class="mb-0 bg-light p-2 rounded">{{ avaliacao.sugestoes }}</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Paginação -->
+                        <nav class="mt-4" aria-label="Navegação de páginas">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link text-success" href="?page={{ page_obj.previous_page_number }}" aria-label="Anterior">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% for num in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link bg-success border-success">{{ num }}</span>
+                                        </li>
+                                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link text-success" href="?page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link text-success" href="?page={{ page_obj.next_page_number }}" aria-label="Próximo">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% else %}
+                        <div class="alert alert-info border-0 shadow-sm">
+                            <i class="fas fa-info-circle me-2"></i>Nenhuma avaliação registrada para esta detecção.
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Lista de Avaliações -->
-    <div class="card">
-        <div class="card-header bg-success text-white">
-            <h5 class="card-title mb-0">
-                <i class="fas fa-star me-2"></i>Avaliações Realizadas
-            </h5>
-        </div>
-        <div class="card-body">
-            {% if avaliacoes %}
-                {% for avaliacao in avaliacoes %}
-                    <div class="card mb-3 {% if forloop.counter|divisibleby:2 %}bg-light{% endif %}">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <strong>Avaliador:</strong><br>
-                                    {{ avaliacao.usuario.get_full_name }}
-                                </div>
-                                <div class="col-md-2">
-                                    <strong>Avaliação:</strong><br>
-                                    <span class="badge {% if avaliacao.avaliacao == 'Correto' %}bg-success
-                                                   {% elif avaliacao.avaliacao == 'Parcialmente Correto' %}bg-warning
-                                                   {% else %}bg-danger{% endif %}">
-                                        {{ avaliacao.avaliacao }}
-                                    </span>
-                                </div>
-                                <div class="col-md-4">
-                                    <strong>Críticas:</strong><br>
-                                    {{ avaliacao.criticas|default:"Nenhuma crítica registrada" }}
-                                </div>
-                                <div class="col-md-3">
-                                    <strong>Data:</strong><br>
-                                    {{ avaliacao.criado_em|date:"d/m/Y H:i" }}
-                                </div>
-                            </div>
-                            {% if avaliacao.sugestoes %}
-                                <div class="row mt-2">
-                                    <div class="col-12">
-                                        <strong>Sugestões:</strong><br>
-                                        {{ avaliacao.sugestoes }}
-                                    </div>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
-
-                <!-- Paginação -->
-                <nav aria-label="Navegação de páginas">
-                    <ul class="pagination justify-content-center">
-                        {% if page_obj.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Anterior">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                        {% endif %}
-
-                        {% for num in page_obj.paginator.page_range %}
-                            {% if page_obj.number == num %}
-                                <li class="page-item active">
-                                    <span class="page-link">{{ num }}</span>
-                                </li>
-                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-
-                        {% if page_obj.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Próximo">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            {% else %}
-                <div class="alert alert-info">
-                    Nenhuma avaliação registrada para esta detecção.
-                </div>
-            {% endif %}
-        </div>
-    </div>
 </div>
 
-<!-- Modal Avaliar Detecção -->
+<!-- Modal de Avaliacao -->
 {% include 'deteccoes/avaliarDeteccaoModal.html' %}
 {% endblock %}

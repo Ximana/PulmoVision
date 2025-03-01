@@ -1,4 +1,4 @@
-<!--apps/radiografias/teamplates/radiografias/detalhe.html -->
+<!--apps/deteccoes/teamplates/deteccoes/detalhe.html -->
 
 {% extends 'core/base.html' %}
 {% load static %}
@@ -20,129 +20,72 @@
             <a href="{% url 'deteccoes:avaliacoes' pk=deteccao.pk %}" class="btn btn-success">
                 <i class="fas fa-star me-2"></i>Ver Avaliações
             </a>
-            <button type="button" 
-                    class="btn btn-success"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalAvaliarDeteccao"
-                    onclick="prepararAvaliacao('{{ deteccao.pk }}')">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAvaliarDeteccao" onclick="prepararAvaliacao('{{ deteccao.pk }}')">
                 <i class="fas fa-plus me-2"></i>Nova Avaliação
             </button>
-            <a href="{% url 'deteccoes:avaliacoes' pk=deteccao.pk %}" class="btn btn-outline-success">
+            <a href="{% url 'deteccoes:pdf' pk=deteccao.pk %}" class="btn btn-outline-success" target="_blank">
                 <i class="fas fa-print me-2"></i>Imprimir
             </a>
         </div>
     </div>
 
+    <!-- Main Content Grid -->
     <div class="row g-4">
-        <!-- Detection Information Card -->
+        <!-- Status Overview Card -->
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-success bg-gradient text-white py-3">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-microscope me-2"></i>Informações da Detecção
-                    </h5>
-                </div>
                 <div class="card-body p-4">
                     <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="d-flex flex-column gap-3">
-                                <div>
-                                    <small class="text-muted d-block mb-1">Doença</small>
-                                    <span class="badge bg-success fs-6 px-3 py-2">{{ deteccao.doenca }}</span>
+                        <div class="col-md-3">
+                            <div class="text-center p-4 rounded-3" style="background-color: #f8f9fa;">
+                                <div class="mb-2">
+                                    <i class="fas fa-virus fa-2x text-success"></i>
                                 </div>
-                                <div>
-                                    <small class="text-muted d-block mb-1">Resultado</small>
-                                    <h6 class="mb-0">{{ deteccao.resultado }}</h6>
+                                <h6 class="text-muted mb-1">Doença</h6>
+                                <h5 class="mb-0">{{ deteccao.doenca }}</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center p-4 rounded-3" style="background-color: #f8f9fa;">
+                                <div class="mb-2">
+                                    <i class="fas fa-percentage fa-2x text-success"></i>
                                 </div>
-                                <div>
-                                    <small class="text-muted d-block mb-1">Probabilidade</small>
-                                    <div class="progress" style="height: 25px; border-radius: 12px;">
-                                        <div class="progress-bar {% if deteccao.probabilidade >= 70 %}bg-danger
-                                                    {% elif deteccao.probabilidade >= 40 %}bg-warning
-                                                    {% else %}bg-success{% endif %}"
-                                             role="progressbar"
-                                             style="width: {{ deteccao.probabilidade|floatformat:0 }}%; border-radius: 12px;"
-                                             aria-valuenow="{{ deteccao.probabilidade|floatformat:0 }}"
-                                             aria-valuemin="0"
-                                             aria-valuemax="100">
-                                            {{ deteccao.probabilidade }}%
-                                        </div>
+                                <h6 class="text-muted mb-1">Probabilidade</h6>
+                                <div class="progress mb-2" style="height: 10px;">
+                                    <div class="progress-bar {% if deteccao.probabilidade >= 70 %}bg-danger
+                                                {% elif deteccao.probabilidade >= 40 %}bg-warning
+                                                {% else %}bg-success{% endif %}"
+                                         role="progressbar"
+                                         style="width: {{ deteccao.probabilidade|floatformat:0 }}%;"
+                                         aria-valuenow="{{ deteccao.probabilidade|floatformat:0 }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
                                     </div>
                                 </div>
+                                <h5 class="mb-0">{{ deteccao.probabilidade }}%</h5>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="d-flex flex-column gap-3">
-                                <div>
-                                    <small class="text-muted d-block mb-1">Estado</small>
-                                    <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
-                                               {% elif deteccao.estado == 'Em Análise' %}bg-primary
-                                               {% elif deteccao.estado == 'Revisão Necessária' %}bg-warning
-                                               {% else %}bg-secondary{% endif %} fs-6 px-3 py-2">
-                                        {{ deteccao.estado }}
-                                    </span>
+                        <div class="col-md-3">
+                            <div class="text-center p-4 rounded-3" style="background-color: #f8f9fa;">
+                                <div class="mb-2">
+                                    <i class="fas fa-tasks fa-2x text-success"></i>
                                 </div>
-                                <div>
-                                    <small class="text-muted d-block mb-1">Data de Criação</small>
-                                    <h6 class="mb-0">{{ deteccao.criado_em|date:"d/m/Y H:i" }}</h6>
-                                </div>
-                                <div>
-                                    <small class="text-muted d-block mb-1">Última Atualização</small>
-                                    <h6 class="mb-0">{{ deteccao.atualizado_em|date:"d/m/Y H:i" }}</h6>
-                                </div>
+                                <h6 class="text-muted mb-1">Estado</h6>
+                                <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
+                                           {% elif deteccao.estado == 'Em Análise' %}bg-primary
+                                           {% elif deteccao.estado == 'Revisão Necessária' %}bg-warning
+                                           {% else %}bg-secondary{% endif %} px-3 py-2 fs-6">
+                                    {{ deteccao.estado }}
+                                </span>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <small class="text-muted d-block mb-2">Descobertas Detalhadas</small>
-                            <p class="mb-0 bg-light p-3 rounded">{{ deteccao.descobertas }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- X-Ray Information -->
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-success bg-gradient text-white py-3">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-x-ray me-2"></i>Informações da Radiografia
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="d-flex flex-column gap-3">
-                                <div>
-                                    <small class="text-muted d-block mb-1">Data do Exame</small>
-                                    <h6 class="mb-0">{{ deteccao.radiografia.data|date:"d/m/Y" }}</h6>
+                        <div class="col-md-3">
+                            <div class="text-center p-4 rounded-3" style="background-color: #f8f9fa;">
+                                <div class="mb-2">
+                                    <i class="fas fa-calendar fa-2x text-success"></i>
                                 </div>
-                                <div>
-                                    <small class="text-muted d-block mb-1">Tipo de Exame</small>
-                                    <h6 class="mb-0">{{ deteccao.radiografia.tipo }}</h6>
-                                </div>
-                                <div>
-                                    <small class="text-muted d-block mb-1">Equipamento</small>
-                                    <h6 class="mb-0">{{ deteccao.radiografia.equipamento_usado }}</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="d-flex flex-column gap-3">
-                                <div>
-                                    <small class="text-muted d-block mb-1">Qualidade</small>
-                                    <h6 class="mb-0">{{ deteccao.radiografia.qualidade_da_imagem }}</h6>
-                                </div>
-                                <div>
-                                    <small class="text-muted d-block mb-1">Dose de Radiação</small>
-                                    <h6 class="mb-0">
-                                        {% if deteccao.radiografia.dose_de_radiacao %}
-                                            {{ deteccao.radiografia.dose_de_radiacao }} mSv
-                                        {% else %}
-                                            Não informado
-                                        {% endif %}
-                                    </h6>
-                                </div>
+                                <h6 class="text-muted mb-1">Data de Criação</h6>
+                                <h5 class="mb-0">{{ deteccao.criado_em|date:"d/m/Y" }}</h5>
                             </div>
                         </div>
                     </div>
@@ -150,7 +93,7 @@
             </div>
         </div>
 
-        <!-- Patient Information -->
+        <!-- Patient Card -->
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-success bg-gradient text-white py-3">
@@ -165,33 +108,119 @@
                                  alt="Foto do Paciente"
                                  class="rounded-circle mb-3"
                                  style="width: 120px; height: 120px; object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3" 
+                                 style="width: 120px; height: 120px;">
+                                <i class="fas fa-user fa-4x text-muted"></i>
+                            </div>
                         {% endif %}
                         <h5 class="mb-1">{{ deteccao.radiografia.paciente.get_nome_completo }}</h5>
                         <p class="text-muted mb-0">{{ deteccao.radiografia.paciente.get_idade }} anos</p>
                     </div>
                     <div class="d-flex flex-column gap-3">
-                        <div>
-                            <small class="text-muted d-block mb-1">Data de Nascimento</small>
-                            <h6 class="mb-0">{{ deteccao.radiografia.paciente.data_nascimento|date:"d/m/Y" }}</h6>
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+                            <div>
+                                <small class="text-muted">Data de Nascimento</small>
+                                <p class="mb-0 fw-medium">{{ deteccao.radiografia.paciente.data_nascimento|date:"d/m/Y" }}</p>
+                            </div>
+                            <i class="fas fa-birthday-cake text-success"></i>
                         </div>
-                        <div>
-                            <small class="text-muted d-block mb-1">Gênero</small>
-                            <h6 class="mb-0">{{ deteccao.radiografia.paciente.genero }}</h6>
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+                            <div>
+                                <small class="text-muted">Gênero</small>
+                                <p class="mb-0 fw-medium">{{ deteccao.radiografia.paciente.genero }}</p>
+                            </div>
+                            <i class="fas fa-venus-mars text-success"></i>
                         </div>
-                        <div>
-                            <small class="text-muted d-block mb-1">Tipo Sanguíneo</small>
-                            <h6 class="mb-0">
-                                {% if deteccao.radiografia.paciente.tipo_sanguineo %}
-                                    {{ deteccao.radiografia.paciente.tipo_sanguineo }}
-                                {% else %}
-                                    Não informado
-                                {% endif %}
-                            </h6>
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+                            <div>
+                                <small class="text-muted">Tipo Sanguíneo</small>
+                                <p class="mb-0 fw-medium">{{ deteccao.radiografia.paciente.tipo_sanguineo|default:"Não informado" }}</p>
+                            </div>
+                            <i class="fas fa-tint text-success"></i>
                         </div>
-                        <div>
-                            <small class="text-muted d-block mb-1">Nº do BI</small>
-                            <h6 class="mb-0">{{ deteccao.radiografia.paciente.numero_bi|default:"Não informado" }}</h6>
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+                            <div>
+                                <small class="text-muted">Nº do BI</small>
+                                <p class="mb-0 fw-medium">{{ deteccao.radiografia.paciente.numero_bi|default:"Não informado" }}</p>
+                            </div>
+                            <i class="fas fa-id-card text-success"></i>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- X-Ray Information -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-x-ray me-2"></i>Informações da Radiografia
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3" 
+                             style="width: 120px; height: 120px;">
+                            <i class="fas fa-x-ray fa-4x text-success"></i>
+                        </div>
+                        <h5 class="mb-1">{{ deteccao.radiografia.tipo }}</h5>
+                        <p class="text-muted mb-0">{{ deteccao.radiografia.data|date:"d/m/Y" }}</p>
+                    </div>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+                            <div>
+                                <small class="text-muted">Equipamento</small>
+                                <p class="mb-0 fw-medium">{{ deteccao.radiografia.equipamento_usado }}</p>
+                            </div>
+                            <i class="fas fa-microscope text-success"></i>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+                            <div>
+                                <small class="text-muted">Qualidade</small>
+                                <p class="mb-0 fw-medium">{{ deteccao.radiografia.qualidade_da_imagem }}</p>
+                            </div>
+                            <i class="fas fa-star text-success"></i>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+                            <div>
+                                <small class="text-muted">Dose de Radiação</small>
+                                <p class="mb-0 fw-medium">
+                                    {% if deteccao.radiografia.dose_de_radiacao %}
+                                        {{ deteccao.radiografia.dose_de_radiacao }} mSv
+                                    {% else %}
+                                        Não informado
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <i class="fas fa-radiation text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detection Details -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-search-plus me-2"></i>Descobertas Detalhadas
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3" 
+                             style="width: 120px; height: 120px;">
+                            <i class="fas fa-microscope fa-4x text-success"></i>
+                        </div>
+                        <h5 class="mb-1">Resultado da Análise</h5>
+                        <p class="text-muted mb-0">{{ deteccao.resultado }}</p>
+                    </div>
+                    <div class="p-3 rounded-3" style="background-color: #f8f9fa;">
+                        <h6 class="text-success mb-3">Descobertas:</h6>
+                        <p class="mb-0">{{ deteccao.descobertas }}</p>
                     </div>
                 </div>
             </div>
@@ -201,9 +230,7 @@
 
 <!-- Evaluation Modal -->
 {% include 'deteccoes/avaliarDeteccaoModal.html' %}
-
 {% endblock %}
-
 
 {% block scriptJS %}
 <script>
