@@ -12,6 +12,10 @@ from django.db.models import Q
 from .forms import DeteccaoCadastroForm, AvaliacaoDeteccaoCadastroForm
 from django.http import HttpResponse
 from .utils import gerar_deteccao_pdf
+from .model_utils.detector import  DetectorDoencasPulmonares, analisar_radiografia
+import os
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # Desativa uso de GPU
 
 def download_deteccao_pdf(request, pk):
     deteccao = get_object_or_404(Deteccao, pk=pk)
@@ -54,9 +58,29 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
         if form.is_valid():
             deteccao = form.save(commit=False)
             deteccao.usuario = request.user
-            deteccao.save()
+            
+            # Analisar a radiografia e obter os resultados
+            # Usar os metodos da classe do arquivo/classe detetor
+            resultado = analisar_radiografia(deteccao.radiografia)
+            
+            deteccao.resultado = 'Resultado alterado por mim'
+            deteccao.probabilidade = 22.00
+            deteccao.descobertas = "Descobertas alteradas por mim"
+            
+            print(resultado)
+            print(deteccao.usuario)
+            print(deteccao.radiografia.imagem)
+            print(deteccao.radiografia.imagem.path)
+            print(deteccao.doenca)
+            print(deteccao.resultado)
+            print(deteccao.probabilidade)
+            print(deteccao.descobertas)
+            print(deteccao.estado)
+            
+            
+            #deteccao.save()
             #messages.success(request, 'Detecção registrada com sucesso!')
-            return redirect(deteccao.get_absolute_url())
+            #return redirect(deteccao.get_absolute_url())
         else:
             context = self.get_context_data()
             context['form'] = form

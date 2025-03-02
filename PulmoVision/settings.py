@@ -110,6 +110,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'apps', 'core', 'static'),
     ]
 
+# Configuração para diretorio/pasta modelos de machine learning
+ML_MODELS_DIR = os.path.join(BASE_DIR, 'apps', 'deteccoes', 'models')
+# Para Certificar de que o diretório existe
+os.makedirs(ML_MODELS_DIR, exist_ok=True)
+
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
