@@ -46,14 +46,15 @@
                             type="text" 
                             class="form-control" 
                             name="search"
-                            placeholder="Pesquisar por paciente, doença ou estado"
+                            placeholder="Pesquisar por paciente, diagnóstico ou estado"
                             value="{{ search_query }}"
                         >
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select" name="doenca">
-                        <option value="">Todas as doenças</option>
+                    <select class="form-select" name="diagnostico">
+                        <option value="">Todos os diagnósticos</option>
+                        <option value="Normal">Normal</option>
                         <option value="Tuberculose">Tuberculose</option>
                         <option value="Pneumonia">Pneumonia</option>
                         <option value="Covid-19">Covid-19</option>
@@ -80,8 +81,8 @@
                     <thead class="bg-success text-white">
                         <tr>
                             <th scope="col" class="ps-3">Paciente</th>
-                            <th scope="col">Doença</th>
-                            <th scope="col">Resultado</th>
+                            <th scope="col">Diagnóstico</th>
+                            <th scope="col">Descobertas</th>
                             <th scope="col">Probabilidade</th>
                             <th scope="col">Estado</th>
                             <th scope="col">Data</th>
@@ -104,9 +105,9 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-success">{{ deteccao.doenca }}</span>
+                                <span class="badge bg-success">{{ deteccao.diagnostico }}</span>
                             </td>
-                            <td>{{ deteccao.resultado }}</td>
+                            <td>{{ deteccao.descobertas|truncatechars:30 }}</td>
                             <td>{{ deteccao.probabilidade }}%</td>
                             <td>
                                 <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success

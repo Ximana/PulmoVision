@@ -15,7 +15,6 @@ class Paciente(models.Model):
     GENERO_CHOICES = (
         ('Masculino', 'Masculino'),
         ('Feminino', 'Feminino'),
-        ('Outro', 'Outro'),
     )
     
     TIPO_SANGUINEO_CHOICES = (

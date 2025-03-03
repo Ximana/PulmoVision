@@ -7,6 +7,7 @@ from apps.radiografias.models import Radiografia
 
 class Deteccao(models.Model):
     DOENCA_CHOICES = (
+        ('Normal', 'Normal'),
         ('Tuberculose', 'Tuberculose'),
         ('Pneumonia', 'Pneumonia'),
         ('Covid-19', 'Covid-19'),
@@ -34,15 +35,14 @@ class Deteccao(models.Model):
     )
     
     # Dados da Detecção
-    doenca = models.CharField(
-        'Doença',
+    diagnostico = models.CharField(
+        'Diagnóstico',
         max_length=20,
         choices=DOENCA_CHOICES
     )
-    resultado = models.CharField(
-        'Resultado',
-        max_length=255,
-        help_text='Resultado da análise de detecção'
+    resultados_completos = models.JSONField(
+        'Resultados Completos',
+        help_text='Probabilidades de todas as classes/doenças'
     )
     probabilidade = models.DecimalField(
         'Probabilidade',
@@ -54,11 +54,15 @@ class Deteccao(models.Model):
         'Descobertas',
         help_text='Descobertas detalhadas da análise'
     )
+    interpretacao = models.TextField(
+        'Interpretação',
+        help_text='Interpretação clínica dos resultados'
+    )
     estado = models.CharField(
         'Estado',
         max_length=20,
         choices=ESTADO_CHOICES,
-        default='Pendente'
+        default='Concluído'
     )
     
     # Campos de Sistema
@@ -71,7 +75,7 @@ class Deteccao(models.Model):
         ordering = ['-criado_em']
         
     def __str__(self):
-        return f"Detecção de {self.doenca} - Paciente: {self.radiografia.paciente.get_nome_completo()} - Data: {self.data}"
+        return f"Detecção de {self.diagnostico} - Paciente: {self.radiografia.paciente.get_nome_completo()} - Data: {self.criado_em.strftime('%d/%m/%Y')}"
     
     def get_absolute_url(self):
         return reverse("deteccoes:detalhe", kwargs={"pk": self.pk})

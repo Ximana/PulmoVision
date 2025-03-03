@@ -118,7 +118,7 @@ def gerar_deteccao_pdf(deteccao):
     # Diagnostic Box
     elements.append(Spacer(1, 20))
     diagnostic_data = [[
-        Paragraph(f"<font size=14 color='#198754'><b>Diagnóstico:</b></font> {deteccao.doenca}", styles['NormalText'])
+        Paragraph(f"<font size=14 color='#198754'><b>Diagnóstico:</b></font> {deteccao.diagnostico}", styles['NormalText'])
     ]]
     diagnostic_table = Table(diagnostic_data, colWidths=[doc.width])
     diagnostic_table.setStyle(TableStyle([

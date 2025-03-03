@@ -106,7 +106,13 @@ class DetectorDoencasPulmonares:
     
     def detectar_doenca(self, imagem_path):
         """
-        Detecta doença a partir de uma imagem de radiografia
+        Detecta doença a partir de uma imagem de radiografia de tórax
+        
+        Args:
+            imagem_path: Caminho ou objeto de arquivo da imagem
+            
+        Returns:
+            dict: Dicionário com informações da detecção
         """
         if not self.loaded:
             self.carregar_modelo()
@@ -127,55 +133,150 @@ class DetectorDoencasPulmonares:
             'covid': 'Covid-19'
         }
         
-        doenca_detectada = mapeamento_doencas.get(self.classes[class_idx], 'Desconhecido')
+        diagnostico = mapeamento_doencas.get(self.classes[class_idx], 'Desconhecido')
         
         # Resultados completos para todas as classes
         resultados_completos = {}
         for i, classe in enumerate(self.classes):
             resultados_completos[mapeamento_doencas.get(classe, classe)] = float(predicoes[0][i]) * 100
         
+        # Gerar interpretação detalhada
+        interpretacao = self._gerar_interpretacao(diagnostico, probabilidade, resultados_completos)
+        
+        # Gerar descobertas detalhadas
+        descobertas = self._gerar_descobertas(diagnostico, probabilidade, resultados_completos)
+        
         # Preparar resultado
         resultado = {
-            'doenca': doenca_detectada,
+            'diagnostico': diagnostico,
             'probabilidade': probabilidade,
             'resultados_completos': resultados_completos,
-            'resultado_texto': f'Detectado {doenca_detectada} com {probabilidade:.2f}% de probabilidade',
-            'descobertas': self._gerar_descobertas(doenca_detectada, probabilidade, resultados_completos)
+            'interpretacao': interpretacao,
+            'descobertas': descobertas
         }
         
         return resultado
     
-    def _gerar_descobertas(self, doenca, probabilidade, resultados_completos):
+    def _gerar_interpretacao(self, diagnostico, probabilidade, resultados_completos):
         """
-        Gera texto de descobertas baseado na doença detectada
+        Gera interpretação clínica baseada no diagnóstico e nas probabilidades
+        
+        Args:
+            diagnostico: Diagnóstico principal
+            probabilidade: Probabilidade do diagnóstico principal
+            resultados_completos: Probabilidades de todas as classes
+            
+        Returns:
+            str: Texto de interpretação
         """
-        descobertas = f"Análise de radiografia pulmonar realizada pelo sistema PulmoVision:\n\n"
-        descobertas += f"Diagnóstico Primário: {doenca} (Probabilidade: {probabilidade:.2f}%)\n\n"
+        interpretacao = f"Análise baseada em radiografia de tórax - {diagnostico} ({probabilidade:.2f}%):\n\n"
         
-        descobertas += "Resultados detalhados:\n"
-        for classe, prob in resultados_completos.items():
-            descobertas += f"- {classe}: {prob:.2f}%\n"
+        # Adicionar informações específicas por doença
+        if diagnostico == "Tuberculose":
+            interpretacao += "• Características radiológicas: Possíveis infiltrados nos lobos superiores, cavitações, "
+            interpretacao += "nódulos e/ou opacidades irregulares sugestivas de tuberculose pulmonar.\n"
+            interpretacao += "• Áreas potencialmente afetadas: Predominantemente nos lobos superiores e segmentos apicais dos lobos inferiores.\n"
+            interpretacao += "• Recomendações: Confirmação bacteriológica recomendada. Considerar teste molecular rápido (GeneXpert MTB/RIF), "
+            interpretacao += "baciloscopia e cultura para confirmação diagnóstica.\n"
+            
+        elif diagnostico == "Pneumonia":
+            interpretacao += "• Características radiológicas: Opacidade(s) de espaço aéreo, possível consolidação lobar ou multilobar, "
+            interpretacao += "broncograma aéreo e/ou derrame pleural associado.\n"
+            interpretacao += "• Áreas potencialmente afetadas: Distribuição variável, frequentemente nos lobos inferiores.\n"
+            interpretacao += "• Recomendações: Avaliação clínica completa, considerar testes laboratoriais incluindo hemograma, "
+            interpretacao += "proteína C reativa e procalcitonina para avaliação de gravidade.\n"
+            
+        elif diagnostico == "Covid-19":
+            interpretacao += "• Características radiológicas: Opacidades em vidro fosco, principalmente bilaterais e periféricas, "
+            interpretacao += "possíveis consolidações e padrão reticular.\n"
+            interpretacao += "• Áreas potencialmente afetadas: Distribuição frequentemente bilateral, periférica e basal.\n"
+            interpretacao += "• Recomendações: Considerar teste de PCR para SARS-CoV-2, monitorar saturação de oxigênio "
+            interpretacao += "e sinais vitais. Avaliar necessidade de exames adicionais como tomografia computadorizada.\n"
+            
+        elif diagnostico == "Normal":
+            interpretacao += "• Características radiológicas: Campos pulmonares claros sem opacidades significativas. "
+            interpretacao += "Estruturas brônquicas e vasculares de aspecto normal.\n"
+            interpretacao += "• Observações: Ausência de consolidações, nódulos ou massas. Silhueta cardíaca e hilos de morfologia preservada.\n"
+            interpretacao += "• Recomendações: Se persistência de sintomas respiratórios apesar de radiografia normal, "
+            interpretacao += "considerar outros métodos diagnósticos ou repetir exame conforme evolução clínica.\n"
         
-        descobertas += "\nInterpretação:\n"
+        # Adicionar informações sobre a confiabilidade
+        if probabilidade >= 90:
+            interpretacao += "\nALTA CONFIABILIDADE: O padrão radiológico apresenta características fortemente sugestivas do diagnóstico indicado.\n"
+        elif probabilidade >= 75:
+            interpretacao += "\nCONFIABILIDADE MODERADA: O padrão radiológico apresenta características compatíveis com o diagnóstico indicado.\n"
+        else:
+            interpretacao += "\nCONFIABILIDADE LIMITADA: O padrão radiológico apresenta algumas características do diagnóstico indicado, porém com sobreposição significativa com outros diagnósticos. Correlação clínica essencial.\n"
         
-        # Adicionar interpretação específica para cada doença
-        if doenca == "Tuberculose":
-            descobertas += "- Padrão sugestivo de infecção por Mycobacterium tuberculosis\n"
-            descobertas += "- Possível presença de infiltrados nos lobos superiores\n"
-            descobertas += "- Recomenda-se avaliação clínica completa e testes confirmatórios\n"
-        elif doenca == "Pneumonia":
-            descobertas += "- Opacidade pulmonar sugestiva de infecção bacteriana ou viral\n"
-            descobertas += "- Possível consolidação lobar\n"
-            descobertas += "- Recomenda-se avaliação clínica e tratamento apropriado\n"
-        elif doenca == "Covid-19":
-            descobertas += "- Padrão de vidro fosco bilateral típico de infecção por SARS-CoV-2\n"
-            descobertas += "- Possível comprometimento periférico dos campos pulmonares\n"
-            descobertas += "- Recomenda-se isolamento e monitoramento dos parâmetros vitais\n"
-        elif doenca == "Normal":
-            descobertas += "- Nenhuma anormalidade significativa detectada\n"
-            descobertas += "- Campos pulmonares claros sem evidência de infecção ativa\n"
+        # Adicionar alertas para diagnósticos diferenciais relevantes
+        for doenca, prob in resultados_completos.items():
+            if doenca != diagnostico and prob > 20:
+                interpretacao += f"\nDIAGNÓSTICO DIFERENCIAL: {doenca} ({prob:.2f}%) - Deve ser considerado na avaliação clínica.\n"
         
-        descobertas += "\nObservações: Este é um resultado gerado por inteligência artificial e deve ser validado por um profissional de saúde qualificado."
+        interpretacao += "\nOBSERVAÇÃO: Esta interpretação é gerada automaticamente e deve ser validada por um radiologista ou médico especialista. Correlação com dados clínicos e laboratoriais é imprescindível para o diagnóstico definitivo."
+        
+        return interpretacao
+    
+    def _gerar_descobertas(self, diagnostico, probabilidade, resultados_completos):
+        """
+        Gera texto de descobertas simplificado para usuários não-técnicos/pacientes
+        
+        Args:
+            diagnostico: Diagnóstico principal detectado
+            probabilidade: Probabilidade do diagnóstico principal
+            resultados_completos: Probabilidades de todas as classes
+        
+        Returns:
+            str: Texto de descobertas em linguagem acessível
+        """
+        descobertas = f"RESULTADO DA ANÁLISE DE RADIOGRAFIA PULMONAR\n\n"
+        descobertas += f"A análise computadorizada sugere: {diagnostico}\n"
+        descobertas += f"Nível de confiança: {probabilidade:.1f}%\n\n"
+        
+        descobertas += "O QUE ISTO SIGNIFICA:\n"
+        
+        if diagnostico == "Tuberculose":
+            descobertas += "• A imagem apresenta sinais que podem indicar uma infecção por tuberculose nos pulmões.\n"
+            descobertas += "• A tuberculose é uma doença infecciosa causada pela bactéria Mycobacterium tuberculosis.\n"
+            descobertas += "• Sintomas comuns incluem tosse persistente, febre, suores noturnos e perda de peso.\n"
+            descobertas += "• É importante realizar testes adicionais para confirmar este diagnóstico.\n"
+            
+        elif diagnostico == "Pneumonia":
+            descobertas += "• A imagem mostra áreas de possível infecção pulmonar compatíveis com pneumonia.\n"
+            descobertas += "• A pneumonia é uma inflamação dos pulmões geralmente causada por infecção.\n"
+            descobertas += "• Sintomas típicos incluem tosse com catarro, febre, falta de ar e dor torácica.\n"
+            descobertas += "• O tratamento geralmente envolve antibióticos, especialmente se for de origem bacteriana.\n"
+            
+        elif diagnostico == "Covid-19":
+            descobertas += "• A imagem apresenta padrões que podem ser compatíveis com pneumonia por COVID-19.\n"
+            descobertas += "• A COVID-19 é causada pelo vírus SARS-CoV-2 e pode afetar os pulmões de maneira característica.\n"
+            descobertas += "• Sintomas comuns incluem febre, tosse seca, fadiga e perda de olfato ou paladar.\n"
+            descobertas += "• Um teste específico para COVID-19 é recomendado para confirmar este diagnóstico.\n"
+            
+        elif diagnostico == "Normal":
+            descobertas += "• Não foram detectadas alterações significativas na radiografia pulmonar.\n"
+            descobertas += "• Os campos pulmonares parecem estar sem anormalidades visíveis nesta imagem.\n"
+            descobertas += "• Se você estiver apresentando sintomas respiratórios, é importante discuti-los com seu médico mesmo com radiografia normal.\n"
+            descobertas += "• Algumas condições podem não ser visíveis em radiografias convencionais.\n"
+        
+        # Adicionar outros resultados significativos
+        outras_possibilidades = []
+        for doenca, prob in resultados_completos.items():
+            if doenca != diagnostico and prob > 15:
+                outras_possibilidades.append(f"{doenca} ({prob:.1f}%)")
+        
+        if outras_possibilidades:
+            descobertas += "\nOUTRAS POSSIBILIDADES PARA CONSIDERAR:\n"
+            for possibilidade in outras_possibilidades:
+                descobertas += f"• {possibilidade}\n"
+        
+        descobertas += "\nPRÓXIMOS PASSOS RECOMENDADOS:\n"
+        descobertas += "• Discuta estes resultados com seu médico assistente.\n"
+        descobertas += "• Este é uma análise preliminar realizada por computador e requer interpretação médica profissional.\n"
+        descobertas += "• Siga as recomendações médicas para exames adicionais ou tratamento conforme necessário.\n"
+        descobertas += "• Nunca ignore sintomas mesmo se o resultado da radiografia for normal.\n"
+        
+        descobertas += "\nIMPORTANTE: Esta análise foi gerada por um sistema de inteligência artificial e deve sempre ser revisada por um profissional de saúde qualificado."
         
         return descobertas
 
@@ -185,6 +286,12 @@ detector = DetectorDoencasPulmonares()
 def analisar_radiografia(radiografia_obj):
     """
     Analisa uma radiografia e retorna uma detecção
+    
+    Args:
+        radiografia_obj: Objeto do modelo Radiografia
+        
+    Returns:
+        dict: Resultado da análise
     """
     if not detector.loaded:
         detector.carregar_modelo()

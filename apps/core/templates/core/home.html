@@ -116,7 +116,7 @@
                                 <tr>
                                     <th>Paciente</th>
                                     <th>Data</th>
-                                    <th>Doença</th>
+                                    <th>Diagnóstico</th>
                                     <th>Probabilidade</th>
                                     <th>Status</th>
                                 </tr>
@@ -126,7 +126,7 @@
                                 <tr>
                                     <td>{{ deteccao.radiografia.paciente.get_nome_completo }}</td>
                                     <td>{{ deteccao.criado_em|date:"d/m/Y" }}</td>
-                                    <td>{{ deteccao.doenca }}</td>
+                                    <td>{{ deteccao.diagnostico }}</td>
                                     <td>
                                         <div class="progress" style="height: 6px; width: 100px;">
                                             <div class="progress-bar {% if deteccao.probabilidade >= 70 %}bg-danger

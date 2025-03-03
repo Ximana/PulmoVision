@@ -15,6 +15,7 @@ from .utils import gerar_deteccao_pdf
 from .model_utils.detector import  DetectorDoencasPulmonares, analisar_radiografia
 import os
 
+
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # Desativa uso de GPU
 
 def download_deteccao_pdf(request, pk):
@@ -40,10 +41,10 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
                 Q(radiografia__paciente__nome__icontains=search_query) |
                 Q(radiografia__paciente__sobrenome__icontains=search_query) |
                 Q(radiografia__paciente__numero_bi__icontains=search_query) |
-                Q(doenca__icontains=search_query) |
+                Q(diagnostico__icontains=search_query) |
                 Q(estado__icontains=search_query)
             )
-        
+            
         return queryset
     
     def get_context_data(self, **kwargs):
@@ -63,11 +64,30 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
             # Usar os metodos da classe do arquivo/classe detetor
             resultado = analisar_radiografia(deteccao.radiografia)
             
+            """
+            print('______________________________________________________')
+            print('Doença:')
+            print(resultado['doenca'])
+            
+            print('probabilidade:')
+            print(resultado['probabilidade'])
+            
+            print('Resultados Completos:')
+            print(resultado['resultados_completos'])
+            
+            print('resultado:')      
+            print(resultado['resultado_texto'])
+                  
+            print('Descobertas')
+            print(resultado['descobertas'])
+            print('______________________________________________________')
+            
+            
             deteccao.resultado = 'Resultado alterado por mim'
             deteccao.probabilidade = 22.00
             deteccao.descobertas = "Descobertas alteradas por mim"
             
-            print(resultado)
+            
             print(deteccao.usuario)
             print(deteccao.radiografia.imagem)
             print(deteccao.radiografia.imagem.path)
@@ -76,6 +96,7 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
             print(deteccao.probabilidade)
             print(deteccao.descobertas)
             print(deteccao.estado)
+            """
             
             
             #deteccao.save()
