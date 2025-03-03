@@ -203,48 +203,87 @@
 
 {% block scriptJS %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-
-    // Modais e demais funcionalidades mantidas do código original
-    const modalAdicionar = document.getElementById('modalAdicionar');
-    const modalSelecionarRadiografia = document.getElementById('modalSelecionarRadiografia');
-
-    let bsModalAdicionar = new bootstrap.Modal(modalAdicionar);
-    let bsModalSelecionarRadiografia = new bootstrap.Modal(modalSelecionarRadiografia);
-
-    // Função para abrir o modal de seleção de radiografia
-    window.abrirModalSelecaoRadiografia = function() {
-        const backdrop = document.querySelector('.modal-backdrop');
-        if (backdrop) {
-            backdrop.style.zIndex = '1040';
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    
+        // Modais e demais funcionalidades mantidas do código original
+        const modalAdicionar = document.getElementById('modalAdicionar');
+        const modalSelecionarRadiografia = document.getElementById('modalSelecionarRadiografia');
+    
+        let bsModalAdicionar = new bootstrap.Modal(modalAdicionar);
+        let bsModalSelecionarRadiografia = new bootstrap.Modal(modalSelecionarRadiografia);
+    
+        // Função para abrir o modal de seleção de radiografia
+        window.abrirModalSelecaoRadiografia = function() {
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.style.zIndex = '1040';
+            }
+            
+            modalAdicionar.style.zIndex = '1041';
+            modalSelecionarRadiografia.style.zIndex = '1042';
+            
+            bsModalSelecionarRadiografia.show();
+        };
+    
+        // Função para selecionar radiografia atualizada
+        window.selecionarRadiografia = function(id, info, dados) {
+            // Preencher o campo escondido e o resumo
+            document.getElementById('id_radiografia').value = id;
+            document.getElementById('radiografiaSelecionada').textContent = info;
+            
+            // Preencher dados do paciente
+            document.getElementById('paciente_nome').textContent = dados.paciente.nome;
+            document.getElementById('paciente_processo').textContent = dados.paciente.processo;
+            document.getElementById('paciente_nascimento').textContent = dados.paciente.nascimento;
+            document.getElementById('paciente_genero').textContent = dados.paciente.genero;
+            document.getElementById('paciente_mae').textContent = dados.paciente.mae;
+            document.getElementById('paciente_bi').textContent = dados.paciente.bi;
+            
+            // Preencher dados da radiografia
+            document.getElementById('radiografia_data').textContent = dados.radiografia.data;
+            document.getElementById('radiografia_descricao').textContent = dados.radiografia.descricao;
+            document.getElementById('radiografia_notas').textContent = dados.radiografia.notas;
+            document.getElementById('radiografia_dose').textContent = dados.radiografia.dose;
+            
+            // Preencher imagem da radiografia
+            const imagemRadiografia = document.getElementById('radiografia_imagem');
+            imagemRadiografia.src = dados.radiografia.imagem;
+            
+            // Mostrar o div com os dados
+            document.getElementById('dadosSelecionados').style.display = 'block';
+            
+            bsModalSelecionarRadiografia.hide();
+        };
+    
+        // Validação do formulário
+        document.getElementById('deteccaoForm').addEventListener('submit', function(e) {
+            const radiografiaId = document.getElementById('id_radiografia').value;
+            if (!radiografiaId) {
+                e.preventDefault();
+                alert('Por favor, selecione uma radiografia antes de prosseguir.');
+            }
+        });
         
-        modalAdicionar.style.zIndex = '1041';
-        modalSelecionarRadiografia.style.zIndex = '1042';
-        
-        bsModalSelecionarRadiografia.show();
-    };
-
-    // Função para selecionar radiografia
-    window.selecionarRadiografia = function(id, info) {
-        document.getElementById('id_radiografia').value = id;
-        document.getElementById('radiografiaSelecionada').textContent = info;
-        bsModalSelecionarRadiografia.hide();
-    };
-
-    // Validação do formulário
-    document.getElementById('deteccaoForm').addEventListener('submit', function(e) {
-        const radiografiaId = document.getElementById('id_radiografia').value;
-        if (!radiografiaId) {
-            e.preventDefault();
-            alert('Por favor, selecione uma radiografia antes de prosseguir.');
-        }
+        // Funcionalidade para filtrar radiografias na tabela
+        document.getElementById('pesquisarRadiografia').addEventListener('input', function(e) {
+            const termo = e.target.value.toLowerCase();
+            const tbody = document.querySelector('#modalSelecionarRadiografia table tbody');
+            const linhas = tbody.querySelectorAll('tr');
+            
+            linhas.forEach(linha => {
+                const texto = linha.textContent.toLowerCase();
+                if(texto.includes(termo)) {
+                    linha.style.display = '';
+                } else {
+                    linha.style.display = 'none';
+                }
+            });
+        });
     });
-});
-</script>
+    </script>
 {% endblock %}

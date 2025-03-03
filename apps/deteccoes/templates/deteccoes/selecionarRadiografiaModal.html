@@ -29,7 +29,27 @@
               <td>{{ radiografia.qualidade_da_imagem }}</td>
               <td>
                 <button type="button" class="btn btn-primary btn-sm" 
-                        onclick="selecionarRadiografia('{{ radiografia.id }}', '{{ radiografia.paciente.get_nome_completo }} - {{ radiografia.data|date:"d.m.Y" }}')"
+                        onclick="selecionarRadiografia(
+                          '{{ radiografia.id }}', 
+                          '{{ radiografia.paciente.get_nome_completo }} - {{ radiografia.data|date:"d.m.Y" }}',
+                          {
+                            paciente: {
+                              nome: '{{ radiografia.paciente.get_nome_completo }}',
+                              processo: '{{ radiografia.paciente.numero_processo }}',
+                              nascimento: '{{ radiografia.paciente.data_nascimento|date:"d.m.Y" }}',
+                              genero: '{{ radiografia.paciente.genero }}',
+                              mae: '{{ radiografia.paciente.nome_da_mae }}',
+                              bi: '{{ radiografia.paciente.numero_bi }}'
+                            },
+                            radiografia: {
+                              data: '{{ radiografia.data|date:"d.m.Y" }}',
+                              descricao: '{{ radiografia.descricao }}',
+                              notas: '{{ radiografia.notas_tecnicas }}',
+                              dose: '{{ radiografia.dose_de_radiacao }}',
+                              imagem: '{{ radiografia.imagem.url }}'
+                            }
+                          }
+                        )"
                         data-bs-dismiss="modal">
                     Selecionar
                 </button>

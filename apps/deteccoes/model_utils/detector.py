@@ -167,56 +167,142 @@ class DetectorDoencasPulmonares:
             resultados_completos: Probabilidades de todas as classes
             
         Returns:
-            str: Texto de interpretação
+            str: Texto de interpretação estruturado em seções
         """
-        interpretacao = f"Análise baseada em radiografia de tórax - {diagnostico} ({probabilidade:.2f}%):\n\n"
+        # Cabeçalho da interpretação
+        interpretacao = f"ANÁLISE RADIOGRÁFICA TORÁCICA - {diagnostico.upper()} ({probabilidade:.2f}%)\n\n"
         
-        # Adicionar informações específicas por doença
+        # Seção de características radiológicas específicas por doença
         if diagnostico == "Tuberculose":
-            interpretacao += "• Características radiológicas: Possíveis infiltrados nos lobos superiores, cavitações, "
-            interpretacao += "nódulos e/ou opacidades irregulares sugestivas de tuberculose pulmonar.\n"
-            interpretacao += "• Áreas potencialmente afetadas: Predominantemente nos lobos superiores e segmentos apicais dos lobos inferiores.\n"
-            interpretacao += "• Recomendações: Confirmação bacteriológica recomendada. Considerar teste molecular rápido (GeneXpert MTB/RIF), "
-            interpretacao += "baciloscopia e cultura para confirmação diagnóstica.\n"
+            interpretacao += "• Características radiológicas:\n"
+            interpretacao += "  - Infiltrados predominantes em lobos superiores\n"
+            interpretacao += "  - Possíveis cavitações de paredes irregulares\n"
+            interpretacao += "  - Nódulos de distribuição segmentar\n"
+            interpretacao += "  - Padrão fibronodular com retração do parênquima\n"
+            interpretacao += "  - Possível derrame pleural, geralmente unilateral e de pequeno volume\n\n"
+            
+            interpretacao += "• Áreas potencialmente afetadas:\n"
+            interpretacao += "  - Predominância em lobos superiores (segmentos apicais e posteriores)\n"
+            interpretacao += "  - Segmentos apicais dos lobos inferiores\n"
+            interpretacao += "  - Possível envolvimento pleural adjacente\n\n"
+            
+            interpretacao += "• Recomendações:\n"
+            interpretacao += "  - Confirmação bacteriológica por teste molecular rápido (GeneXpert MTB/RIF)\n"
+            interpretacao += "  - Baciloscopia de escarro em série (3 amostras)\n"
+            interpretacao += "  - Cultura para micobactérias e teste de sensibilidade a antimicrobianos\n"
+            interpretacao += "  - Avaliação de contatos domiciliares\n"
+            interpretacao += "  - Considerar tomografia computadorizada de tórax em casos de alta suspeita e RX normal\n\n"
             
         elif diagnostico == "Pneumonia":
-            interpretacao += "• Características radiológicas: Opacidade(s) de espaço aéreo, possível consolidação lobar ou multilobar, "
-            interpretacao += "broncograma aéreo e/ou derrame pleural associado.\n"
-            interpretacao += "• Áreas potencialmente afetadas: Distribuição variável, frequentemente nos lobos inferiores.\n"
-            interpretacao += "• Recomendações: Avaliação clínica completa, considerar testes laboratoriais incluindo hemograma, "
-            interpretacao += "proteína C reativa e procalcitonina para avaliação de gravidade.\n"
+            interpretacao += "• Características radiológicas:\n"
+            interpretacao += "  - Opacidade(s) de espaço aéreo com densidade aumentada\n"
+            interpretacao += "  - Consolidação lobar ou multilobar\n"
+            interpretacao += "  - Presença de broncograma aéreo nas áreas afetadas\n"
+            interpretacao += "  - Possível derrame pleural associado (geralmente unilateral)\n"
+            interpretacao += "  - Distribuição frequentemente segmentar ou lobar\n\n"
+            
+            interpretacao += "• Áreas potencialmente afetadas:\n"
+            interpretacao += "  - Distribuição variável, com predomínio em lobos inferiores\n"
+            interpretacao += "  - Pneumonia bacteriana típica: padrão lobar\n"
+            interpretacao += "  - Pneumonia atípica: padrão intersticial difuso\n"
+            interpretacao += "  - Possível acometimento bilateral em casos graves\n\n"
+            
+            interpretacao += "• Recomendações:\n"
+            interpretacao += "  - Avaliação clínica completa com atenção à frequência respiratória e oximetria\n"
+            interpretacao += "  - Exames laboratoriais: hemograma, proteína C reativa, procalcitonina\n"
+            interpretacao += "  - Coleta de culturas (sangue e escarro) antes de iniciar antibioticoterapia\n"
+            interpretacao += "  - Estratificação de risco (scores CURB-65 ou PSI/PORT)\n"
+            interpretacao += "  - Considerar tomografia em casos de evolução desfavorável\n\n"
             
         elif diagnostico == "Covid-19":
-            interpretacao += "• Características radiológicas: Opacidades em vidro fosco, principalmente bilaterais e periféricas, "
-            interpretacao += "possíveis consolidações e padrão reticular.\n"
-            interpretacao += "• Áreas potencialmente afetadas: Distribuição frequentemente bilateral, periférica e basal.\n"
-            interpretacao += "• Recomendações: Considerar teste de PCR para SARS-CoV-2, monitorar saturação de oxigênio "
-            interpretacao += "e sinais vitais. Avaliar necessidade de exames adicionais como tomografia computadorizada.\n"
+            interpretacao += "• Características radiológicas:\n"
+            interpretacao += "  - Opacidades em vidro fosco (padrão mais comum)\n"
+            interpretacao += "  - Distribuição bilateral, periférica e basal predominante\n"
+            interpretacao += "  - Padrão reticular sobreposto a vidro fosco (pavimentação em mosaico)\n"
+            interpretacao += "  - Consolidações nas fases mais avançadas\n"
+            interpretacao += "  - Ausência habitual de derrame pleural e adenomegalias\n\n"
+            
+            interpretacao += "• Áreas potencialmente afetadas:\n"
+            interpretacao += "  - Distribuição bilateral e assimétrica\n"
+            interpretacao += "  - Predomínio em regiões periféricas e posteriores\n"
+            interpretacao += "  - Maior acometimento de lobos inferiores\n"
+            interpretacao += "  - Progressão centro-lobular em casos avançados\n\n"
+            
+            interpretacao += "• Recomendações:\n"
+            interpretacao += "  - Confirmação por teste RT-PCR para SARS-CoV-2\n"
+            interpretacao += "  - Monitoramento contínuo de saturação de oxigênio e sinais vitais\n"
+            interpretacao += "  - Avaliação laboratorial: hemograma, dímero-D, ferritina, PCR\n"
+            interpretacao += "  - Considerar tomografia computadorizada para avaliação da extensão\n"
+            interpretacao += "  - Vigilância para progressão rápida ou complicações (TEP, sobreinfecção)\n\n"
             
         elif diagnostico == "Normal":
-            interpretacao += "• Características radiológicas: Campos pulmonares claros sem opacidades significativas. "
-            interpretacao += "Estruturas brônquicas e vasculares de aspecto normal.\n"
-            interpretacao += "• Observações: Ausência de consolidações, nódulos ou massas. Silhueta cardíaca e hilos de morfologia preservada.\n"
-            interpretacao += "• Recomendações: Se persistência de sintomas respiratórios apesar de radiografia normal, "
-            interpretacao += "considerar outros métodos diagnósticos ou repetir exame conforme evolução clínica.\n"
+            interpretacao += "• Características radiológicas:\n"
+            interpretacao += "  - Campos pulmonares bem ventilados sem opacidades focais ou difusas\n"
+            interpretacao += "  - Tramas brônquica e vascular de calibre e distribuição normais\n"
+            interpretacao += "  - Ausência de consolidações, nódulos ou massas identificáveis\n"
+            interpretacao += "  - Silhueta cardíaca de dimensões normais\n"
+            interpretacao += "  - Seios costofrênicos livres bilateralmente\n\n"
+            
+            interpretacao += "• Observações:\n"
+            interpretacao += "  - Exame sem alterações significativas identificáveis\n"
+            interpretacao += "  - Hilos pulmonares de morfologia e densidade preservadas\n"
+            interpretacao += "  - Diafragmas com cúpulas bem definidas e regulares\n"
+            interpretacao += "  - Arcabouço ósseo torácico sem lesões aparentes\n\n"
+            
+            interpretacao += "• Recomendações:\n"
+            interpretacao += "  - Correlação com quadro clínico do paciente\n"
+            interpretacao += "  - Se persistência de sintomas respiratórios, considerar métodos diagnósticos complementares\n"
+            interpretacao += "  - Radiografia normal não exclui completamente patologias em fase inicial\n"
+            interpretacao += "  - Considerar acompanhamento clínico conforme sintomatologia\n\n"
         
         # Adicionar informações sobre a confiabilidade
         if probabilidade >= 90:
-            interpretacao += "\nALTA CONFIABILIDADE: O padrão radiológico apresenta características fortemente sugestivas do diagnóstico indicado.\n"
+            interpretacao += "NÍVEL DE CONFIABILIDADE: ALTO (>90%)\n"
+            interpretacao += "- O padrão radiológico apresenta características fortemente sugestivas do diagnóstico indicado\n"
+            interpretacao += "- Alta especificidade para o diagnóstico proposto\n"
+            interpretacao += "- Correlação clínica ainda recomendada para confirmação\n\n"
         elif probabilidade >= 75:
-            interpretacao += "\nCONFIABILIDADE MODERADA: O padrão radiológico apresenta características compatíveis com o diagnóstico indicado.\n"
+            interpretacao += "NÍVEL DE CONFIABILIDADE: MODERADO (75-90%)\n"
+            interpretacao += "- O padrão radiológico apresenta características compatíveis com o diagnóstico indicado\n"
+            interpretacao += "- Especificidade moderada para o diagnóstico proposto\n"
+            interpretacao += "- Correlação clínica necessária e exames complementares podem ser úteis\n\n"
         else:
-            interpretacao += "\nCONFIABILIDADE LIMITADA: O padrão radiológico apresenta algumas características do diagnóstico indicado, porém com sobreposição significativa com outros diagnósticos. Correlação clínica essencial.\n"
+            interpretacao += "NÍVEL DE CONFIABILIDADE: LIMITADO (<75%)\n"
+            interpretacao += "- O padrão radiológico apresenta algumas características do diagnóstico indicado\n" 
+            interpretacao += "- Sobreposição significativa com outros diagnósticos diferenciais\n"
+            interpretacao += "- Correlação clínica essencial e exames complementares fortemente recomendados\n\n"
         
-        # Adicionar alertas para diagnósticos diferenciais relevantes
-        for doenca, prob in resultados_completos.items():
+        # Adicionar diagnósticos diferenciais relevantes
+        diferenciais_adicionados = False
+        for doenca, prob in sorted(resultados_completos.items(), key=lambda x: x[1], reverse=True):
             if doenca != diagnostico and prob > 20:
-                interpretacao += f"\nDIAGNÓSTICO DIFERENCIAL: {doenca} ({prob:.2f}%) - Deve ser considerado na avaliação clínica.\n"
+                if not diferenciais_adicionados:
+                    interpretacao += "DIAGNÓSTICOS DIFERENCIAIS:\n"
+                    diferenciais_adicionados = True
+                
+                interpretacao += f"• {doenca} ({prob:.2f}%):\n"
+                
+                if doenca == "Tuberculose":
+                    interpretacao += "  - Considerar na presença de sintomas respiratórios prolongados, perda de peso, histórico epidemiológico\n"
+                    interpretacao += "  - Recomenda-se investigação com baciloscopia e teste molecular\n"
+                elif doenca == "Pneumonia":
+                    interpretacao += "  - Considerar quando há febre, tosse produtiva e alterações auscultatórias focais\n"
+                    interpretacao += "  - Avaliar resposta a antibioticoterapia e leucocitose\n"
+                elif doenca == "Covid-19":
+                    interpretacao += "  - Considerar em contexto epidemiológico e sintomas típicos (anosmia, disgeusia, fadiga)\n"
+                    interpretacao += "  - Indicado teste específico para SARS-CoV-2\n"
+                else:  # Outras condições ou Normal
+                    interpretacao += "  - Avaliar conforme apresentação clínica\n"
         
-        interpretacao += "\nOBSERVAÇÃO: Esta interpretação é gerada automaticamente e deve ser validada por um radiologista ou médico especialista. Correlação com dados clínicos e laboratoriais é imprescindível para o diagnóstico definitivo."
+        # Nota de observação final
+        interpretacao += "\nOBSERVAÇÃO IMPORTANTE:\n"
+        interpretacao += "Esta interpretação é gerada automaticamente por um sistema de inteligência artificial e deve ser validada por um médico especialista. "
+        interpretacao += "A correlação com dados clínicos e laboratoriais é imprescindível para o diagnóstico definitivo. "
+        interpretacao += "O resultado não substitui a avaliação médica presencial."
         
         return interpretacao
-    
+
+
     def _gerar_descobertas(self, diagnostico, probabilidade, resultados_completos):
         """
         Gera texto de descobertas simplificado para usuários não-técnicos/pacientes
@@ -230,57 +316,104 @@ class DetectorDoencasPulmonares:
             str: Texto de descobertas em linguagem acessível
         """
         descobertas = f"RESULTADO DA ANÁLISE DE RADIOGRAFIA PULMONAR\n\n"
-        descobertas += f"A análise computadorizada sugere: {diagnostico}\n"
-        descobertas += f"Nível de confiança: {probabilidade:.1f}%\n\n"
         
-        descobertas += "O QUE ISTO SIGNIFICA:\n"
+        # Usar emojis para tornar mais amigável e organizar a informação
+        descobertas += f"DIAGNÓSTICO SUGERIDO: {diagnostico}\n"
+        descobertas += f"NÍVEL DE CONFIANÇA: {probabilidade:.1f}%\n\n"
+        
+        # Adicionar classificação de confiabilidade em linguagem simples
+        if probabilidade >= 90:
+            descobertas += "CONFIABILIDADE: ALTA\n\n"
+        elif probabilidade >= 75:
+            descobertas += "CONFIABILIDADE: MODERADA\n\n"
+        else:
+            descobertas += "CONFIABILIDADE: LIMITADA\n\n"
+        
+        # Explicação do diagnóstico em linguagem simples
+        descobertas += "O QUE ISTO SIGNIFICA:\n\n"
         
         if diagnostico == "Tuberculose":
-            descobertas += "• A imagem apresenta sinais que podem indicar uma infecção por tuberculose nos pulmões.\n"
-            descobertas += "• A tuberculose é uma doença infecciosa causada pela bactéria Mycobacterium tuberculosis.\n"
-            descobertas += "• Sintomas comuns incluem tosse persistente, febre, suores noturnos e perda de peso.\n"
-            descobertas += "• É importante realizar testes adicionais para confirmar este diagnóstico.\n"
+            descobertas += "• A imagem do seu pulmão apresenta sinais que podem indicar tuberculose\n\n"
+            descobertas += "• A tuberculose é uma infecção causada por uma bactéria que afeta principalmente os pulmões\n\n"
+            descobertas += "• Sintomas comuns incluem:\n"
+            descobertas += "  - Tosse persistente por mais de 3 semanas\n"
+            descobertas += "  - Febre, geralmente no período da tarde\n"
+            descobertas += "  - Suores noturnos que podem molhar a roupa de cama\n"
+            descobertas += "  - Perda de peso sem causa aparente\n"
+            descobertas += "  - Cansaço e fraqueza\n\n"
+            descobertas += "• A tuberculose tem tratamento eficaz e cura na maioria dos casos quando seguido corretamente\n\n"
+            descobertas += "• É uma doença que pode ser transmitida pelo ar, mas é prevenível e tratável\n\n"
             
         elif diagnostico == "Pneumonia":
-            descobertas += "• A imagem mostra áreas de possível infecção pulmonar compatíveis com pneumonia.\n"
-            descobertas += "• A pneumonia é uma inflamação dos pulmões geralmente causada por infecção.\n"
-            descobertas += "• Sintomas típicos incluem tosse com catarro, febre, falta de ar e dor torácica.\n"
-            descobertas += "• O tratamento geralmente envolve antibióticos, especialmente se for de origem bacteriana.\n"
+            descobertas += "• A imagem do seu pulmão mostra áreas que sugerem uma infecção chamada pneumonia\n\n"
+            descobertas += "• A pneumonia é uma inflamação nos pulmões geralmente causada por bactérias, vírus ou fungos\n\n"
+            descobertas += "• Sintomas comuns incluem:\n"
+            descobertas += "  - Tosse com catarro (que pode ser amarelado ou esverdeado)\n"
+            descobertas += "  - Febre e calafrios\n"
+            descobertas += "  - Dificuldade para respirar ou respiração rápida\n"
+            descobertas += "  - Dor no peito ao respirar ou tossir\n"
+            descobertas += "  - Sensação de cansaço ou falta de energia\n\n"
+            descobertas += "• A maioria das pneumonias pode ser tratada com antibióticos se forem causadas por bactérias\n\n"
+            descobertas += "• O tempo de recuperação varia de poucos dias a algumas semanas, dependendo da gravidade\n\n"
             
         elif diagnostico == "Covid-19":
-            descobertas += "• A imagem apresenta padrões que podem ser compatíveis com pneumonia por COVID-19.\n"
-            descobertas += "• A COVID-19 é causada pelo vírus SARS-CoV-2 e pode afetar os pulmões de maneira característica.\n"
-            descobertas += "• Sintomas comuns incluem febre, tosse seca, fadiga e perda de olfato ou paladar.\n"
-            descobertas += "• Um teste específico para COVID-19 é recomendado para confirmar este diagnóstico.\n"
+            descobertas += "• A imagem do seu pulmão mostra um padrão que pode ser compatível com Covid-19\n\n"
+            descobertas += "• A Covid-19 é causada pelo vírus SARS-CoV-2 e pode afetar os pulmões de maneira característica\n\n"
+            descobertas += "• Sintomas comuns incluem:\n"
+            descobertas += "  - Febre ou sensação febril\n"
+            descobertas += "  - Tosse seca (sem catarro)\n"
+            descobertas += "  - Cansaço e dores no corpo\n"
+            descobertas += "  - Perda de olfato e/ou paladar\n"
+            descobertas += "  - Dificuldade para respirar (em casos mais graves)\n\n"
+            descobertas += "• É importante realizar um teste específico para Covid-19 para confirmar o diagnóstico\n\n"
+            descobertas += "• O tratamento depende da gravidade dos sintomas e pode incluir medicamentos para aliviar os sintomas\n\n"
             
         elif diagnostico == "Normal":
-            descobertas += "• Não foram detectadas alterações significativas na radiografia pulmonar.\n"
-            descobertas += "• Os campos pulmonares parecem estar sem anormalidades visíveis nesta imagem.\n"
-            descobertas += "• Se você estiver apresentando sintomas respiratórios, é importante discuti-los com seu médico mesmo com radiografia normal.\n"
-            descobertas += "• Algumas condições podem não ser visíveis em radiografias convencionais.\n"
+            descobertas += "• A imagem do seu pulmão não mostra alterações significativas\n\n"
+            descobertas += "• Isto significa que não foram encontradas anormalidades visíveis na radiografia\n\n"
+            descobertas += "• É importante saber que:\n"
+            descobertas += "  - Algumas condições podem não aparecer em radiografias simples\n"
+            descobertas += "  - Se você está com sintomas, eles devem ser avaliados pelo seu médico mesmo com raio-x normal\n"
+            descobertas += "  - Seu médico pode recomendar outros exames se necessário\n\n"
+            descobertas += "• Uma radiografia normal é geralmente um bom sinal, mas não descarta completamente todas as condições\n\n"
         
-        # Adicionar outros resultados significativos
+        # Adicionar outras possibilidades relevantes
         outras_possibilidades = []
-        for doenca, prob in resultados_completos.items():
+        for doenca, prob in sorted(resultados_completos.items(), key=lambda x: x[1], reverse=True):
             if doenca != diagnostico and prob > 15:
-                outras_possibilidades.append(f"{doenca} ({prob:.1f}%)")
+                outras_possibilidades.append((doenca, prob))
         
         if outras_possibilidades:
-            descobertas += "\nOUTRAS POSSIBILIDADES PARA CONSIDERAR:\n"
-            for possibilidade in outras_possibilidades:
-                descobertas += f"• {possibilidade}\n"
+            descobertas += "OUTRAS POSSIBILIDADES A CONSIDERAR:\n\n"
+            for doenca, prob in outras_possibilidades:
+                descobertas += f"• {doenca} ({prob:.1f}%)\n"
+                if doenca == "Tuberculose":
+                    descobertas += "  - Infecção que afeta principalmente os pulmões\n"
+                elif doenca == "Pneumonia":
+                    descobertas += "  - Infecção que causa inflamação nos pulmões\n"
+                elif doenca == "Covid-19":
+                    descobertas += "  - Infecção viral que pode afetar os pulmões\n"
+                elif doenca == "Normal":
+                    descobertas += "  - Ausência de alterações significativas\n"
+            descobertas += "\n"
         
-        descobertas += "\nPRÓXIMOS PASSOS RECOMENDADOS:\n"
-        descobertas += "• Discuta estes resultados com seu médico assistente.\n"
-        descobertas += "• Este é uma análise preliminar realizada por computador e requer interpretação médica profissional.\n"
-        descobertas += "• Siga as recomendações médicas para exames adicionais ou tratamento conforme necessário.\n"
-        descobertas += "• Nunca ignore sintomas mesmo se o resultado da radiografia for normal.\n"
+        # Próximos passos em linguagem acessível
+        descobertas += "PRÓXIMOS PASSOS RECOMENDADOS:\n\n"
+        descobertas += "Converse com seu médico sobre este resultado\n\n"
+        descobertas += "Lembre-se: esta análise foi feita por computador e precisa ser confirmada por um profissional de saúde\n\n"
+        descobertas += "Siga as orientações médicas para tratamento ou exames adicionais\n\n"
+        descobertas += "Não deixe de relatar todos os seus sintomas ao médico, mesmo se o resultado for normal\n\n"
+        descobertas += "Em caso de piora dos sintomas, procure atendimento médico imediatamente\n\n"
         
-        descobertas += "\nIMPORTANTE: Esta análise foi gerada por um sistema de inteligência artificial e deve sempre ser revisada por um profissional de saúde qualificado."
+        # Alerta importante
+        descobertas += "IMPORTANTE: Este resultado é uma análise preliminar gerada por inteligência artificial. "
+        descobertas += "Toda interpretação deve ser confirmada por um médico qualificado antes de qualquer decisão sobre tratamento ou diagnóstico."
         
         return descobertas
-
-# Instância global para reutilização
+    
+    
+    
+    # Instância global para reutilização
 detector = DetectorDoencasPulmonares()
 
 def analisar_radiografia(radiografia_obj):

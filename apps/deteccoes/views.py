@@ -44,7 +44,6 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
                 Q(diagnostico__icontains=search_query) |
                 Q(estado__icontains=search_query)
             )
-            
         return queryset
     
     def get_context_data(self, **kwargs):
@@ -64,44 +63,16 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
             # Usar os metodos da classe do arquivo/classe detetor
             resultado = analisar_radiografia(deteccao.radiografia)
             
-            """
-            print('______________________________________________________')
-            print('Doença:')
-            print(resultado['doenca'])
+            # Colocar o resultado na detecao
+            deteccao.diagnostico = resultado['diagnostico']
+            deteccao.resultados_completos = resultado['resultados_completos']
+            deteccao.probabilidade = resultado['probabilidade']
+            deteccao.descobertas = resultado['descobertas']
+            deteccao.interpretacao = resultado['interpretacao']
             
-            print('probabilidade:')
-            print(resultado['probabilidade'])
-            
-            print('Resultados Completos:')
-            print(resultado['resultados_completos'])
-            
-            print('resultado:')      
-            print(resultado['resultado_texto'])
-                  
-            print('Descobertas')
-            print(resultado['descobertas'])
-            print('______________________________________________________')
-            
-            
-            deteccao.resultado = 'Resultado alterado por mim'
-            deteccao.probabilidade = 22.00
-            deteccao.descobertas = "Descobertas alteradas por mim"
-            
-            
-            print(deteccao.usuario)
-            print(deteccao.radiografia.imagem)
-            print(deteccao.radiografia.imagem.path)
-            print(deteccao.doenca)
-            print(deteccao.resultado)
-            print(deteccao.probabilidade)
-            print(deteccao.descobertas)
-            print(deteccao.estado)
-            """
-            
-            
-            #deteccao.save()
+            deteccao.save()
             #messages.success(request, 'Detecção registrada com sucesso!')
-            #return redirect(deteccao.get_absolute_url())
+            return redirect(deteccao.get_absolute_url())
         else:
             context = self.get_context_data()
             context['form'] = form
@@ -120,7 +91,61 @@ class DeteccaoDetailView(LoginRequiredMixin, DetailView):
             deteccao=self.object,
             usuario=self.request.user
         ).exists()
+        
+        # Processar a interpretação para facilitar a exibição no template
+        interpretacao = self.object.interpretacao if self.object.interpretacao else ""
+        context['interpretacao_formatada'] = self._processar_interpretacao(interpretacao)
+        
         return context
+    
+    def _processar_interpretacao(self, interpretacao):
+        """
+        Processa a interpretação clínica, separando-a em seções para o template.
+
+        Args:
+            interpretacao (str): Texto completo da interpretação.
+
+        Returns:
+            dict: Dicionário com as seções separadas.
+        """
+        secoes = {
+            "titulo": None,
+            "caracteristicas": None,
+            "areas_afetadas": None,
+            "recomendacoes": None,
+            "confiabilidade": None,
+            "diferenciais": None,
+            "observacao": None,
+        }
+
+        # Mapeia os títulos para encontrar os trechos
+        partes = {
+            "• Características radiológicas:": "caracteristicas",
+            "• Áreas potencialmente afetadas:": "areas_afetadas",
+            "• Recomendações:": "recomendacoes",
+            "NÍVEL DE CONFIABILIDADE:": "confiabilidade",
+            "DIAGNÓSTICOS DIFERENCIAIS:": "diferenciais",
+            "OBSERVAÇÃO IMPORTANTE:": "observacao",
+        }
+
+        # Inicializa o título como a primeira linha
+        linhas = interpretacao.split("\n")
+        if linhas:
+            secoes["titulo"] = linhas[0]
+
+        # Processa as demais seções
+        atual = None
+        for linha in linhas:
+            for marcador, chave in partes.items():
+                if marcador in linha:
+                    atual = chave
+                    secoes[atual] = ""
+                    break
+
+            if atual and atual in secoes:
+                secoes[atual] += linha + "\n"
+
+        return secoes
     
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
