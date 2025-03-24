@@ -19,56 +19,114 @@
           </div>
 
           <!-- Dados do Paciente e Radiografia (inicialmente ocultos) -->
-          <div id="dadosSelecionados" class="mt-3" style="display: none;">
-            <div class="row">
-              <!-- Card de Dados do Paciente -->
-              <div class="col-md-6 mb-3">
-                <div class="card border-success h-100">
-                  <div class="card-header bg-success text-white">
-                    <i class="fas fa-user me-2"></i>Dados do Paciente
-                  </div>
-                  <div class="card-body">
-                    <div class="row g-2">
-                      <div class="col-md-6">
-                        <p class="mb-1"><strong>Nome:</strong> <span id="paciente_nome"></span></p>
-                        <p class="mb-1"><strong>Número Processo:</strong> <span id="paciente_processo"></span></p>
-                        <p class="mb-1"><strong>Data Nascimento:</strong> <span id="paciente_nascimento"></span></p>
-                      </div>
-                      <div class="col-md-6">
-                        <p class="mb-1"><strong>Gênero:</strong> <span id="paciente_genero"></span></p>
-                        <p class="mb-1"><strong>Nome da Mãe:</strong> <span id="paciente_mae"></span></p>
-                        <p class="mb-1"><strong>Número BI:</strong> <span id="paciente_bi"></span></p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+<div id="dadosSelecionados" class="mt-3" style="display: none;">
+  <div class="row g-4">
+    <!-- Card de Dados do Paciente -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-success bg-gradient text-white py-3">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-user me-2"></i>Informações do Paciente
+          </h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="d-flex flex-column gap-3">
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+              <div>
+                <small class="text-muted">Nome Completo</small>
+                <p class="mb-0 fw-medium" id="paciente_nome"></p>
               </div>
-              
-              <!-- Card de Dados da Radiografia -->
-              <div class="col-md-6 mb-3">
-                <div class="card border-primary h-100">
-                  <div class="card-header bg-primary text-white">
-                    <i class="fas fa-x-ray me-2"></i>Dados da Radiografia
-                  </div>
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-md-7">
-                        <p class="mb-1"><strong>Data:</strong> <span id="radiografia_data"></span></p>
-                        <p class="mb-1"><strong>Dose de Radiação:</strong> <span id="radiografia_dose"></span></p>
-                        <p class="mb-1"><strong>Descrição:</strong> <span id="radiografia_descricao"></span></p>
-                        <p class="mb-1"><strong>Notas Técnicas:</strong> <span id="radiografia_notas"></span></p>
-                      </div>
-                      <div class="col-md-5">
-                        <div class="text-center mb-2">
-                          <img id="radiografia_imagem" src="" alt="Imagem da Radiografia" class="img-fluid rounded" style="max-height: 120px;">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <i class="fas fa-id-card text-success"></i>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+              <div>
+                <small class="text-muted">Número do Processo</small>
+                <p class="mb-0 fw-medium" id="paciente_processo"></p>
               </div>
+              <i class="fas fa-file-alt text-success"></i>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+              <div>
+                <small class="text-muted">Data de Nascimento</small>
+                <p class="mb-0 fw-medium" id="paciente_nascimento"></p>
+              </div>
+              <i class="fas fa-birthday-cake text-success"></i>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+              <div>
+                <small class="text-muted">Gênero</small>
+                <p class="mb-0 fw-medium" id="paciente_genero"></p>
+              </div>
+              <i class="fas fa-venus-mars text-success"></i>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+              <div>
+                <small class="text-muted">Nome da Mãe</small>
+                <p class="mb-0 fw-medium" id="paciente_mae"></p>
+              </div>
+              <i class="fas fa-female text-success"></i>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+              <div>
+                <small class="text-muted">Número BI</small>
+                <p class="mb-0 fw-medium" id="paciente_bi"></p>
+              </div>
+              <i class="fas fa-id-badge text-success"></i>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Card de Dados da Radiografia -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-success bg-gradient text-white py-3">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-x-ray me-2"></i>Informações da Radiografia
+          </h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="text-center mb-4">
+            <img id="radiografia_imagem" src="" alt="Imagem da Radiografia" 
+                 class="img-fluid rounded shadow-sm" 
+                 style="max-height: 200px; object-fit: cover;">
+          </div>
+          <div class="d-flex flex-column gap-3">
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+              <div>
+                <small class="text-muted">Data do Exame</small>
+                <p class="mb-0 fw-medium" id="radiografia_data"></p>
+              </div>
+              <i class="fas fa-calendar text-success"></i>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+              <div>
+                <small class="text-muted">Dose de Radiação</small>
+                <p class="mb-0 fw-medium" id="radiografia_dose"></p>
+              </div>
+              <i class="fas fa-radiation text-success"></i>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+              <div>
+                <small class="text-muted">Descrição</small>
+                <p class="mb-0 fw-medium" id="radiografia_descricao"></p>
+              </div>
+              <i class="fas fa-file-medical text-success"></i>
+            </div>
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #f8f9fa;">
+              <div>
+                <small class="text-muted">Notas Técnicas</small>
+                <p class="mb-0 fw-medium" id="radiografia_notas"></p>
+              </div>
+              <i class="fas fa-sticky-note text-success"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
         </div>
 
         <form id="deteccaoForm" class="row" method="POST">

@@ -122,3 +122,8 @@ class Usuario(AbstractUser):
     def get_total_radiografias(self):
         """Retorna o total de radiografias realizadas pelo usuário."""
         return self.radiografias.count()
+    
+    def get_total_deteccoes(self):
+        """Retorna o total de radiografias realizadas pelo usuário."""
+        return self.deteccoes.count()
+    

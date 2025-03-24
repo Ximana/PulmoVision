@@ -37,12 +37,52 @@ class UsuarioListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def test_func(self):
         return self.request.user.funcao == 'admin'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = UsuarioRegistroForm()  # Adiciona um formulário vazio ao contexto
+        
+        # Contagens por função
+        context['medicos_count'] = Usuario.objects.filter(funcao='medico').count()
+        context['tecnicos_count'] = Usuario.objects.filter(funcao='tecnico').count()
+        context['admins_count'] = Usuario.objects.filter(funcao='admin').count()
+        context['pesquisadores_count'] = Usuario.objects.filter(funcao='pesquisador').count()
+        
+        return context
+    
+    
+    def post(self, request, *args, **kwargs):
+        form = UsuarioRegistroForm(request.POST, request.FILES)
+        try:
+            if form.is_valid():
+                usuario = form.save()
+                messages.success(request, 'Usuário cadastrado com sucesso!')
+                return redirect(usuario.get_absolute_url())
+            else:
+                # Se o formulário tiver erros de validação
+                messages.error(request, 'Verifique os erros no formulário.')
+       
+        except ValueError as e:
+            # Captura especificamente o erro do registro profissional
+            messages.error(request, str(e))
+            form.add_error('registro_profissional', str(e))
+        
+        except Exception as e:
+            # Captura outros erros inesperados
+            messages.error(request, f'Erro ao cadastrar usuário: {str(e)}')
+        
+        # Se o formulário não for válido, retorna à lista com os erros
+        self.object_list = self.get_queryset()
+        context = self.get_context_data(form=form)
+        return self.render_to_response(context)
+    
+    
 
 class UsuarioCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Usuario
     form_class = UsuarioRegistroForm
     template_name = 'usuarios/usuario_form.html'
-    success_url = reverse_lazy('usuario_lista')
+    success_url = reverse_lazy('usuarios:lista')
 
     def test_func(self):
         return self.request.user.funcao == 'admin'
@@ -51,11 +91,25 @@ class UsuarioCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         messages.success(self.request, 'Usuário criado com sucesso!')
         return super().form_valid(form)
 
+class UsuarioDetailView(LoginRequiredMixin, DetailView):
+    model = Usuario
+    template_name = 'usuarios/detalhe.html'
+    context_object_name = 'usuario'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Adiciona o formulário no contexto
+        context['form'] = UsuarioRegistroForm(instance=self.object)
+        
+        return context
+    
+        
+    
 class UsuarioUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Usuario
     form_class = UsuarioEdicaoForm
     template_name = 'usuarios/usuario_form.html'
-    success_url = reverse_lazy('usuario_lista')
+    success_url = reverse_lazy('usuarios:lista')
 
     def test_func(self):
         return self.request.user.funcao == 'admin'
@@ -66,28 +120,16 @@ class UsuarioUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class UsuarioDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Usuario
-    template_name = 'usuarios/usuario_confirmar_delete.html'
-    success_url = reverse_lazy('usuario_lista')
-
+    success_url = reverse_lazy('usuarios:lista')
+    success_message = "Usuario removido com sucesso!"
+    
     def test_func(self):
         return self.request.user.funcao == 'admin'
-
+    
     def delete(self, request, *args, **kwargs):
-        messages.success(request, 'Usuário removido com sucesso!')
+        messages.success(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
     
-
-class UsuarioPerfilView(LoginRequiredMixin, DetailView):
-    model = Usuario
-    template_name = 'usuaios/perfil.html'
-    context_object_name = 'usuario'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Adiciona o formulário no contexto
-        context['form'] = UsuarioEdicaoForm(instance=self.object)
-        
-        return context
     
 class PerfilView(LoginRequiredMixin, TemplateView):
     template_name = 'usuarios/perfil.html'

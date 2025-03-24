@@ -126,7 +126,7 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                   <li><a class="dropdown-item" href="{% url 'home' %}">
                     <i class="fas fa-cog me-2"></i>Configurações</a></li>
-                  <li><a class="dropdown-item" href="{% url 'usuarios:perfil' %}">
+                  <li><a class="dropdown-item" href="{% url 'usuarios:detalhe' pk=user.pk %}">
                     <i class="fas fa-user me-2"></i>Perfil</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item text-danger" href="{% url 'usuarios:logout' %}">

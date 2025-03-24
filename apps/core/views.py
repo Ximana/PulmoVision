@@ -16,7 +16,7 @@ class HomeView(LoginRequiredMixin, ListView):
     context_object_name = 'deteccoes_recentes'
 
     def get_queryset(self):
-        # Retorna as últimas 5 detecções
+        # Retorna as últimas 10 detecções
         return Deteccao.objects.select_related('radiografia__paciente').order_by('-criado_em')[:10]
 
     def get_context_data(self, **kwargs):
