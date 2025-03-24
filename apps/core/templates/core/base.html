@@ -137,19 +137,60 @@
         </nav>
 
         <!-- Mobile Menu -->
-        <div class="offcanvas offcanvas-start bg-dark" tabindex="-1" id="offcanvasMenu">
-          <div class="offcanvas-header border-bottom border-secondary">
-            <h5 class="offcanvas-title text-white">PulmoVision</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-          </div>
-          <div class="offcanvas-body">
-            <ul class="nav flex-column">
-              {% if user.is_authenticated %}
-              <!-- Mesmo conteúdo do sidebar principal -->
-              {% endif %}
-            </ul>
-          </div>
-        </div>
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu">
+  <div class="offcanvas-header border-bottom border-secondary">
+    <a href="{% url 'home' %}">
+      <img src="{% static 'core/img/logo.png'%}" alt="Logo" height="40">
+    </a>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="nav flex-column mt-3">
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'pacientes:lista' %}">
+          <i class="fas fa-user-injured me-2"></i>Pacientes
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'deteccoes:lista' %}">
+          <i class="fas fa-microscope me-2"></i>Detecções
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'radiografias:lista' %}">
+          <i class="fas fa-x-ray me-2"></i>Radiografias
+        </a>
+      </li>
+      
+      {% if user.is_admin %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'usuarios:lista' %}">
+          <i class="fas fa-users me-2"></i>Usuários
+        </a>
+      </li>
+      {% endif %}
+
+      <li class="nav-item mt-4">
+        <a class="nav-link" href="{% url 'sobre' %}">
+          <i class="fas fa-info-circle me-2"></i>Sobre
+        </a>
+      </li>
+      <li class="nav-item mt-4">
+        <a class="nav-link text-danger" href="{% url 'usuarios:logout' %}">
+          <i class="fas fa-sign-out-alt me-2"></i>Sair
+        </a>
+      </li>
+      {% else %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'usuarios:login' %}">
+          <i class="fas fa-sign-in-alt me-2"></i>Login
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
 
         <!-- Conteudo principal -->
         <main>
