@@ -85,42 +85,49 @@
         </div>
     </div>
 
-    <!-- Filtros e Busca -->
-    <div class="card shadow-sm mb-4 border-0">
-        <div class="card-body">
-            <form class="row g-3">
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text border-success bg-success text-white">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        <input type="text" name="q" class="form-control border-success" placeholder="Buscar por nome, email ou registro...">
-                    </div>
+   <!-- Filtros e Busca Atualizados Limpar-->
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-body">
+        <form class="row g-3" method="GET" action="{% url 'usuarios:lista' %}">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text border-success bg-success text-white">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" name="q" class="form-control border-success" 
+                           placeholder="Buscar por nome, email ou registro..." 
+                           value="{{ search_query }}">
                 </div>
-                <div class="col-md-3">
-                    <select name="funcao" class="form-select border-success">
-                        <option value="">Todas as funções</option>
-                        <option value="admin">Administrador</option>
-                        <option value="medico">Médico</option>
-                        <option value="tecnico">Técnico</option>
-                        <option value="pesquisador">Pesquisador</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select name="status" class="form-select border-success">
-                        <option value="">Status</option>
-                        <option value="1">Ativo</option>
-                        <option value="0">Inativo</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-success w-100">
-                        <i class="fas fa-filter me-2"></i>Filtrar
-                    </button>
-                </div>
-            </form>
-        </div>
+            </div>
+            <div class="col-md-3">
+                <select name="funcao" class="form-select border-success">
+                    <option value="">Todas as funções</option>
+                    <option value="admin" {% if funcao_filter == 'admin' %}selected{% endif %}>Administrador</option>
+                    <option value="medico" {% if funcao_filter == 'medico' %}selected{% endif %}>Médico</option>
+                    <option value="tecnico" {% if funcao_filter == 'tecnico' %}selected{% endif %}>Técnico</option>
+                    <option value="pesquisador" {% if funcao_filter == 'pesquisador' %}selected{% endif %}>Pesquisador</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select border-success">
+                    <option value="">Todos os status</option>
+                    <option value="1" {% if status_filter == '1' %}selected{% endif %}>Ativo</option>
+                    <option value="0" {% if status_filter == '0' %}selected{% endif %}>Inativo</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-filter me-2"></i>Filtrar
+                </button>
+                {% comment "" %}
+                <a href="{% url 'usuarios:lista' %}" class="btn btn-outline-secondary ms-2">
+                    <i class="fas fa-times me-1"></i>Limpar
+                </a>
+                {% endcomment %}
+            </div>
+        </form>
     </div>
+</div>
 
     <!-- Lista de Usuários -->
     <div class="card shadow-sm border-0">
@@ -219,41 +226,40 @@
         </div>
     </div>
 
-    <!-- Paginação -->
-    {% if is_paginated %}
-    <nav class="mt-4" aria-label="Navegação de páginas">
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link text-success border-success" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.funcao %}&funcao={{ request.GET.funcao }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
-                    <i class="fas fa-chevron-left"></i>
-                </a>
-            </li>
-            {% endif %}
+   <!-- Paginação atualizada para preservar os parâmetros de busca e filtros -->
+{% if is_paginated %}
+<nav class="mt-4" aria-label="Navegação de páginas">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link text-success border-success" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if funcao_filter %}&funcao={{ funcao_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </li>
+        {% endif %}
 
-            {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-            <li class="page-item active">
-                <span class="page-link bg-success border-success">{{ num }}</span>
-            </li>
-            {% else %}
-            <li class="page-item">
-                <a class="page-link text-success border-success" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.funcao %}&funcao={{ request.GET.funcao }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{{ num }}</a>
-            </li>
-            {% endif %}
-            {% endfor %}
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active">
+            <span class="page-link bg-success border-success">{{ num }}</span>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link text-success border-success" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if funcao_filter %}&funcao={{ funcao_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
 
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link text-success border-success" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.funcao %}&funcao={{ request.GET.funcao }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
-</div>
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link text-success border-success" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if funcao_filter %}&funcao={{ funcao_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
 
 <!-- Modal Adicionar Paciente -->
 {% include 'usuarios/adicionarModal.html' %}
@@ -266,6 +272,87 @@
 
 {% block scriptJS %}
 <script>
+
+    // Scripts para busca e filtragem
+document.addEventListener('DOMContentLoaded', function() {
+    // Referência ao formulário de busca
+    const searchForm = document.querySelector('form[method="GET"]');
+    
+    // Função para limpar todos os filtros
+    function clearFilters() {
+        window.location.href = window.location.pathname;
+    }
+    
+    // Botão para limpar filtros (pode ser adicionado ao template)
+    const clearButton = document.createElement('button');
+    clearButton.type = 'button';
+    clearButton.className = 'btn btn-outline-secondary ms-2';
+    clearButton.innerHTML = '<i class="fas fa-times me-2"></i>Limpar';
+    clearButton.addEventListener('click', clearFilters);
+    
+    // Adicionar o botão ao lado do botão filtrar
+    const filterButton = searchForm.querySelector('button[type="submit"]');
+    if (filterButton && filterButton.parentNode) {
+        filterButton.parentNode.appendChild(clearButton);
+    }
+    
+    // Submeter o formulário automaticamente ao mudar selects
+    const selects = searchForm.querySelectorAll('select');
+    selects.forEach(select => {
+        select.addEventListener('change', function() {
+            searchForm.submit();
+        });
+    });
+    
+    // Input de busca com delay para não submeter imediatamente a cada digitação
+    const searchInput = searchForm.querySelector('input[name="q"]');
+    if (searchInput) {
+        let debounceTimer;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            
+            // Se o campo estiver vazio e houver uma busca ativa
+            if (this.value.trim() === '' && window.location.search.includes('q=')) {
+                debounceTimer = setTimeout(() => {
+                    searchForm.submit();
+                }, 500);
+            }
+        });
+        
+        // Enter para submeter
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchForm.submit();
+            }
+        });
+    }
+    
+    // Manter os filtros na paginação
+    document.querySelectorAll('.pagination a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const url = new URL(this.href);
+            const searchParams = new URLSearchParams(window.location.search);
+            
+            // Manter apenas o parâmetro de página do link
+            const page = url.searchParams.get('page');
+            
+            // Remover parâmetro de página existente (se houver)
+            searchParams.delete('page');
+            
+            // Adicionar o novo parâmetro de página
+            if (page) {
+                searchParams.set('page', page);
+            }
+            
+            // Redirecionar para a nova URL com os parâmetros combinados
+            window.location.href = `${window.location.pathname}?${searchParams.toString()}`;
+        });
+    });
+});
+//___________________________________________
     // Inicializa todos os tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -294,5 +381,81 @@ function confirmarRemocao(nome, url) {
     // Abre o modal
     new bootstrap.Modal(document.getElementById('modalRemover')).show();
 }
+
+
+// Código Para mostrar os erros do modal sem fchar o modal
+document.addEventListener('DOMContentLoaded', function() {
+    const formUsuario = document.getElementById('formAdicionarUsuario');
+    
+    if (formUsuario) {
+      formUsuario.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Limpar mensagens de erro anteriores
+        document.querySelectorAll('.is-invalid').forEach(el => {
+          el.classList.remove('is-invalid');
+        });
+        document.querySelectorAll('.invalid-feedback').forEach(el => {
+          el.remove();
+        });
+        
+        // Criar FormData com os dados do formulário
+        const formData = new FormData(formUsuario);
+        
+        // Enviar requisição AJAX
+        fetch(window.location.href, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Se sucesso, redirecionar ou recarregar a página
+            window.location.href = data.redirect_url;
+          } else {
+            // Se houver erros, exibir no formulário
+            if (data.errors) {
+              // Erros específicos de campo
+              for (const [field, errors] of Object.entries(data.errors)) {
+                const inputElement = document.getElementById(field);
+                if (inputElement) {
+                  inputElement.classList.add('is-invalid');
+                  
+                  // Adicionar feedback de erro
+                  const feedbackDiv = document.createElement('div');
+                  feedbackDiv.className = 'invalid-feedback';
+                  feedbackDiv.textContent = errors[0]; // Primeiro erro
+                  inputElement.parentNode.appendChild(feedbackDiv);
+                }
+              }
+            }
+            
+            // Mensagens gerais
+            if (data.message) {
+              const alertDiv = document.createElement('div');
+              alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+              alertDiv.innerHTML = `
+                ${data.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              `;
+              formUsuario.prepend(alertDiv);
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Erro:', error);
+          
+          // Mostrar mensagem de erro genérica
+          const alertDiv = document.createElement('div');
+          alertDiv.className = 'alert alert-danger';
+          alertDiv.textContent = 'Ocorreu um erro ao processar a solicitação.';
+          formUsuario.prepend(alertDiv);
+        });
+      });
+    }
+  });
 </script>
 {% endblock %}

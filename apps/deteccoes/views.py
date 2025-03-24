@@ -34,7 +34,13 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         queryset = super().get_queryset()
+        
+        # Busca por texto
         search_query = self.request.GET.get('search', '')
+        
+        # Filtros específicos
+        diagnostico_filter = self.request.GET.get('diagnostico', '')
+        estado_filter = self.request.GET.get('estado', '')
         
         if search_query:
             queryset = queryset.filter(
@@ -44,13 +50,28 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
                 Q(diagnostico__icontains=search_query) |
                 Q(estado__icontains=search_query)
             )
+        
+        # Aplicar filtro por diagnostico
+        if diagnostico_filter:
+            queryset = queryset.filter(diagnostico=diagnostico_filter)
+        
+        # Aplicar filtro por estado
+        if estado_filter:
+            queryset = queryset.filter(estado=estado_filter)
+        
         return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['radiografias'] = Radiografia.objects.all()
+        
+        # Parâmetros de busca e filtros
         context['search_query'] = self.request.GET.get('search', '')
-        context['form'] = DeteccaoCadastroForm() 
+        context['diagnostico_filter'] = self.request.GET.get('diagnostico', '')
+        context['estado_filter'] = self.request.GET.get('estado', '')
+        
+        # Formulário para adicionar nova detecção
+        context['form'] = DeteccaoCadastroForm()
+        
         return context
 
     def post(self, request, *args, **kwargs):

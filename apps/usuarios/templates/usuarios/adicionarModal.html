@@ -20,7 +20,10 @@
         ></button>
       </div>
       <div class="modal-body">
-        <form class="row" method="POST" enctype="multipart/form-data">
+        <!-- Espaço para mensagens de alerta -->
+        <div id="alertMessages"></div>
+        
+        <form id="formAdicionarUsuario" class="row" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
           {{ form.non_field_errors }}
           

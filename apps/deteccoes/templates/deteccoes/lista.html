@@ -36,38 +36,48 @@
     <!-- Filtros e Busca -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <form class="row g-3" action="{% url 'deteccoes:lista' %}" method="GET">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text bg-success text-white">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            name="search"
-                            placeholder="Pesquisar por paciente, diagnóstico ou estado"
-                            value="{{ search_query }}"
-                        >
+            <form class="card shadow-sm mb-4" action="{% url 'deteccoes:lista' %}" method="GET" id="filtroForm">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-success text-white">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    name="search"
+                                    placeholder="Pesquisar por paciente, diagnóstico ou estado"
+                                    value="{{ search_query }}"
+                                    id="searchInput"
+                                >
+                                {% if search_query %}
+                                <button type="button" class="btn btn-outline-secondary" id="clearSearchBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" name="diagnostico" id="diagnosticoSelect">
+                                <option value="">Todos os diagnósticos</option>
+                                <option value="Normal" {% if diagnostico_filter == 'Normal' %}selected{% endif %}>Normal</option>
+                                <option value="Tuberculose" {% if diagnostico_filter == 'Tuberculose' %}selected{% endif %}>Tuberculose</option>
+                                <option value="Pneumonia" {% if diagnostico_filter == 'Pneumonia' %}selected{% endif %}>Pneumonia</option>
+                                <option value="Covid-19" {% if diagnostico_filter == 'Covid-19' %}selected{% endif %}>Covid-19</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" name="estado" id="estadoSelect">
+                                <option value="">Todos os estados</option>
+                                <option value="Pendente" {% if estado_filter == 'Pendente' %}selected{% endif %}>Pendente</option>
+                                <option value="Em Análise" {% if estado_filter == 'Em Análise' %}selected{% endif %}>Em Análise</option>
+                                <option value="Concluído" {% if estado_filter == 'Concluído' %}selected{% endif %}>Concluído</option>
+                                <option value="Revisão Necessária" {% if estado_filter == 'Revisão Necessária' %}selected{% endif %}>Revisão Necessária</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" name="diagnostico">
-                        <option value="">Todos os diagnósticos</option>
-                        <option value="Normal">Normal</option>
-                        <option value="Tuberculose">Tuberculose</option>
-                        <option value="Pneumonia">Pneumonia</option>
-                        <option value="Covid-19">Covid-19</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" name="estado">
-                        <option value="">Todos os estados</option>
-                        <option value="Pendente">Pendente</option>
-                        <option value="Em Análise">Em Análise</option>
-                        <option value="Concluído">Concluído</option>
-                        <option value="Revisão Necessária">Revisão Necessária</option>
-                    </select>
                 </div>
             </form>
         </div>
@@ -82,7 +92,6 @@
                         <tr>
                             <th scope="col" class="ps-3">Paciente</th>
                             <th scope="col">Diagnóstico</th>
-                            <th scope="col">Descobertas</th>
                             <th scope="col">Probabilidade</th>
                             <th scope="col">Estado</th>
                             <th scope="col">Data</th>
@@ -107,7 +116,7 @@
                             <td>
                                 <span class="badge bg-success">{{ deteccao.diagnostico }}</span>
                             </td>
-                            <td>{{ deteccao.descobertas|truncatechars:30 }}</td>
+                            
                             <td>{{ deteccao.probabilidade }}%</td>
                             <td>
                                 <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
@@ -158,40 +167,39 @@
     </div>
 
     <!-- Paginação -->
-    {% if is_paginated %}
-    <nav class="mt-4">
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link text-success" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
-                    <i class="fas fa-chevron-left"></i>
-                </a>
-            </li>
-            {% endif %}
+{% if is_paginated %}
+<nav class="mt-4" aria-label="Navegação de páginas">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link text-success border-success" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if funcao_filter %}&funcao={{ funcao_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </li>
+        {% endif %}
 
-            {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-            <li class="page-item active">
-                <span class="page-link bg-success border-success">{{ num }}</span>
-            </li>
-            {% else %}
-            <li class="page-item">
-                <a class="page-link text-success" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
-            </li>
-            {% endif %}
-            {% endfor %}
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active">
+            <span class="page-link bg-success border-success">{{ num }}</span>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link text-success border-success" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if funcao_filter %}&funcao={{ funcao_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
 
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link text-success" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
-</div>
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link text-success border-success" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if funcao_filter %}&funcao={{ funcao_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
 
 <!-- Modal Adicionar Detecção -->
 {% include 'deteccoes/adicionarModal.html' %}
@@ -203,6 +211,58 @@
 
 {% block scriptJS %}
 <script>
+
+
+    // Scripts para busca e filtragem
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('filtroForm');
+        const searchInput = document.getElementById('searchInput');
+        const diagnosticoSelect = document.getElementById('diagnosticoSelect');
+        const estadoSelect = document.getElementById('estadoSelect');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+    
+        // Função para submeter o formulário
+        function submitForm() {
+            form.submit();
+        }
+    
+        // Adicionar event listeners para mudanças nos filtros
+        diagnosticoSelect.addEventListener('change', submitForm);
+        estadoSelect.addEventListener('change', submitForm);
+    
+        // Limpar busca
+        if (clearSearchBtn) {
+            clearSearchBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                submitForm();
+            });
+        }
+    
+        // Adicionar debounce para busca
+        let debounceTimer;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(submitForm, 500);
+        });
+    
+        // Manter parâmetros na paginação
+        document.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = new URL(this.href);
+                const currentParams = new URLSearchParams(window.location.search);
+                
+                // Manter parâmetros de filtro
+                url.searchParams.set('search', currentParams.get('search') || '');
+                url.searchParams.set('diagnostico', currentParams.get('diagnostico') || '');
+                url.searchParams.set('estado', currentParams.get('estado') || '');
+                
+                window.location.href = url.toString();
+            });
+        });
+    });
+//___________________________________________
+
     document.addEventListener('DOMContentLoaded', function() {
         // Inicializar tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
