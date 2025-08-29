@@ -248,100 +248,143 @@
             </div>
         </div>
         
-        <!-- Interpretação Clínica -->
-<div class="col-12">
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-success bg-gradient text-white py-3">
-            <h5 class="card-title mb-0">
-                <i class="fas fa-stethoscope me-2"></i>Interpretação Clínica
-            </h5>
-        </div>
-        <div class="card-body p-4">
-            {% if deteccao.interpretacao %}
-                <div class="interpretation-content">
-                    <!-- Título da análise -->
-                    <div class="mb-4">
-                        <h5 class="text-success">Análise baseada em radiografia de tórax - {{ deteccao.diagnostico }} ({{ deteccao.probabilidade|floatformat:2 }}%)</h5>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <!-- Características radiológicas -->
-                            {% if interpretacao_formatada.caracteristicas %}
-                            <div class="mb-4">
-                                <h5 class="text-success mb-3"><i class="fas fa-lungs me-2"></i>Características Radiológicas</h5>
-                                <div class="p-3 bg-light rounded-3">
-                                    {{ interpretacao_formatada.caracteristicas|linebreaksbr }}
-                                </div>
-                            </div>
-                            {% endif %}
-                            
-                            <!-- Áreas afetadas -->
-                            {% if interpretacao_formatada.areas_afetadas %}
-                            <div class="mb-4">
-                                <h5 class="text-success mb-3"><i class="fas fa-map-marker-alt me-2"></i>Áreas Potencialmente Afetadas</h5>
-                                <div class="p-3 bg-light rounded-3">
-                                    {{ interpretacao_formatada.areas_afetadas|linebreaksbr }}
-                                </div>
-                            </div>
-                            {% endif %}
-                            
-                            <!-- Recomendações -->
-                            {% if interpretacao_formatada.recomendacoes %}
-                            <div class="mb-4">
-                                <h5 class="text-success mb-3"><i class="fas fa-clipboard-list me-2"></i>Recomendações</h5>
-                                <div class="p-3 bg-light rounded-3">
-                                    {{ interpretacao_formatada.recomendacoes|linebreaksbr }}
-                                </div>
-                            </div>
-                            {% endif %}
+        <!-- Descobertas -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-search me-2"></i>Descobertas da Análise
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    {% if deteccao.descobertas %}
+                        <div class="p-3 bg-light rounded-3">
+                            {{ deteccao.descobertas|linebreaksbr }}
                         </div>
-                        
-                        <div class="col-md-6">
-                            <!-- Confiabilidade -->
-                            {% if interpretacao_formatada.confiabilidade %}
-                            <div class="mb-4">
-                                <h5 class="text-success mb-3"><i class="fas fa-shield-alt me-2"></i>Nível de Confiabilidade</h5>
-                                <div class="p-3 {% if deteccao.probabilidade >= 90 %}bg-success{% elif deteccao.probabilidade >= 75 %}bg-warning{% else %}bg-danger{% endif %} bg-opacity-10 rounded-3">
-                                    {{ interpretacao_formatada.confiabilidade|linebreaksbr }}
-                                </div>
-                            </div>
-                            {% endif %}
-                            
-                            <!-- Diagnósticos diferenciais -->
-                            {% if interpretacao_formatada.diferenciais %}
-                            <div class="mb-4">
-                                <h5 class="text-success mb-3"><i class="fas fa-exchange-alt me-2"></i>Diagnósticos Diferenciais</h5>
-                                <div class="p-3 bg-light rounded-3">
-                                    {{ interpretacao_formatada.diferenciais|linebreaksbr }}
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <!-- Observação final - mantida em largura total -->
-                    {% if interpretacao_formatada.observacao %}
-                    <div class="mt-4 p-3 bg-warning bg-opacity-10 rounded-3 border-start border-warning border-4">
-                        {{ interpretacao_formatada.observacao|linebreaksbr }}
-                    </div>
                     {% else %}
-                    <div class="mt-4 p-3 bg-warning bg-opacity-10 rounded-3 border-start border-warning border-4">
-                        <p class="mb-0"><i class="fas fa-exclamation-triangle text-warning me-2"></i><strong>OBSERVAÇÃO:</strong> Esta interpretação é gerada automaticamente e deve ser validada por um radiologista ou médico especialista. Correlação com dados clínicos e laboratoriais é imprescindível para o diagnóstico definitivo.</p>
-                    </div>
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Descobertas não disponíveis para esta detecção.
+                        </div>
                     {% endif %}
                 </div>
-            {% else %}
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle me-2"></i>Interpretação não disponível para esta detecção.
-                </div>
-            {% endif %}
+            </div>
         </div>
-    </div>
-</div>
+
+        <!-- Pontuação de Confiança -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-shield-alt me-2"></i>Pontuação de Confiança
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    {% if deteccao.pontuacao_de_confianca %}
+                        <div class="p-3 {% if deteccao.probabilidade >= 90 %}bg-success{% elif deteccao.probabilidade >= 75 %}bg-warning{% else %}bg-danger{% endif %} bg-opacity-10 rounded-3">
+                            {{ deteccao.pontuacao_de_confianca|linebreaksbr }}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Pontuação de confiança não disponível para esta detecção.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Interpretação Clínica -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-stethoscope me-2"></i>Interpretação Clínica
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    {% if deteccao.interpretacao %}
+                        <div class="interpretation-content">
+                            <!-- Título da análise -->
+                            <div class="mb-4">
+                                <h5 class="text-success">Análise baseada em radiografia de tórax - {{ deteccao.diagnostico }} ({{ deteccao.probabilidade|floatformat:2 }}%)</h5>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <!-- Características radiológicas -->
+                                    {% if interpretacao_formatada.caracteristicas %}
+                                    <div class="mb-4">
+                                        <h5 class="text-success mb-3"><i class="fas fa-lungs me-2"></i>Características Radiológicas</h5>
+                                        <div class="p-3 bg-light rounded-3">
+                                            {{ interpretacao_formatada.caracteristicas|linebreaksbr }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <!-- Áreas afetadas -->
+                                    {% if interpretacao_formatada.areas_afetadas %}
+                                    <div class="mb-4">
+                                        <h5 class="text-success mb-3"><i class="fas fa-map-marker-alt me-2"></i>Áreas Potencialmente Afetadas</h5>
+                                        <div class="p-3 bg-light rounded-3">
+                                            {{ interpretacao_formatada.areas_afetadas|linebreaksbr }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <!-- Recomendações -->
+                                    {% if interpretacao_formatada.recomendacoes %}
+                                    <div class="mb-4">
+                                        <h5 class="text-success mb-3"><i class="fas fa-clipboard-list me-2"></i>Recomendações</h5>
+                                        <div class="p-3 bg-light rounded-3">
+                                            {{ interpretacao_formatada.recomendacoes|linebreaksbr }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <!-- Confiabilidade -->
+                                    {% if interpretacao_formatada.confiabilidade %}
+                                    <div class="mb-4">
+                                        <h5 class="text-success mb-3"><i class="fas fa-shield-alt me-2"></i>Nível de Confiabilidade</h5>
+                                        <div class="p-3 {% if deteccao.probabilidade >= 90 %}bg-success{% elif deteccao.probabilidade >= 75 %}bg-warning{% else %}bg-danger{% endif %} bg-opacity-10 rounded-3">
+                                            {{ interpretacao_formatada.confiabilidade|linebreaksbr }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <!-- Diagnósticos diferenciais -->
+                                    {% if interpretacao_formatada.diferenciais %}
+                                    <div class="mb-4">
+                                        <h5 class="text-success mb-3"><i class="fas fa-exchange-alt me-2"></i>Diagnósticos Diferenciais</h5>
+                                        <div class="p-3 bg-light rounded-3">
+                                            {{ interpretacao_formatada.diferenciais|linebreaksbr }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Observação final - mantida em largura total -->
+                            {% if interpretacao_formatada.observacao %}
+                            <div class="mt-4 p-3 bg-warning bg-opacity-10 rounded-3 border-start border-warning border-4">
+                                {{ interpretacao_formatada.observacao|linebreaksbr }}
+                            </div>
+                            {% else %}
+                            <div class="mt-4 p-3 bg-warning bg-opacity-10 rounded-3 border-start border-warning border-4">
+                                <p class="mb-0"><i class="fas fa-exclamation-triangle text-warning me-2"></i><strong>OBSERVAÇÃO:</strong> Esta interpretação é gerada automaticamente e deve ser validada por um radiologista ou médico especialista. Correlação com dados clínicos e laboratoriais é imprescindível para o diagnóstico definitivo.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Interpretação não disponível para esta detecção.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         
         <!-- Descobertas para Pacientes -->
-        {% comment "Descobertas para Pacientes" %}
         <div class="col-12 mt-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-info bg-gradient text-white py-3">
@@ -376,13 +419,6 @@
                                             <li class="mb-2"><i class="fas fa-circle text-info me-2" style="font-size: 0.5rem; vertical-align: middle;"></i> A pneumonia é uma inflamação dos pulmões geralmente causada por infecção.</li>
                                             <li class="mb-2"><i class="fas fa-circle text-info me-2" style="font-size: 0.5rem; vertical-align: middle;"></i> Sintomas típicos incluem tosse com catarro, febre, falta de ar e dor torácica.</li>
                                             <li class="mb-0"><i class="fas fa-circle text-info me-2" style="font-size: 0.5rem; vertical-align: middle;"></i> O tratamento geralmente envolve antibióticos, especialmente se for de origem bacteriana.</li>
-                                        </ul>
-                                    {% elif deteccao.diagnostico == "Covid-19" %}
-                                        <ul class="list-unstyled mb-0">
-                                            <li class="mb-2"><i class="fas fa-circle text-info me-2" style="font-size: 0.5rem; vertical-align: middle;"></i> A imagem apresenta padrões que podem ser compatíveis com pneumonia por COVID-19.</li>
-                                            <li class="mb-2"><i class="fas fa-circle text-info me-2" style="font-size: 0.5rem; vertical-align: middle;"></i> A COVID-19 é causada pelo vírus SARS-CoV-2 e pode afetar os pulmões de maneira característica.</li>
-                                            <li class="mb-2"><i class="fas fa-circle text-info me-2" style="font-size: 0.5rem; vertical-align: middle;"></i> Sintomas comuns incluem febre, tosse seca, fadiga e perda de olfato ou paladar.</li>
-                                            <li class="mb-0"><i class="fas fa-circle text-info me-2" style="font-size: 0.5rem; vertical-align: middle;"></i> Um teste específico para COVID-19 é recomendado para confirmar este diagnóstico.</li>
                                         </ul>
                                     {% elif deteccao.diagnostico == "Normal" %}
                                         <ul class="list-unstyled mb-0">
@@ -428,12 +464,9 @@
                                     </ul>
                                 </div>
                             </div>
-                            
-                            
                         </div>
 
                         <div class="col-md-12">
-
                             <div class="alert alert-warning border-0">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0 me-3">
@@ -445,16 +478,62 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        {% endcomment %}
+
+        <!-- Informações do Modelo Utilizado -->
+        <div class="col-12 mt-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success bg-gradient text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cogs me-2"></i>Informações do Modelo de IA
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="text-center p-4 rounded-3" style="background-color: #f8f9fa;">
+                                <div class="mb-2">
+                                    <i class="fas fa-robot fa-2x text-success"></i>
+                                </div>
+                                <h6 class="text-muted mb-1">Modelo Utilizado</h6>
+                                <h5 class="mb-0">{{ deteccao.modelo.nome }}</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-4 rounded-3" style="background-color: #f8f9fa;">
+                                <div class="mb-2">
+                                    <i class="fas fa-chart-line fa-2x text-success"></i>
+                                </div>
+                                <h6 class="text-muted mb-1">Acurácia</h6>
+                                <h5 class="mb-0">{{ deteccao.modelo.acuracia|floatformat:1 }}%</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-4 rounded-3" style="background-color: #f8f9fa;">
+                                <div class="mb-2">
+                                    <i class="fas fa-calendar-alt fa-2x text-success"></i>
+                                </div>
+                                <h6 class="text-muted mb-1">Versão</h6>
+                                <h5 class="mb-0">{{ deteccao.modelo.versao }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if deteccao.modelo.descricao %}
+                    <div class="mt-4 p-3 bg-light rounded-3">
+                        <h6 class="text-success mb-2"><i class="fas fa-info-circle me-2"></i>Descrição do Modelo</h6>
+                        <p class="mb-0">{{ deteccao.modelo.descricao }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
 
 <!-- Evaluation Modal -->
 {% include 'deteccoes/avaliarDeteccaoModal.html' %}

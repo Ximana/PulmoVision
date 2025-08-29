@@ -21,7 +21,7 @@ class DetectorDoencasPulmonares:
         self.img_height = 224
         self.img_width = 224
         self.model = None
-        self.classes = ['normal', 'tuberculose', 'pneumonia', 'covid']
+        self.classes = ['normal', 'pneumonia', 'tuberculose']  # Removido covid-19
         self.loaded = False
         
     def carregar_modelo(self, diretorio_modelo=None):
@@ -66,7 +66,7 @@ class DetectorDoencasPulmonares:
             
         self.img_height = config.get('img_height', 224)
         self.img_width = config.get('img_width', 224)
-        self.classes = config.get('classes', ['normal', 'tuberculose', 'pneumonia', 'covid'])
+        self.classes = config.get('classes', ['normal', 'pneumonia', 'tuberculose'])
         
         # Carregar modelo
         caminho_modelo = os.path.join(diretorio_modelo, 'modelo.keras')
@@ -95,7 +95,10 @@ class DetectorDoencasPulmonares:
                 
             img = img.resize((self.img_width, self.img_height))
             img_array = tf.keras.preprocessing.image.img_to_array(img)
-            img_array = img_array / 255.0  # Normalização
+            
+            # Aplicar preprocess_input do EfficientNet (compatível com o pipeline de treinamento)
+            from tensorflow.keras.applications.efficientnet import preprocess_input
+            img_array = preprocess_input(img_array)
             
             # Adicionar a dimensão de batch
             img_array = np.expand_dims(img_array, axis=0)
@@ -129,8 +132,7 @@ class DetectorDoencasPulmonares:
         mapeamento_doencas = {
             'normal': 'Normal',
             'tuberculose': 'Tuberculose',
-            'pneumonia': 'Pneumonia',
-            'covid': 'Covid-19'
+            'pneumonia': 'Pneumonia'
         }
         
         diagnostico = mapeamento_doencas.get(self.classes[class_idx], 'Desconhecido')
@@ -214,27 +216,6 @@ class DetectorDoencasPulmonares:
             interpretacao += "  - Estratificação de risco (scores CURB-65 ou PSI/PORT)\n"
             interpretacao += "  - Considerar tomografia em casos de evolução desfavorável\n\n"
             
-        elif diagnostico == "Covid-19":
-            interpretacao += "• Características radiológicas:\n"
-            interpretacao += "  - Opacidades em vidro fosco (padrão mais comum)\n"
-            interpretacao += "  - Distribuição bilateral, periférica e basal predominante\n"
-            interpretacao += "  - Padrão reticular sobreposto a vidro fosco (pavimentação em mosaico)\n"
-            interpretacao += "  - Consolidações nas fases mais avançadas\n"
-            interpretacao += "  - Ausência habitual de derrame pleural e adenomegalias\n\n"
-            
-            interpretacao += "• Áreas potencialmente afetadas:\n"
-            interpretacao += "  - Distribuição bilateral e assimétrica\n"
-            interpretacao += "  - Predomínio em regiões periféricas e posteriores\n"
-            interpretacao += "  - Maior acometimento de lobos inferiores\n"
-            interpretacao += "  - Progressão centro-lobular em casos avançados\n\n"
-            
-            interpretacao += "• Recomendações:\n"
-            interpretacao += "  - Confirmação por teste RT-PCR para SARS-CoV-2\n"
-            interpretacao += "  - Monitoramento contínuo de saturação de oxigênio e sinais vitais\n"
-            interpretacao += "  - Avaliação laboratorial: hemograma, dímero-D, ferritina, PCR\n"
-            interpretacao += "  - Considerar tomografia computadorizada para avaliação da extensão\n"
-            interpretacao += "  - Vigilância para progressão rápida ou complicações (TEP, sobreinfecção)\n\n"
-            
         elif diagnostico == "Normal":
             interpretacao += "• Características radiológicas:\n"
             interpretacao += "  - Campos pulmonares bem ventilados sem opacidades focais ou difusas\n"
@@ -288,10 +269,7 @@ class DetectorDoencasPulmonares:
                 elif doenca == "Pneumonia":
                     interpretacao += "  - Considerar quando há febre, tosse produtiva e alterações auscultatórias focais\n"
                     interpretacao += "  - Avaliar resposta a antibioticoterapia e leucocitose\n"
-                elif doenca == "Covid-19":
-                    interpretacao += "  - Considerar em contexto epidemiológico e sintomas típicos (anosmia, disgeusia, fadiga)\n"
-                    interpretacao += "  - Indicado teste específico para SARS-CoV-2\n"
-                else:  # Outras condições ou Normal
+                else:  # Normal
                     interpretacao += "  - Avaliar conforme apresentação clínica\n"
         
         # Nota de observação final
@@ -301,7 +279,6 @@ class DetectorDoencasPulmonares:
         interpretacao += "O resultado não substitui a avaliação médica presencial."
         
         return interpretacao
-
 
     def _gerar_descobertas(self, diagnostico, probabilidade, resultados_completos):
         """
@@ -356,18 +333,6 @@ class DetectorDoencasPulmonares:
             descobertas += "• A maioria das pneumonias pode ser tratada com antibióticos se forem causadas por bactérias\n\n"
             descobertas += "• O tempo de recuperação varia de poucos dias a algumas semanas, dependendo da gravidade\n\n"
             
-        elif diagnostico == "Covid-19":
-            descobertas += "• A imagem do seu pulmão mostra um padrão que pode ser compatível com Covid-19\n\n"
-            descobertas += "• A Covid-19 é causada pelo vírus SARS-CoV-2 e pode afetar os pulmões de maneira característica\n\n"
-            descobertas += "• Sintomas comuns incluem:\n"
-            descobertas += "  - Febre ou sensação febril\n"
-            descobertas += "  - Tosse seca (sem catarro)\n"
-            descobertas += "  - Cansaço e dores no corpo\n"
-            descobertas += "  - Perda de olfato e/ou paladar\n"
-            descobertas += "  - Dificuldade para respirar (em casos mais graves)\n\n"
-            descobertas += "• É importante realizar um teste específico para Covid-19 para confirmar o diagnóstico\n\n"
-            descobertas += "• O tratamento depende da gravidade dos sintomas e pode incluir medicamentos para aliviar os sintomas\n\n"
-            
         elif diagnostico == "Normal":
             descobertas += "• A imagem do seu pulmão não mostra alterações significativas\n\n"
             descobertas += "• Isto significa que não foram encontradas anormalidades visíveis na radiografia\n\n"
@@ -391,8 +356,6 @@ class DetectorDoencasPulmonares:
                     descobertas += "  - Infecção que afeta principalmente os pulmões\n"
                 elif doenca == "Pneumonia":
                     descobertas += "  - Infecção que causa inflamação nos pulmões\n"
-                elif doenca == "Covid-19":
-                    descobertas += "  - Infecção viral que pode afetar os pulmões\n"
                 elif doenca == "Normal":
                     descobertas += "  - Ausência de alterações significativas\n"
             descobertas += "\n"
@@ -412,8 +375,7 @@ class DetectorDoencasPulmonares:
         return descobertas
     
     
-    
-    # Instância global para reutilização
+# Instância global para reutilização
 detector = DetectorDoencasPulmonares()
 
 def analisar_radiografia(radiografia_obj):

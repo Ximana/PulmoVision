@@ -1,16 +1,16 @@
-#apps/deteccoes/models-py
+#apps/deteccoes/models.py
 from django.db import models
 from django.urls import reverse
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from apps.radiografias.models import Radiografia
+from apps.modelos.models import Modelo
 
 class Deteccao(models.Model):
     DOENCA_CHOICES = (
         ('Normal', 'Normal'),
         ('Tuberculose', 'Tuberculose'),
         ('Pneumonia', 'Pneumonia'),
-        ('Covid-19', 'Covid-19'),
     )
     
     ESTADO_CHOICES = (
@@ -25,6 +25,13 @@ class Deteccao(models.Model):
         Radiografia,
         on_delete=models.CASCADE,
         verbose_name='Radiografia',
+        related_name='deteccoes'
+    )
+    
+    modelo = models.ForeignKey(
+        Modelo,
+        on_delete=models.CASCADE,
+        verbose_name='Modelo',
         related_name='deteccoes'
     )
     usuario = models.ForeignKey(
@@ -58,6 +65,10 @@ class Deteccao(models.Model):
         'Interpretação',
         help_text='Interpretação clínica dos resultados'
     )
+    pontuacao_de_confianca = models.TextField(
+        'Pontuação de Confiança',
+        help_text='Pontuação de Confiança'
+    )
     estado = models.CharField(
         'Estado',
         max_length=20,
@@ -79,7 +90,7 @@ class Deteccao(models.Model):
     
     def get_absolute_url(self):
         return reverse("deteccoes:detalhe", kwargs={"pk": self.pk})
-    
+
 
 class AvaliacaoDeteccao(models.Model):
     AVALIACAO_CHOICES = (
@@ -90,7 +101,7 @@ class AvaliacaoDeteccao(models.Model):
     
     # Relacionamentos
     deteccao = models.ForeignKey(
-        Deteccao,  # Agora referenciamos diretamente a classe Deteccao
+        Deteccao,
         on_delete=models.CASCADE,
         verbose_name='Detecção',
         related_name='avaliacoes'

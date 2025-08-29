@@ -42,4 +42,5 @@ Thumbs.db
 .gitignore
 
 # Arquivos do migration
-migrations/
+*/migrations/
+!*/migrations/__init__.py

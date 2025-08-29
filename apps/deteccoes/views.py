@@ -6,13 +6,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from apps.pacientes.models import Paciente
 from apps.radiografias.models import Radiografia
+from apps.modelos.models import Modelo
 from .models import Deteccao, AvaliacaoDeteccao
 from django.contrib import messages
 from django.db.models import Q
 from .forms import DeteccaoCadastroForm, AvaliacaoDeteccaoCadastroForm
 from django.http import HttpResponse
 from .utils import gerar_deteccao_pdf
-from .model_utils.detector import  DetectorDoencasPulmonares, analisar_radiografia
+from .model_utils.detector import DetectorDoencasPulmonares, analisar_radiografia
 import os
 
 
@@ -65,6 +66,7 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         
         context['radiografias'] = Radiografia.objects.all()
+        context['modelos'] = Modelo.objects.filter(ativo=True)
         
         # Parâmetros de busca e filtros
         context['search_query'] = self.request.GET.get('search', '')
@@ -82,8 +84,20 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
             deteccao = form.save(commit=False)
             deteccao.usuario = request.user
             
-            # Analisar a radiografia e obter os resultados
-            # Usar os metodos da classe do arquivo/classe detetor
+            # Se não foi selecionado um modelo, usar o modelo padrão 'pv1'
+            if not deteccao.modelo:
+                try:
+                    modelo_padrao = Modelo.objects.filter(nome='pv1', ativo=True).first()
+                    if not modelo_padrao:
+                        # Se não encontrar o modelo 'pv1', usar o primeiro modelo ativo
+                        modelo_padrao = Modelo.objects.filter(ativo=True).first()
+                    deteccao.modelo = modelo_padrao
+                except Modelo.DoesNotExist:
+                    messages.error(request, 'Nenhum modelo disponível para análise.')
+                    return redirect('deteccoes:lista')
+            
+            # Analisar a radiografia e obter os resultados usando o modelo selecionado
+            #resultado = analisar_radiografia(deteccao.radiografia, deteccao.modelo)
             resultado = analisar_radiografia(deteccao.radiografia)
             
             # Colocar o resultado na detecao
@@ -94,7 +108,7 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
             deteccao.interpretacao = resultado['interpretacao']
             
             deteccao.save()
-            #messages.success(request, 'Detecção registrada com sucesso!')
+            messages.success(request, f'Detecção registrada com sucesso usando o modelo {deteccao.modelo.nome}!')
             return redirect(deteccao.get_absolute_url())
         else:
             context = self.get_context_data()
@@ -194,7 +208,7 @@ class DeteccaoDetailView(LoginRequiredMixin, DetailView):
                     avaliacao.usuario = request.user
                     avaliacao.deteccao = self.object
                     avaliacao.save()
-                    #messages.success(request, 'Avaliação registrada com sucesso!')
+                    messages.success(request, 'Avaliação registrada com sucesso!')
                 
                 return redirect('deteccoes:detalhe', pk=self.object.pk)
             

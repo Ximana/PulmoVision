@@ -1,4 +1,4 @@
-
+<!-- apps/deteccoes/templates/deteccoes/lista.html -->
 {% extends 'core/base.html' %}
 {% load static %}
 
@@ -6,7 +6,6 @@
 
 {% block arquivos_css %}
 <style>
-
   /* Estilos para os modais */
   .modal {
     background: rgba(0, 0, 0, 0.5);
@@ -66,7 +65,6 @@
                                 <option value="Normal" {% if diagnostico_filter == 'Normal' %}selected{% endif %}>Normal</option>
                                 <option value="Tuberculose" {% if diagnostico_filter == 'Tuberculose' %}selected{% endif %}>Tuberculose</option>
                                 <option value="Pneumonia" {% if diagnostico_filter == 'Pneumonia' %}selected{% endif %}>Pneumonia</option>
-                                <option value="Covid-19" {% if diagnostico_filter == 'Covid-19' %}selected{% endif %}>Covid-19</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -93,6 +91,7 @@
                         <tr>
                             <th scope="col" class="ps-3">Paciente</th>
                             <th scope="col">Diagnóstico</th>
+                            <th scope="col">Modelo</th>
                             <th scope="col">Probabilidade</th>
                             <th scope="col">Estado</th>
                             <th scope="col">Data</th>
@@ -115,9 +114,17 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-success">{{ deteccao.diagnostico }}</span>
+                                <span class="badge {% if deteccao.diagnostico == 'Normal' %}bg-success
+                                           {% elif deteccao.diagnostico == 'Tuberculose' %}bg-danger
+                                           {% elif deteccao.diagnostico == 'Pneumonia' %}bg-warning text-dark
+                                           {% else %}bg-secondary{% endif %}">
+                                    {{ deteccao.diagnostico }}
+                                </span>
                             </td>
-                            
+                            <td>
+                                <span class="badge bg-info">{{ deteccao.modelo.nome }}</span>
+                                <br><small class="text-muted">v{{ deteccao.modelo.versao }}</small>
+                            </td>
                             <td>{{ deteccao.probabilidade }}%</td>
                             <td>
                                 <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
@@ -212,8 +219,6 @@
 
 {% block scriptJS %}
 <script>
-
-
     // Scripts para busca e filtragem
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('filtroForm');
@@ -261,18 +266,14 @@
                 window.location.href = url.toString();
             });
         });
-    });
 
-//___________________________________________
-
-    document.addEventListener('DOMContentLoaded', function() {
         // Inicializar tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         });
     
-        // Modais e demais funcionalidades mantidas do código original
+        // Modais e demais funcionalidades
         const modalAdicionar = document.getElementById('modalAdicionar');
         const modalSelecionarRadiografia = document.getElementById('modalSelecionarRadiografia');
     
@@ -332,20 +333,23 @@
         });
         
         // Funcionalidade para filtrar radiografias na tabela
-        document.getElementById('pesquisarRadiografia').addEventListener('input', function(e) {
-            const termo = e.target.value.toLowerCase();
-            const tbody = document.querySelector('#modalSelecionarRadiografia table tbody');
-            const linhas = tbody.querySelectorAll('tr');
-            
-            linhas.forEach(linha => {
-                const texto = linha.textContent.toLowerCase();
-                if(texto.includes(termo)) {
-                    linha.style.display = '';
-                } else {
-                    linha.style.display = 'none';
-                }
+        const pesquisarRadiografia = document.getElementById('pesquisarRadiografia');
+        if (pesquisarRadiografia) {
+            pesquisarRadiografia.addEventListener('input', function(e) {
+                const termo = e.target.value.toLowerCase();
+                const tbody = document.querySelector('#modalSelecionarRadiografia table tbody');
+                const linhas = tbody.querySelectorAll('tr');
+                
+                linhas.forEach(linha => {
+                    const texto = linha.textContent.toLowerCase();
+                    if(texto.includes(termo)) {
+                        linha.style.display = '';
+                    } else {
+                        linha.style.display = 'none';
+                    }
+                });
             });
-        });
+        }
     });
-    </script>
+</script>
 {% endblock %}
