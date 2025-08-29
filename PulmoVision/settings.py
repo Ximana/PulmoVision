@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     
     # Apps de terceiros
     'crispy_forms',
-    'crispy_bootstrap5',  # Corrigido aqui
+    'crispy_bootstrap5', 
     
     # Apps locais
     'apps.usuarios.apps.UsuariosConfig',
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'apps.deteccoes',
     'apps.core',
     'apps.radiografias',
+    'apps.modelos',
     
 ]
 

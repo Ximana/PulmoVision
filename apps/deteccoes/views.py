@@ -64,6 +64,8 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
+        context['radiografias'] = Radiografia.objects.all()
+        
         # Parâmetros de busca e filtros
         context['search_query'] = self.request.GET.get('search', '')
         context['diagnostico_filter'] = self.request.GET.get('diagnostico', '')
