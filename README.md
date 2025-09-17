@@ -117,7 +117,7 @@ Este projeto está licenciado sob a **MIT License**.
 
 ## 📞 Contato  
 📧 Email: **pauloximana@gmail.com**  
-🌐 GitHub: [Seu Perfil](https://github.com/Ximana)  
+🌐 GitHub: [ximana](https://github.com/Ximana)  
 
 ---
 
