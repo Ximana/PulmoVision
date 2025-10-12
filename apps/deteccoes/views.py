@@ -6,12 +6,18 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from apps.pacientes.models import Paciente
 from apps.radiografias.models import Radiografia
+from apps.modelos.models import Modelo
 from .models import Deteccao, AvaliacaoDeteccao
 from django.contrib import messages
 from django.db.models import Q
 from .forms import DeteccaoCadastroForm, AvaliacaoDeteccaoCadastroForm
 from django.http import HttpResponse
 from .utils import gerar_deteccao_pdf
+from .model_utils.detector import DetectorDoencasPulmonares, analisar_radiografia
+import os
+
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # Desativa uso de GPU
 
 def download_deteccao_pdf(request, pk):
     deteccao = get_object_or_404(Deteccao, pk=pk)
@@ -29,24 +35,47 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         queryset = super().get_queryset()
+        
+        # Busca por texto
         search_query = self.request.GET.get('search', '')
+        
+        # Filtros específicos
+        diagnostico_filter = self.request.GET.get('diagnostico', '')
+        estado_filter = self.request.GET.get('estado', '')
         
         if search_query:
             queryset = queryset.filter(
                 Q(radiografia__paciente__nome__icontains=search_query) |
                 Q(radiografia__paciente__sobrenome__icontains=search_query) |
                 Q(radiografia__paciente__numero_bi__icontains=search_query) |
-                Q(doenca__icontains=search_query) |
+                Q(diagnostico__icontains=search_query) |
                 Q(estado__icontains=search_query)
             )
+        
+        # Aplicar filtro por diagnostico
+        if diagnostico_filter:
+            queryset = queryset.filter(diagnostico=diagnostico_filter)
+        
+        # Aplicar filtro por estado
+        if estado_filter:
+            queryset = queryset.filter(estado=estado_filter)
         
         return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
         context['radiografias'] = Radiografia.objects.all()
+        context['modelos'] = Modelo.objects.filter(ativo=True)
+        
+        # Parâmetros de busca e filtros
         context['search_query'] = self.request.GET.get('search', '')
-        context['form'] = DeteccaoCadastroForm() 
+        context['diagnostico_filter'] = self.request.GET.get('diagnostico', '')
+        context['estado_filter'] = self.request.GET.get('estado', '')
+        
+        # Formulário para adicionar nova detecção
+        context['form'] = DeteccaoCadastroForm()
+        
         return context
 
     def post(self, request, *args, **kwargs):
@@ -54,8 +83,32 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
         if form.is_valid():
             deteccao = form.save(commit=False)
             deteccao.usuario = request.user
+            
+            # Se não foi selecionado um modelo, usar o modelo padrão 'pv1'
+            if not deteccao.modelo:
+                try:
+                    modelo_padrao = Modelo.objects.filter(nome='pv1', ativo=True).first()
+                    if not modelo_padrao:
+                        # Se não encontrar o modelo 'pv1', usar o primeiro modelo ativo
+                        modelo_padrao = Modelo.objects.filter(ativo=True).first()
+                    deteccao.modelo = modelo_padrao
+                except Modelo.DoesNotExist:
+                    messages.error(request, 'Nenhum modelo disponível para análise.')
+                    return redirect('deteccoes:lista')
+            
+            # Analisar a radiografia e obter os resultados usando o modelo selecionado
+            #resultado = analisar_radiografia(deteccao.radiografia, deteccao.modelo)
+            resultado = analisar_radiografia(deteccao.radiografia)
+            
+            # Colocar o resultado na detecao
+            deteccao.diagnostico = resultado['diagnostico']
+            deteccao.resultados_completos = resultado['resultados_completos']
+            deteccao.probabilidade = resultado['probabilidade']
+            deteccao.descobertas = resultado['descobertas']
+            deteccao.interpretacao = resultado['interpretacao']
+            
             deteccao.save()
-            #messages.success(request, 'Detecção registrada com sucesso!')
+            messages.success(request, f'Detecção registrada com sucesso usando o modelo {deteccao.modelo.nome}!')
             return redirect(deteccao.get_absolute_url())
         else:
             context = self.get_context_data()
@@ -75,7 +128,61 @@ class DeteccaoDetailView(LoginRequiredMixin, DetailView):
             deteccao=self.object,
             usuario=self.request.user
         ).exists()
+        
+        # Processar a interpretação para facilitar a exibição no template
+        interpretacao = self.object.interpretacao if self.object.interpretacao else ""
+        context['interpretacao_formatada'] = self._processar_interpretacao(interpretacao)
+        
         return context
+    
+    def _processar_interpretacao(self, interpretacao):
+        """
+        Processa a interpretação clínica, separando-a em seções para o template.
+
+        Args:
+            interpretacao (str): Texto completo da interpretação.
+
+        Returns:
+            dict: Dicionário com as seções separadas.
+        """
+        secoes = {
+            "titulo": None,
+            "caracteristicas": None,
+            "areas_afetadas": None,
+            "recomendacoes": None,
+            "confiabilidade": None,
+            "diferenciais": None,
+            "observacao": None,
+        }
+
+        # Mapeia os títulos para encontrar os trechos
+        partes = {
+            "• Características radiológicas:": "caracteristicas",
+            "• Áreas potencialmente afetadas:": "areas_afetadas",
+            "• Recomendações:": "recomendacoes",
+            "NÍVEL DE CONFIABILIDADE:": "confiabilidade",
+            "DIAGNÓSTICOS DIFERENCIAIS:": "diferenciais",
+            "OBSERVAÇÃO IMPORTANTE:": "observacao",
+        }
+
+        # Inicializa o título como a primeira linha
+        linhas = interpretacao.split("\n")
+        if linhas:
+            secoes["titulo"] = linhas[0]
+
+        # Processa as demais seções
+        atual = None
+        for linha in linhas:
+            for marcador, chave in partes.items():
+                if marcador in linha:
+                    atual = chave
+                    secoes[atual] = ""
+                    break
+
+            if atual and atual in secoes:
+                secoes[atual] += linha + "\n"
+
+        return secoes
     
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -101,7 +208,7 @@ class DeteccaoDetailView(LoginRequiredMixin, DetailView):
                     avaliacao.usuario = request.user
                     avaliacao.deteccao = self.object
                     avaliacao.save()
-                    #messages.success(request, 'Avaliação registrada com sucesso!')
+                    messages.success(request, 'Avaliação registrada com sucesso!')
                 
                 return redirect('deteccoes:detalhe', pk=self.object.pk)
             

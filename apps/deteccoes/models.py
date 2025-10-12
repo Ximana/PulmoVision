@@ -1,15 +1,16 @@
-#apps/deteccoes/models-py
+#apps/deteccoes/models.py
 from django.db import models
 from django.urls import reverse
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from apps.radiografias.models import Radiografia
+from apps.modelos.models import Modelo
 
 class Deteccao(models.Model):
     DOENCA_CHOICES = (
+        ('Normal', 'Normal'),
         ('Tuberculose', 'Tuberculose'),
         ('Pneumonia', 'Pneumonia'),
-        ('Covid-19', 'Covid-19'),
     )
     
     ESTADO_CHOICES = (
@@ -26,6 +27,13 @@ class Deteccao(models.Model):
         verbose_name='Radiografia',
         related_name='deteccoes'
     )
+    
+    modelo = models.ForeignKey(
+        Modelo,
+        on_delete=models.CASCADE,
+        verbose_name='Modelo',
+        related_name='deteccoes'
+    )
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -34,15 +42,14 @@ class Deteccao(models.Model):
     )
     
     # Dados da Detecção
-    doenca = models.CharField(
-        'Doença',
+    diagnostico = models.CharField(
+        'Diagnóstico',
         max_length=20,
         choices=DOENCA_CHOICES
     )
-    resultado = models.CharField(
-        'Resultado',
-        max_length=255,
-        help_text='Resultado da análise de detecção'
+    resultados_completos = models.JSONField(
+        'Resultados Completos',
+        help_text='Probabilidades de todas as classes/doenças'
     )
     probabilidade = models.DecimalField(
         'Probabilidade',
@@ -54,11 +61,19 @@ class Deteccao(models.Model):
         'Descobertas',
         help_text='Descobertas detalhadas da análise'
     )
+    interpretacao = models.TextField(
+        'Interpretação',
+        help_text='Interpretação clínica dos resultados'
+    )
+    pontuacao_de_confianca = models.TextField(
+        'Pontuação de Confiança',
+        help_text='Pontuação de Confiança'
+    )
     estado = models.CharField(
         'Estado',
         max_length=20,
         choices=ESTADO_CHOICES,
-        default='Pendente'
+        default='Concluído'
     )
     
     # Campos de Sistema
@@ -71,11 +86,11 @@ class Deteccao(models.Model):
         ordering = ['-criado_em']
         
     def __str__(self):
-        return f"Detecção de {self.doenca} - Paciente: {self.radiografia.paciente.get_nome_completo()} - Data: {self.data}"
+        return f"Detecção de {self.diagnostico} - Paciente: {self.radiografia.paciente.get_nome_completo()} - Data: {self.criado_em.strftime('%d/%m/%Y')}"
     
     def get_absolute_url(self):
         return reverse("deteccoes:detalhe", kwargs={"pk": self.pk})
-    
+
 
 class AvaliacaoDeteccao(models.Model):
     AVALIACAO_CHOICES = (
@@ -86,7 +101,7 @@ class AvaliacaoDeteccao(models.Model):
     
     # Relacionamentos
     deteccao = models.ForeignKey(
-        Deteccao,  # Agora referenciamos diretamente a classe Deteccao
+        Deteccao,
         on_delete=models.CASCADE,
         verbose_name='Detecção',
         related_name='avaliacoes'

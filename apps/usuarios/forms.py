@@ -9,11 +9,21 @@ class UsuarioRegistroForm(UserCreationForm):
         fields = ('username', 'email', 'first_name', 'last_name', 'funcao', 
                  'telefone', 'registro_profissional', 'especializacao', 
                  'foto_perfil', 'password1', 'password2')
+        widgets = {
+            'foto_perfil': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'funcao': forms.Select(attrs={'class': 'form-select'})
+        }
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control'
+        # Aplicar classes Bootstrap aos campos
+        for field_name, field in self.fields.items():
+            if field_name == 'funcao':
+                field.widget.attrs['class'] = 'form-select'
+            else:
+                field.widget.attrs['class'] = 'form-control'
+
+
 
 class UsuarioEdicaoForm(UserChangeForm):
     password = None

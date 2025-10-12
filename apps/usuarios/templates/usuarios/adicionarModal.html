@@ -1,0 +1,251 @@
+<div
+  class="modal fade"
+  id="modalAdicionar"
+  tabindex="-1"
+  aria-labelledby="modalAdicionarLabel"
+  aria-hidden="true"
+  data-bs-backdrop="static"
+>
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAdicionarLabel">
+          Adicionar Novo Usuário
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- Espaço para mensagens de alerta -->
+        <div id="alertMessages"></div>
+        
+        <form id="formAdicionarUsuario" class="row" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          
+          <div class="col-md-6">
+            <!-- Dados de Acesso e Identificação -->
+            <div class="form-group mb-3">
+              <label for="username">Nome de Usuário</label>
+              <input
+                type="text"
+                class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                id="username"
+                name="username"
+                value="{{ form.username.value|default:'' }}"
+                required
+              />
+              {% if form.username.errors %}
+                <div class="invalid-feedback">{{ form.username.errors|first }}</div>
+              {% endif %}
+              {% if form.username.help_text %}
+                <small class="form-text text-muted">{{ form.username.help_text }}</small>
+              {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="email">E-mail</label>
+              <input
+                type="email"
+                class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                id="email"
+                name="email"
+                value="{{ form.email.value|default:'' }}"
+                required
+              />
+              {% if form.email.errors %}
+                <div class="invalid-feedback">{{ form.email.errors|first }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="first_name">Nome</label>
+              <input
+                type="text"
+                class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+                id="first_name"
+                name="first_name"
+                value="{{ form.first_name.value|default:'' }}"
+                required
+              />
+              {% if form.first_name.errors %}
+                <div class="invalid-feedback">{{ form.first_name.errors|first }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="last_name">Sobrenome</label>
+              <input
+                type="text"
+                class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+                id="last_name"
+                name="last_name"
+                value="{{ form.last_name.value|default:'' }}"
+                required
+              />
+              {% if form.last_name.errors %}
+                <div class="invalid-feedback">{{ form.last_name.errors|first }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="funcao">Função</label>
+              <select 
+                class="form-select {% if form.funcao.errors %}is-invalid{% endif %}" 
+                id="funcao" 
+                name="funcao"
+                required
+              >
+                <option value="">Selecione...</option>
+                {% for value, label in form.fields.funcao.choices %}
+                  <option value="{{ value }}" {% if form.funcao.value == value %}selected{% endif %}>
+                    {{ label }}
+                  </option>
+                {% endfor %}
+              </select>
+              {% if form.funcao.errors %}
+                <div class="invalid-feedback">{{ form.funcao.errors|first }}</div>
+              {% endif %}
+              {% if form.funcao.help_text %}
+                <small class="form-text text-muted">{{ form.funcao.help_text }}</small>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="row h-100">
+              <div class="col-8">
+                <div class="form-group mb-3">
+                  <label for="telefone">Telefone</label>
+                  <input
+                    type="text"
+                    class="form-control {% if form.telefone.errors %}is-invalid{% endif %}"
+                    id="telefone"
+                    name="telefone"
+                    value="{{ form.telefone.value|default:'' }}"
+                  />
+                  {% if form.telefone.errors %}
+                    <div class="invalid-feedback">{{ form.telefone.errors|first }}</div>
+                  {% endif %}
+                  {% if form.telefone.help_text %}
+                    <small class="form-text text-muted">{{ form.telefone.help_text }}</small>
+                  {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="registro_profissional">Registro Profissional</label>
+                  <input
+                    type="text"
+                    class="form-control {% if form.registro_profissional.errors %}is-invalid{% endif %}"
+                    id="registro_profissional"
+                    name="registro_profissional"
+                    value="{{ form.registro_profissional.value|default:'' }}"
+                  />
+                  {% if form.registro_profissional.errors %}
+                    <div class="invalid-feedback">{{ form.registro_profissional.errors|first }}</div>
+                  {% endif %}
+                  {% if form.registro_profissional.help_text %}
+                    <small class="form-text text-muted">{{ form.registro_profissional.help_text }}</small>
+                  {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="especializacao">Especialização</label>
+                  <input
+                    type="text"
+                    class="form-control {% if form.especializacao.errors %}is-invalid{% endif %}"
+                    id="especializacao"
+                    name="especializacao"
+                    value="{{ form.especializacao.value|default:'' }}"
+                  />
+                  {% if form.especializacao.errors %}
+                    <div class="invalid-feedback">{{ form.especializacao.errors|first }}</div>
+                  {% endif %}
+                  {% if form.especializacao.help_text %}
+                    <small class="form-text text-muted">{{ form.especializacao.help_text }}</small>
+                  {% endif %}
+                </div>
+              </div>
+              
+              <div class="col-4">
+                <!-- Imagem do Perfil -->
+                <div class="form-group mb-3">
+                  <label for="foto_perfil">Foto de Perfil</label>
+                  <input
+                    type="file"
+                    class="form-control {% if form.foto_perfil.errors %}is-invalid{% endif %}"
+                    id="foto_perfil"
+                    name="foto_perfil"
+                    accept="image/*"
+                  />
+                  {% if form.foto_perfil.errors %}
+                    <div class="invalid-feedback">{{ form.foto_perfil.errors|first }}</div>
+                  {% endif %}
+                  {% if form.foto_perfil.help_text %}
+                    <small class="form-text text-muted">{{ form.foto_perfil.help_text }}</small>
+                  {% endif %}
+                </div>
+                {% if form.instance.foto_perfil %}
+                  <img src="{{ form.instance.foto_perfil.url }}" class="img-fluid mb-2" alt="Foto de perfil">
+                {% endif %}
+              </div>
+
+              <div class="col-12">
+                <div class="form-group mb-3">
+                  <label for="password1">Senha</label>
+                  <input
+                    type="password"
+                    class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+                    id="password1"
+                    name="password1"
+                    required
+                  />
+                  {% if form.password1.errors %}
+                    <div class="invalid-feedback">{{ form.password1.errors|first }}</div>
+                  {% endif %}
+                  {% if form.password1.help_text %}
+                    <small class="form-text text-muted">{{ form.password1.help_text }}</small>
+                  {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                  <label for="password2">Confirmação de Senha</label>
+                  <input
+                    type="password"
+                    class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+                    id="password2"
+                    name="password2"
+                    required
+                  />
+                  {% if form.password2.errors %}
+                    <div class="invalid-feedback">{{ form.password2.errors|first }}</div>
+                  {% endif %}
+                  {% if form.password2.help_text %}
+                    <small class="form-text text-muted">{{ form.password2.help_text }}</small>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer mt-3">
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Fechar
+            </button>
+            <button type="submit" class="btn btn-success btn-sm">
+              Adicionar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

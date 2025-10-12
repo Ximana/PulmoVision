@@ -1,27 +1,29 @@
 # apps/deteccoes/forms.py
 from django import forms
 from .models import Deteccao, AvaliacaoDeteccao
+from apps.modelos.models import Modelo
 
 class DeteccaoCadastroForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filtrar apenas modelos ativos
+        self.fields['modelo'].queryset = Modelo.objects.filter(ativo=True)
+        
+        # Tentar definir o modelo padrão 'pv1'
+        try:
+            modelo_padrao = Modelo.objects.filter(nome='pv1', ativo=True).first()
+            if modelo_padrao:
+                self.fields['modelo'].initial = modelo_padrao
+        except Modelo.DoesNotExist:
+            pass
+    
     class Meta:
         model = Deteccao
-        fields = ['radiografia', 'doenca', 'resultado', 'probabilidade', 
-                 'descobertas', 'estado']
+        fields = ['radiografia', 'modelo']
         widgets = {
             'radiografia': forms.Select(attrs={'class': 'form-select'}),
-            'doenca': forms.Select(attrs={'class': 'form-select'}),
-            'resultado': forms.TextInput(attrs={'class': 'form-control'}),
-            'probabilidade': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'descobertas': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'estado': forms.Select(attrs={'class': 'form-select'})
+            'modelo': forms.Select(attrs={'class': 'form-select'}),
         }
-        
-    def clean_probabilidade(self):
-        probabilidade = self.cleaned_data.get('probabilidade')
-        if probabilidade is not None:
-            if probabilidade < 0 or probabilidade > 100:
-                raise forms.ValidationError('A probabilidade deve estar entre 0 e 100.')
-        return probabilidade
     
 class AvaliacaoDeteccaoCadastroForm(forms.ModelForm):
     class Meta:

@@ -10,4 +10,5 @@ urlpatterns = [
     path('pacientes/', include('apps.pacientes.urls')),
     path('deteccoes/', include('apps.deteccoes.urls')),
     path('radiografias/', include('apps.radiografias.urls')),
+    path('modelos/', include('apps.modelos.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

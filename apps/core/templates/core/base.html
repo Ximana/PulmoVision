@@ -11,7 +11,186 @@
     <link href="{% static 'core/css/all.min.css'  %}" rel="stylesheet" />
     <link href="{% static 'core/css/estilo.css' %}" rel="stylesheet" />
     <style>
-     
+     :root {
+  --sidebar-width: 280px;
+  --header-height: 70px;
+  --primary-color: #198754;
+  --primary-hover: #157347;
+  --sidebar-bg: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+#wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Sidebar Styles */
+#sidebar {
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  transition: all 0.3s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1050;
+  overflow-y: auto;
+}
+
+.sidebar-heading {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.nav-item {
+  margin: 8px 16px;
+}
+
+.nav-link {
+  color: #a8a8a8;
+  padding: 12px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link:hover, .nav-link.active {
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateX(5px);
+}
+
+.nav-link i {
+  width: 24px;
+  margin-right: 12px;
+}
+
+/* Content Wrapper */
+#page-content-wrapper {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  transition: all 0.3s ease;
+  width: calc(100% - var(--sidebar-width));
+  padding-left: 0;
+}
+
+/* Top Navbar */
+.navbar {
+  height: var(--header-height);
+  background: white !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  padding: 0 16px;
+}
+
+.navbar .btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
+.dropdown-item {
+  padding: 8px 16px;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Mobile Offcanvas */
+.offcanvas {
+  width: 280px;
+  background: var(--sidebar-bg);
+}
+
+.offcanvas-header {
+  height: var(--header-height);
+}
+
+.offcanvas-body .nav-link {
+  color: #a8a8a8;
+}
+
+.offcanvas-body .nav-link:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Main Content */
+main {
+  padding: 24px;
+  width: 100%;
+}
+
+/* Alerts */
+.alert {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  #sidebar {
+    margin-left: calc(-1 * var(--sidebar-width));
+    width: var(--sidebar-width);
+  }
+
+  #page-content-wrapper {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .navbar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* Mobile Navigation */
+  .offcanvas {
+    width: 280px;
+  }
+
+  .offcanvas-body .nav-item {
+    margin: 8px 0;
+  }
+}
+
+/* Ensure responsiveness for small screens */
+@media (max-width: 576px) {
+  main {
+    padding: 12px;
+  }
+
+  .container-fluid {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .navbar .d-none {
+    display: none !important;
+  }
+}
     </style>
     {% block arquivos_css %}{% endblock %}
   </head>
@@ -43,23 +222,22 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">
-              <i class="fas fa-history"></i>Histórico
+            <a class="nav-link" href="{% url 'modelos:lista' %}">
+              <i class="fas fa-brain"></i>Modelos
             </a>
           </li>
+          
+          {% if user.is_admin %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'usuarios:lista' %}">
               <i class="fas fa-users"></i>Usuários
             </a>
           </li>
+          {% endif %}
+
           <li class="nav-item mt-4">
             <a class="nav-link" href="{% url 'sobre' %}">
               <i class="fas fa-info-circle"></i>Sobre
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">
-              <i class="fas fa-question-circle"></i>Ajuda
             </a>
           </li>
           <li class="nav-item mt-4">
@@ -126,7 +304,7 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                   <li><a class="dropdown-item" href="{% url 'home' %}">
                     <i class="fas fa-cog me-2"></i>Configurações</a></li>
-                  <li><a class="dropdown-item" href="{% url 'usuarios:perfil' %}">
+                  <li><a class="dropdown-item" href="{% url 'usuarios:detalhe' pk=user.pk %}">
                     <i class="fas fa-user me-2"></i>Perfil</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item text-danger" href="{% url 'usuarios:logout' %}">
@@ -143,19 +321,65 @@
         </nav>
 
         <!-- Mobile Menu -->
-        <div class="offcanvas offcanvas-start bg-dark" tabindex="-1" id="offcanvasMenu">
-          <div class="offcanvas-header border-bottom border-secondary">
-            <h5 class="offcanvas-title text-white">PulmoVision</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-          </div>
-          <div class="offcanvas-body">
-            <ul class="nav flex-column">
-              {% if user.is_authenticated %}
-              <!-- Mesmo conteúdo do sidebar principal -->
-              {% endif %}
-            </ul>
-          </div>
-        </div>
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu">
+  <div class="offcanvas-header border-bottom border-secondary">
+    <a href="{% url 'home' %}">
+      <img src="{% static 'core/img/logo.png'%}" alt="Logo" height="40">
+    </a>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="nav flex-column mt-3">
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'pacientes:lista' %}">
+          <i class="fas fa-user-injured me-2"></i>Pacientes
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'deteccoes:lista' %}">
+          <i class="fas fa-microscope me-2"></i>Detecções
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'radiografias:lista' %}">
+          <i class="fas fa-x-ray me-2"></i>Radiografias
+        </a>
+      </li>
+      <li class="nav-item">
+            <a class="nav-link" href="{% url 'modelos:lista' %}">
+              <i class="fas fa-brain"></i>Modelos
+            </a>
+      </li>
+      
+      {% if user.is_admin %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'usuarios:lista' %}">
+          <i class="fas fa-users me-2"></i>Usuários
+        </a>
+      </li>
+      {% endif %}
+
+      <li class="nav-item mt-4">
+        <a class="nav-link" href="{% url 'sobre' %}">
+          <i class="fas fa-info-circle me-2"></i>Sobre
+        </a>
+      </li>
+      <li class="nav-item mt-4">
+        <a class="nav-link text-danger" href="{% url 'usuarios:logout' %}">
+          <i class="fas fa-sign-out-alt me-2"></i>Sair
+        </a>
+      </li>
+      {% else %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'usuarios:login' %}">
+          <i class="fas fa-sign-in-alt me-2"></i>Login
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
 
         <!-- Conteudo principal -->
         <main>

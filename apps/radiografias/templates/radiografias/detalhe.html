@@ -133,29 +133,33 @@
         </div>
 
         <!-- Notes and Descriptions -->
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-success bg-gradient text-white py-3">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-file-alt me-2"></i>Notas e Descrições
-                    </h5>
+<div class="col-12">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-success bg-gradient text-white py-3">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-file-alt me-2"></i>Notas e Descrições
+            </h5>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <small class="text-muted d-block mb-2">Descrição</small>
+                    <div class="bg-light p-3 rounded overflow-auto" style="max-height: 200px;">
+                        <p class="mb-0 text-break">{{ radiografia.descricao|default:"Sem descrição" }}</p>
+                    </div>
                 </div>
-                <div class="card-body p-4">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <small class="text-muted d-block mb-2">Descrição</small>
-                            <p class="mb-0 bg-light p-3 rounded">{{ radiografia.descricao|default:"Sem descrição" }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <small class="text-muted d-block mb-2">Notas Técnicas</small>
-                            <p class="mb-0 bg-light p-3 rounded">{{ radiografia.notas_tecnicas|default:"Sem notas técnicas" }}</p>
-                        </div>
+                <div class="col-md-6">
+                    <small class="text-muted d-block mb-2">Notas Técnicas</small>
+                    <div class="bg-light p-3 rounded overflow-auto" style="max-height: 200px;">
+                        <p class="mb-0 text-break">{{ radiografia.notas_tecnicas|default:"Sem notas técnicas" }}</p>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- System Information -->
+        <!-- Informações do Sistema  -->
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-success bg-gradient text-white py-3">

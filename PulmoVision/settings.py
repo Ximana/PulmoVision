@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     
     # Apps de terceiros
     'crispy_forms',
-    'crispy_bootstrap5',  # Corrigido aqui
+    'crispy_bootstrap5', 
     
     # Apps locais
     'apps.usuarios.apps.UsuariosConfig',
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'apps.deteccoes',
     'apps.core',
     'apps.radiografias',
+    'apps.modelos',
     
 ]
 
@@ -109,6 +110,11 @@ STATICFILES_DIRS = [
     #os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'apps', 'core', 'static'),
     ]
+
+# Configuração para diretorio/pasta modelos de machine learning
+ML_MODELS_DIR = os.path.join(BASE_DIR, 'apps', 'deteccoes', 'models')
+# Para Certificar de que o diretório existe
+os.makedirs(ML_MODELS_DIR, exist_ok=True)
 
 # Media files
 MEDIA_URL = '/media/'

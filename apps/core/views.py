@@ -16,7 +16,7 @@ class HomeView(LoginRequiredMixin, ListView):
     context_object_name = 'deteccoes_recentes'
 
     def get_queryset(self):
-        # Retorna as últimas 5 detecções
+        # Retorna as últimas 10 detecções
         return Deteccao.objects.select_related('radiografia__paciente').order_by('-criado_em')[:10]
 
     def get_context_data(self, **kwargs):
@@ -42,7 +42,7 @@ class HomeView(LoginRequiredMixin, ListView):
         
         # Estatísticas adicionais para o dashboard
         context['deteccoes_por_doenca'] = (
-            Deteccao.objects.values('doenca')
+            Deteccao.objects.values('diagnostico')
             .annotate(total=Count('id'))
             .order_by('-total')
         )
@@ -55,9 +55,9 @@ class HomeView(LoginRequiredMixin, ListView):
         
         # Média de probabilidade por doença
         context['media_probabilidade'] = (
-            Deteccao.objects.values('doenca')
+            Deteccao.objects.values('diagnostico')
             .annotate(media=Avg('probabilidade'))
-            .order_by('doenca')
+            .order_by('diagnostico')
         )
 
         return context

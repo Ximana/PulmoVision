@@ -31,6 +31,16 @@ logs/
 # Arquivos de mídia
 media/
 
+# Arquivos do modelo de Machine Learning
+models/
+
 # Arquivos do sistema operacional
 .DS_Store
 Thumbs.db
+
+# Arquivos do git
+.gitignore
+
+# Arquivos do migration
+*/migrations/
+!*/migrations/__init__.py

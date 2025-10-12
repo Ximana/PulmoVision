@@ -1,0 +1,406 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Modelos de IA - PulmoVision{% endblock %}
+
+{% block arquivos_css %}
+<style>
+  .performance-badge {
+    border-radius: 12px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+  
+  .performance-excelente { background-color: #28a745; color: white; }
+  .performance-boa { background-color: #17a2b8; color: white; }
+  .performance-regular { background-color: #ffc107; color: black; }
+  .performance-baixa { background-color: #dc3545; color: white; }
+  
+  .metric-card {
+    border-left: 4px solid #007bff;
+    transition: transform 0.2s;
+  }
+  
+  .metric-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .status-ativo {
+    color: #28a745;
+  }
+  
+  .status-inativo {
+    color: #dc3545;
+  }
+  
+  /* Estilos para os modais */
+  .modal {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Ajusta o backdrop quando múltiplos modais estão abertos */
+  .modal-backdrop + .modal-backdrop {
+    display: none;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-success mb-0">
+                <i class="fas fa-brain me-2"></i>Modelos de IA
+            </h2>
+            <p class="text-muted">Gerenciamento de modelos para detecção de doenças pulmonares</p>
+        </div>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionar">
+            <i class="fas fa-plus me-2"></i>Novo Modelo
+        </button>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card metric-card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-muted mb-1">Total de Modelos</h5>
+                            <h3 class="text-success mb-0">{{ stats.total }}</h3>
+                        </div>
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px">
+                            <i class="fas fa-brain fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card metric-card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-muted mb-1">Modelos Ativos</h5>
+                            <h3 class="text-success mb-0">{{ stats.ativos }}</h3>
+                        </div>
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px">
+                            <i class="fas fa-check-circle fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card metric-card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-muted mb-1">Modelos Inativos</h5>
+                            <h3 class="text-warning mb-0">{{ stats.inativos }}</h3>
+                        </div>
+                        <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px">
+                            <i class="fas fa-pause-circle fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros e Busca -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form class="row g-3" action="{% url 'modelos:lista' %}" method="GET">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-success text-white">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            name="search"
+                            placeholder="Pesquisar por nome do modelo ou versão"
+                            value="{{ search_query }}"
+                        >
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ativo" name="ativo" 
+                               {% if apenas_ativos %}checked{% endif %}>
+                        <label class="form-check-label" for="ativo">
+                            Apenas ativos
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-search me-2"></i>Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de Modelos -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr class="bg-dark text-white">
+                            <th colspan="8" class="ps-3">
+                                Modelos de IA Cadastrados
+                                <a href="" class="float-end text-success me-3" data-bs-toggle="tooltip" data-bs-placement="top" title="Imprimir Lista de Modelos">
+                                    <i class="fas fa-print"></i>
+                                </a>
+                            </th>
+                        </tr>
+                        <tr class="bg-success text-white">
+                            <th scope="col" class="ps-3">Modelo</th>
+                            <th scope="col">Data Treino</th>
+                            <th scope="col">Acurácia</th>
+                            <th scope="col">Precisão</th>
+                            <th scope="col">Recall</th>
+                            <th scope="col">F1-Score</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end pe-3">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for modelo in modelos %}
+                        <tr>
+                            <td class="ps-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-success text-white rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px">
+                                        <i class="fas fa-brain"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">{{ modelo.nome }}</div>
+                                        <small class="text-muted">
+                                            Versão {{ modelo.versao }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ modelo.data_treino|date:"d.m.Y" }}</td>
+                            <td>
+                                <span class="performance-badge performance-{% if modelo.acuracia >= 90 %}excelente{% elif modelo.acuracia >= 80 %}boa{% elif modelo.acuracia >= 70 %}regular{% else %}baixa{% endif %}">
+                                    {{ modelo.acuracia }}%
+                                </span>
+                            </td>
+                            <td>{{ modelo.precisao }}%</td>
+                            <td>{{ modelo.recall }}%</td>
+                            <td>{{ modelo.get_f1_score }}%</td>
+                            <td>
+                                {% if modelo.ativo %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle me-1"></i>Ativo
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-pause-circle me-1"></i>Inativo
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-3">
+                                <div class="btn-group">
+                                    <a href="{% url 'modelos:detalhe' pk=modelo.pk %}" 
+                                       class="btn btn-sm btn-outline-success"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-placement="top"
+                                       title="Ver detalhes do modelo">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% if modelo.ativo %}
+                                        <a href="{% url 'modelos:desativar' pk=modelo.pk %}" 
+                                           class="btn btn-sm btn-outline-warning"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-placement="top"
+                                           title="Desativar modelo"
+                                           onclick="return confirm('Desativar modelo {{ modelo.nome }}?')">
+                                            <i class="fas fa-pause"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'modelos:ativar' pk=modelo.pk %}" 
+                                           class="btn btn-sm btn-outline-success"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-placement="top"
+                                           title="Ativar modelo"
+                                           onclick="return confirm('Ativar modelo {{ modelo.nome }}?')">
+                                            <i class="fas fa-play"></i>
+                                        </a>
+                                    {% endif %}
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="confirmarRemocao('{{ modelo.nome }} v{{ modelo.versao }}', '{% url 'modelos:remover' modelo.pk %}')"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top"
+                                            title="Remover modelo">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fas fa-brain fa-3x mb-3 text-success"></i>
+                                    <h5>Nenhum modelo encontrado</h5>
+                                    <p class="mb-3">
+                                        {% if search_query %}
+                                            Nenhum modelo encontrado para "{{ search_query }}".
+                                        {% else %}
+                                            Nenhum modelo de IA cadastrado no sistema.
+                                        {% endif %}
+                                    </p>
+                                    {% if search_query %}
+                                        <a href="{% url 'modelos:lista' %}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-times me-1"></i>Limpar pesquisa
+                                        </a>
+                                    {% else %}
+                                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionar">
+                                            <i class="fas fa-plus me-2"></i>Adicionar Primeiro Modelo
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paginação -->
+    {% if is_paginated %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link text-success" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.ativo %}&ativo={{ request.GET.ativo }}{% endif %}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <span class="page-link bg-success border-success">{{ num }}</span>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link text-success" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.ativo %}&ativo={{ request.GET.ativo }}{% endif %}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link text-success" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.ativo %}&ativo={{ request.GET.ativo }}{% endif %}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<!-- Modal Adicionar Modelo -->
+{% include 'modelos/adicionarModal.html' %}
+
+<!-- Modal Remover Modelo -->
+{% include 'modelos/removerModal.html' %}
+{% endblock %}
+
+{% block scriptJS %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+
+    // Modal
+    const modalAdicionar = document.getElementById('modalAdicionar');
+    let bsModalAdicionar = new bootstrap.Modal(modalAdicionar);
+
+    // Validação do formulário
+    document.getElementById('modeloForm').addEventListener('submit', function(e) {
+        const nome = document.getElementById('nome').value.trim();
+        const versao = document.getElementById('versao').value.trim();
+        const diretorio = document.getElementById('diretorio').value.trim();
+        
+        if (!nome || !versao || !diretorio) {
+            e.preventDefault();
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            return false;
+        }
+        
+        // Validar métricas
+        const acuracia = parseFloat(document.getElementById('acuracia').value);
+        const precisao = parseFloat(document.getElementById('precisao').value);
+        const recall = parseFloat(document.getElementById('recall').value);
+        
+        if (acuracia < 0 || acuracia > 100 || precisao < 0 || precisao > 100 || recall < 0 || recall > 100) {
+            e.preventDefault();
+            alert('As métricas devem estar entre 0 e 100%.');
+            return false;
+        }
+    });
+
+    // Limpar formulário quando modal é fechado
+    modalAdicionar.addEventListener('hidden.bs.modal', function () {
+        document.getElementById('modeloForm').reset();
+        // Remover classes de erro
+        const invalidFields = document.querySelectorAll('.is-invalid');
+        invalidFields.forEach(field => field.classList.remove('is-invalid'));
+    });
+
+    // Tratamento de mensagens
+    {% if messages %}
+        const messages = document.querySelectorAll('.alert');
+        messages.forEach(message => {
+            setTimeout(() => {
+                message.style.transition = 'opacity 0.5s ease';
+                message.style.opacity = '0';
+                setTimeout(() => message.remove(), 500);
+            }, 5000);
+        });
+    {% endif %}
+    
+    // Função para calcular F1-Score em tempo real
+    function calcularF1Score() {
+        const precisao = parseFloat(document.getElementById('precisao').value) || 0;
+        const recall = parseFloat(document.getElementById('recall').value) || 0;
+        
+        if (precisao > 0 && recall > 0) {
+            const f1 = 2 * (precisao * recall) / (precisao + recall);
+            const f1Element = document.getElementById('f1-preview');
+            if (f1Element) {
+                f1Element.textContent = f1.toFixed(2) + '%';
+            }
+        }
+    }
+    
+    // Event listeners para cálculo do F1-Score
+    document.getElementById('precisao').addEventListener('input', calcularF1Score);
+    document.getElementById('recall').addEventListener('input', calcularF1Score);
+});
+
+// Função para confirmar remoção
+function confirmarRemocao(nome, url) {
+    document.getElementById('modeloNome').textContent = nome;
+    document.getElementById('formRemover').action = url;
+    new bootstrap.Modal(document.getElementById('modalRemover')).show();
+}
+</script>
+{% endblock %}

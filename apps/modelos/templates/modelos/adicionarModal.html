@@ -1,0 +1,157 @@
+<!-- app/modelos/templates/modelos/adicionarModal.html -->
+<div class="modal fade" id="modalAdicionar" tabindex="-1" aria-labelledby="modalAdicionarLabel" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAdicionarLabel">
+          Adicionar Novo Modelo
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="modeloForm" class="row" method="POST">
+          {% csrf_token %}
+          
+          <div class="col-md-6">
+            <!-- Nome do Modelo -->
+            <div class="form-group mb-3">
+              <label for="nome" class="form-label">
+                <i class="fas fa-tag me-1"></i>Nome do Modelo *
+              </label>
+              <input type="text" class="form-control {% if form.nome.errors %}is-invalid{% endif %}"
+                     id="nome" name="nome" required
+                     placeholder="Ex: ResNet50-PulmoVision">
+              {% if form.nome.errors %}
+                <div class="invalid-feedback">{{ form.nome.errors|first }}</div>
+              {% endif %}
+              <small class="form-text text-muted">Nome identificador único do modelo</small>
+            </div>
+
+            <!-- Versão -->
+            <div class="form-group mb-3">
+              <label for="versao" class="form-label">
+                <i class="fas fa-code-branch me-1"></i>Versão *
+              </label>
+              <input type="text" class="form-control {% if form.versao.errors %}is-invalid{% endif %}"
+                     id="versao" name="versao" required
+                     placeholder="Ex: 1.0, 2.1, 3.0">
+              {% if form.versao.errors %}
+                <div class="invalid-feedback">{{ form.versao.errors|first }}</div>
+              {% endif %}
+              <small class="form-text text-muted">Versão do modelo</small>
+            </div>
+
+            <!-- Data do Treino -->
+            <div class="form-group mb-3">
+              <label for="data_treino" class="form-label">
+                <i class="fas fa-calendar me-1"></i>Data do Treino *
+              </label>
+              <input type="date" class="form-control {% if form.data_treino.errors %}is-invalid{% endif %}"
+                     id="data_treino" name="data_treino" required>
+              {% if form.data_treino.errors %}
+                <div class="invalid-feedback">{{ form.data_treino.errors|first }}</div>
+              {% endif %}
+              <small class="form-text text-muted">Data em que o modelo foi treinado</small>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <!-- Acurácia -->
+            <div class="form-group mb-3">
+              <label for="acuracia" class="form-label">
+                <i class="fas fa-chart-line me-1"></i>Acurácia (%) *
+              </label>
+              <input type="number" step="0.01" min="0" max="100" 
+                     class="form-control {% if form.acuracia.errors %}is-invalid{% endif %}"
+                     id="acuracia" name="acuracia" required
+                     placeholder="95.50">
+              {% if form.acuracia.errors %}
+                <div class="invalid-feedback">{{ form.acuracia.errors|first }}</div>
+              {% endif %}
+              <small class="form-text text-muted">Acurácia do modelo (0-100%)</small>
+            </div>
+
+            <!-- Precisão -->
+            <div class="form-group mb-3">
+              <label for="precisao" class="form-label">
+                <i class="fas fa-bullseye me-1"></i>Precisão (%) *
+              </label>
+              <input type="number" step="0.01" min="0" max="100" 
+                     class="form-control {% if form.precisao.errors %}is-invalid{% endif %}"
+                     id="precisao" name="precisao" required
+                     placeholder="92.30">
+              {% if form.precisao.errors %}
+                <div class="invalid-feedback">{{ form.precisao.errors|first }}</div>
+              {% endif %}
+              <small class="form-text text-muted">Precisão do modelo (0-100%)</small>
+            </div>
+
+            <!-- Recall -->
+            <div class="form-group mb-3">
+              <label for="recall" class="form-label">
+                <i class="fas fa-search me-1"></i>Recall (%) *
+              </label>
+              <input type="number" step="0.01" min="0" max="100" 
+                     class="form-control {% if form.recall.errors %}is-invalid{% endif %}"
+                     id="recall" name="recall" required
+                     placeholder="88.75">
+              {% if form.recall.errors %}
+                <div class="invalid-feedback">{{ form.recall.errors|first }}</div>
+              {% endif %}
+              <small class="form-text text-muted">Recall do modelo (0-100%)</small>
+            </div>
+          </div>
+
+          <!-- Diretório -->
+          <div class="col-12 mb-3">
+            <label for="diretorio" class="form-label">
+              <i class="fas fa-folder me-1"></i>Diretório/URL do Modelo *
+            </label>
+            <input type="text" class="form-control {% if form.diretorio.errors %}is-invalid{% endif %}"
+                   id="diretorio" name="diretorio" required
+                   placeholder="/models/resnet50/ ou https://example.com/modelo/">
+            {% if form.diretorio.errors %}
+              <div class="invalid-feedback">{{ form.diretorio.errors|first }}</div>
+            {% endif %}
+            <small class="form-text text-muted">
+              Caminho local ou URL onde estão os arquivos modelo.keras e config.json
+            </small>
+          </div>
+
+          <!-- Descrição -->
+          <div class="col-12 mb-3">
+            <label for="descricao" class="form-label">
+              <i class="fas fa-align-left me-1"></i>Descrição
+            </label>
+            <textarea class="form-control {% if form.descricao.errors %}is-invalid{% endif %}"
+                      id="descricao" name="descricao" rows="4"
+                      placeholder="Descrição detalhada do modelo, arquitetura utilizada, datasets de treino, etc."></textarea>
+            {% if form.descricao.errors %}
+              <div class="invalid-feedback">{{ form.descricao.errors|first }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Status Ativo -->
+          <div class="col-12 mb-3">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="ativo" name="ativo" checked>
+              <label class="form-check-label" for="ativo">
+                <i class="fas fa-toggle-on me-1"></i>Modelo Ativo
+              </label>
+              <small class="form-text text-muted d-block">Marque para disponibilizar o modelo para uso no sistema</small>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="fas fa-times me-2"></i>Fechar
+            </button>
+            <button type="submit" class="btn btn-success" id="submitModelo">
+              <i class="fas fa-save me-2"></i>Salvar Modelo
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

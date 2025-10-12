@@ -1,3 +1,4 @@
+<!-- apps/deteccoes/templates/deteccoes/lista.html -->
 {% extends 'core/base.html' %}
 {% load static %}
 
@@ -5,7 +6,6 @@
 
 {% block arquivos_css %}
 <style>
-
   /* Estilos para os modais */
   .modal {
     background: rgba(0, 0, 0, 0.5);
@@ -36,37 +36,47 @@
     <!-- Filtros e Busca -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <form class="row g-3" action="{% url 'deteccoes:lista' %}" method="GET">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text bg-success text-white">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            name="search"
-                            placeholder="Pesquisar por paciente, doença ou estado"
-                            value="{{ search_query }}"
-                        >
+            <form class="card shadow-sm mb-4" action="{% url 'deteccoes:lista' %}" method="GET" id="filtroForm">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-success text-white">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    name="search"
+                                    placeholder="Pesquisar por paciente, diagnóstico ou estado"
+                                    value="{{ search_query }}"
+                                    id="searchInput"
+                                >
+                                {% if search_query %}
+                                <button type="button" class="btn btn-outline-secondary" id="clearSearchBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" name="diagnostico" id="diagnosticoSelect">
+                                <option value="">Todos os diagnósticos</option>
+                                <option value="Normal" {% if diagnostico_filter == 'Normal' %}selected{% endif %}>Normal</option>
+                                <option value="Tuberculose" {% if diagnostico_filter == 'Tuberculose' %}selected{% endif %}>Tuberculose</option>
+                                <option value="Pneumonia" {% if diagnostico_filter == 'Pneumonia' %}selected{% endif %}>Pneumonia</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" name="estado" id="estadoSelect">
+                                <option value="">Todos os estados</option>
+                                <option value="Pendente" {% if estado_filter == 'Pendente' %}selected{% endif %}>Pendente</option>
+                                <option value="Em Análise" {% if estado_filter == 'Em Análise' %}selected{% endif %}>Em Análise</option>
+                                <option value="Concluído" {% if estado_filter == 'Concluído' %}selected{% endif %}>Concluído</option>
+                                <option value="Revisão Necessária" {% if estado_filter == 'Revisão Necessária' %}selected{% endif %}>Revisão Necessária</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" name="doenca">
-                        <option value="">Todas as doenças</option>
-                        <option value="Tuberculose">Tuberculose</option>
-                        <option value="Pneumonia">Pneumonia</option>
-                        <option value="Covid-19">Covid-19</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" name="estado">
-                        <option value="">Todos os estados</option>
-                        <option value="Pendente">Pendente</option>
-                        <option value="Em Análise">Em Análise</option>
-                        <option value="Concluído">Concluído</option>
-                        <option value="Revisão Necessária">Revisão Necessária</option>
-                    </select>
                 </div>
             </form>
         </div>
@@ -80,8 +90,8 @@
                     <thead class="bg-success text-white">
                         <tr>
                             <th scope="col" class="ps-3">Paciente</th>
-                            <th scope="col">Doença</th>
-                            <th scope="col">Resultado</th>
+                            <th scope="col">Diagnóstico</th>
+                            <th scope="col">Modelo</th>
                             <th scope="col">Probabilidade</th>
                             <th scope="col">Estado</th>
                             <th scope="col">Data</th>
@@ -104,9 +114,17 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-success">{{ deteccao.doenca }}</span>
+                                <span class="badge {% if deteccao.diagnostico == 'Normal' %}bg-success
+                                           {% elif deteccao.diagnostico == 'Tuberculose' %}bg-danger
+                                           {% elif deteccao.diagnostico == 'Pneumonia' %}bg-warning text-dark
+                                           {% else %}bg-secondary{% endif %}">
+                                    {{ deteccao.diagnostico }}
+                                </span>
                             </td>
-                            <td>{{ deteccao.resultado }}</td>
+                            <td>
+                                <span class="badge bg-info">{{ deteccao.modelo.nome }}</span>
+                                <br><small class="text-muted">v{{ deteccao.modelo.versao }}</small>
+                            </td>
                             <td>{{ deteccao.probabilidade }}%</td>
                             <td>
                                 <span class="badge {% if deteccao.estado == 'Concluído' %}bg-success
@@ -157,40 +175,39 @@
     </div>
 
     <!-- Paginação -->
-    {% if is_paginated %}
-    <nav class="mt-4">
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link text-success" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
-                    <i class="fas fa-chevron-left"></i>
-                </a>
-            </li>
-            {% endif %}
+{% if is_paginated %}
+<nav class="mt-4" aria-label="Navegação de páginas">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link text-success border-success" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if funcao_filter %}&funcao={{ funcao_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </li>
+        {% endif %}
 
-            {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-            <li class="page-item active">
-                <span class="page-link bg-success border-success">{{ num }}</span>
-            </li>
-            {% else %}
-            <li class="page-item">
-                <a class="page-link text-success" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
-            </li>
-            {% endif %}
-            {% endfor %}
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active">
+            <span class="page-link bg-success border-success">{{ num }}</span>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link text-success border-success" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if funcao_filter %}&funcao={{ funcao_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
 
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link text-success" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
-</div>
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link text-success border-success" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if funcao_filter %}&funcao={{ funcao_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
 
 <!-- Modal Adicionar Detecção -->
 {% include 'deteccoes/adicionarModal.html' %}
@@ -202,48 +219,137 @@
 
 {% block scriptJS %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-
-    // Modais e demais funcionalidades mantidas do código original
-    const modalAdicionar = document.getElementById('modalAdicionar');
-    const modalSelecionarRadiografia = document.getElementById('modalSelecionarRadiografia');
-
-    let bsModalAdicionar = new bootstrap.Modal(modalAdicionar);
-    let bsModalSelecionarRadiografia = new bootstrap.Modal(modalSelecionarRadiografia);
-
-    // Função para abrir o modal de seleção de radiografia
-    window.abrirModalSelecaoRadiografia = function() {
-        const backdrop = document.querySelector('.modal-backdrop');
-        if (backdrop) {
-            backdrop.style.zIndex = '1040';
+    // Scripts para busca e filtragem
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('filtroForm');
+        const searchInput = document.getElementById('searchInput');
+        const diagnosticoSelect = document.getElementById('diagnosticoSelect');
+        const estadoSelect = document.getElementById('estadoSelect');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+    
+        // Função para submeter o formulário
+        function submitForm() {
+            form.submit();
         }
-        
-        modalAdicionar.style.zIndex = '1041';
-        modalSelecionarRadiografia.style.zIndex = '1042';
-        
-        bsModalSelecionarRadiografia.show();
-    };
+    
+        // Adicionar event listeners para mudanças nos filtros
+        diagnosticoSelect.addEventListener('change', submitForm);
+        estadoSelect.addEventListener('change', submitForm);
+    
+        // Limpar busca
+        if (clearSearchBtn) {
+            clearSearchBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                submitForm();
+            });
+        }
+    
+        // Adicionar debounce para busca
+        let debounceTimer;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(submitForm, 500);
+        });
+    
+        // Manter parâmetros na paginação
+        document.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = new URL(this.href);
+                const currentParams = new URLSearchParams(window.location.search);
+                
+                // Manter parâmetros de filtro
+                url.searchParams.set('search', currentParams.get('search') || '');
+                url.searchParams.set('diagnostico', currentParams.get('diagnostico') || '');
+                url.searchParams.set('estado', currentParams.get('estado') || '');
+                
+                window.location.href = url.toString();
+            });
+        });
 
-    // Função para selecionar radiografia
-    window.selecionarRadiografia = function(id, info) {
-        document.getElementById('id_radiografia').value = id;
-        document.getElementById('radiografiaSelecionada').textContent = info;
-        bsModalSelecionarRadiografia.hide();
-    };
-
-    // Validação do formulário
-    document.getElementById('deteccaoForm').addEventListener('submit', function(e) {
-        const radiografiaId = document.getElementById('id_radiografia').value;
-        if (!radiografiaId) {
-            e.preventDefault();
-            alert('Por favor, selecione uma radiografia antes de prosseguir.');
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    
+        // Modais e demais funcionalidades
+        const modalAdicionar = document.getElementById('modalAdicionar');
+        const modalSelecionarRadiografia = document.getElementById('modalSelecionarRadiografia');
+    
+        let bsModalAdicionar = new bootstrap.Modal(modalAdicionar);
+        let bsModalSelecionarRadiografia = new bootstrap.Modal(modalSelecionarRadiografia);
+    
+        // Função para abrir o modal de seleção de radiografia
+        window.abrirModalSelecaoRadiografia = function() {
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.style.zIndex = '1040';
+            }
+            
+            modalAdicionar.style.zIndex = '1041';
+            modalSelecionarRadiografia.style.zIndex = '1042';
+            
+            bsModalSelecionarRadiografia.show();
+        };
+    
+        // Função para selecionar radiografia atualizada
+        window.selecionarRadiografia = function(id, info, dados) {
+            // Preencher o campo escondido e o resumo
+            document.getElementById('id_radiografia').value = id;
+            document.getElementById('radiografiaSelecionada').textContent = info;
+            
+            // Preencher dados do paciente
+            document.getElementById('paciente_nome').textContent = dados.paciente.nome;
+            document.getElementById('paciente_processo').textContent = dados.paciente.processo;
+            document.getElementById('paciente_nascimento').textContent = dados.paciente.nascimento;
+            document.getElementById('paciente_genero').textContent = dados.paciente.genero;
+            document.getElementById('paciente_mae').textContent = dados.paciente.mae;
+            document.getElementById('paciente_bi').textContent = dados.paciente.bi;
+            
+            // Preencher dados da radiografia
+            document.getElementById('radiografia_data').textContent = dados.radiografia.data;
+            document.getElementById('radiografia_descricao').textContent = dados.radiografia.descricao;
+            document.getElementById('radiografia_notas').textContent = dados.radiografia.notas;
+            document.getElementById('radiografia_dose').textContent = dados.radiografia.dose;
+            
+            // Preencher imagem da radiografia
+            const imagemRadiografia = document.getElementById('radiografia_imagem');
+            imagemRadiografia.src = dados.radiografia.imagem;
+            
+            // Mostrar o div com os dados
+            document.getElementById('dadosSelecionados').style.display = 'block';
+            
+            bsModalSelecionarRadiografia.hide();
+        };
+    
+        // Validação do formulário
+        document.getElementById('deteccaoForm').addEventListener('submit', function(e) {
+            const radiografiaId = document.getElementById('id_radiografia').value;
+            if (!radiografiaId) {
+                e.preventDefault();
+                alert('Por favor, selecione uma radiografia antes de prosseguir.');
+            }
+        });
+        
+        // Funcionalidade para filtrar radiografias na tabela
+        const pesquisarRadiografia = document.getElementById('pesquisarRadiografia');
+        if (pesquisarRadiografia) {
+            pesquisarRadiografia.addEventListener('input', function(e) {
+                const termo = e.target.value.toLowerCase();
+                const tbody = document.querySelector('#modalSelecionarRadiografia table tbody');
+                const linhas = tbody.querySelectorAll('tr');
+                
+                linhas.forEach(linha => {
+                    const texto = linha.textContent.toLowerCase();
+                    if(texto.includes(termo)) {
+                        linha.style.display = '';
+                    } else {
+                        linha.style.display = 'none';
+                    }
+                });
+            });
         }
     });
-});
 </script>
 {% endblock %}
