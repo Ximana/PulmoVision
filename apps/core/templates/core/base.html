@@ -240,11 +240,11 @@ main {
               <i class="fas fa-info-circle"></i>Sobre
             </a>
           </li>
-          <li class="nav-item mt-4">
+          {% comment %}<li class="nav-item mt-4">
             <a class="nav-link text-danger" href="{% url 'usuarios:logout' %}">
               <i class="fas fa-sign-out-alt"></i>Sair
             </a>
-          </li>
+          </li>{% endcomment %}
           {% else %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'usuarios:login' %}">
@@ -383,7 +383,7 @@ main {
 
         <!-- Conteudo principal -->
         <main>
-          {% if messages %}
+          {% comment %}{% if messages %}
             {% for message in messages %}
               <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                 <i class="fas fa-info-circle me-2"></i>
@@ -391,7 +391,7 @@ main {
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
               </div>
             {% endfor %}
-          {% endif %}
+          {% endif %}{% endcomment %}
 
           {% block content %}{% endblock %}
         </main>

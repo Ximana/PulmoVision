@@ -8,14 +8,26 @@
 ## Sobre o projeto  
 O **PulmoVision** é um sistema que usa em **redes neurais convolucionais (CNN)** para a **detecção automática de doenças pulmonares** — **tuberculose e pneumonia** — por meio da análise de **imagens de raio-X do tórax**.  
 
-Ele foi desenvolvido utilizando **Django** como framework web e integra um modelo de **Deep Learning** para processar e classificar exames, proporcionando um suporte rápido e eficiente para diagnósticos médicos.  
+Ele foi desenvolvido utilizando **Django** como framework web e integra um modelo de **Deep Learning** para processar e classificar exames, proporcionando um suporte rápido e eficiente para diagnósticos médicos. 
+
+>  **Importante:** O modelo de Deep Learning utilizado no PulmoVision é desenvolvido em um projeto separado. Você pode conferir o repositório oficial do modelo [aqui](https://github.com/Ximana/pulmovision-modelo.git).
+
 
 ## Funcionalidades  
 ✔️ **Upload de imagens de raio-X** para análise  
 ✔️ **Detecção automática** de doenças pulmonares com CNN  
 ✔️ **Gestão de usuários e pacientes** com autenticação segura  
 ✔️ **Histórico de exames** para acompanhamento clínico  
-✔️ **Interface intuitiva** para médicos e pesquisadores  
+✔️ **Interface intuitiva** para médicos e pesquisadores 
+
+## Modelo de Deep Learning
+
+O modelo de Deep Learning usado pelo PulmoVision é mantido em um repositório separado e é responsável pela classificação das imagens de raio-X.
+
+* Desenvolvido em **TensorFlow/Keras**
+* Detecta **Tuberculose, Pneumonia e casos normais**
+* Repositório oficial: [PulmoVision Modelo](https://github.com/Ximana/pulmovision-modelo.git)
+ 
 
 ## 🛠 Tecnologias utilizadas  
 🔹 **Python 3.x**  
@@ -84,4 +96,3 @@ Este projeto está licenciado sob a **MIT License**.
 🌐 GitHub: [ximana](https://github.com/Ximana)  
 
 ---
-
