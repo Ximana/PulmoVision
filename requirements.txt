@@ -39,3 +39,5 @@ gunicorn==23.0.0
 
 # HTTP requests (opcional - APIs externas)
 requests==2.32.3
+
+reportlab==4.3.1
