@@ -29,8 +29,12 @@
             <!-- Data do Exame -->
             <div class="form-group mb-3">
               <label for="data">Data do Exame</label>
-              <input type="date" class="form-control {% if form.data.errors %}is-invalid{% endif %}"
-                     id="data" name="data" required>
+              <input type="date"
+       class="form-control {% if form.data.errors %}is-invalid{% endif %}"
+       id="data"
+       name="data"
+       value="{{ form.data.value|default_if_none:'' }}"
+       required>
               {% if form.data.errors %}
                 <div class="invalid-feedback">{{ form.data.errors|first }}</div>
               {% endif %}
@@ -40,12 +44,16 @@
             <div class="form-group mb-3">
               <label for="tipo">Tipo de Exame</label>
               <select class="form-select {% if form.tipo.errors %}is-invalid{% endif %}"
-                      id="tipo" name="tipo" required>
-                <option value="">Selecione...</option>
-                {% for value, label in form.fields.tipo.choices %}
-                  <option value="{{ value }}">{{ label }}</option>
-                {% endfor %}
-              </select>
+        id="tipo" name="tipo" required>
+  <option value="">Selecione...</option>
+  {% for value, label in form.fields.tipo.choices %}
+    <option value="{{ value }}"
+      {% if form.tipo.value == value %}selected{% endif %}>
+      {{ label }}
+    </option>
+  {% endfor %}
+</select>
+
               {% if form.tipo.errors %}
                 <div class="invalid-feedback">{{ form.tipo.errors|first }}</div>
               {% endif %}
@@ -55,12 +63,16 @@
             <div class="form-group mb-3">
               <label for="equipamento_usado">Equipamento Utilizado</label>
               <select class="form-select {% if form.equipamento_usado.errors %}is-invalid{% endif %}"
-                      id="equipamento_usado" name="equipamento_usado" required>
-                <option value="">Selecione...</option>
-                {% for value, label in form.fields.equipamento_usado.choices %}
-                  <option value="{{ value }}">{{ label }}</option>
-                {% endfor %}
-              </select>
+        id="equipamento_usado" name="equipamento_usado" required>
+  <option value="">Selecione...</option>
+  {% for value, label in form.fields.equipamento_usado.choices %}
+    <option value="{{ value }}"
+      {% if form.equipamento_usado.value == value %}selected{% endif %}>
+      {{ label }}
+    </option>
+  {% endfor %}
+</select>
+
               {% if form.equipamento_usado.errors %}
                 <div class="invalid-feedback">{{ form.equipamento_usado.errors|first }}</div>
               {% endif %}
@@ -72,12 +84,16 @@
             <div class="form-group mb-3">
               <label for="qualidade_da_imagem">Qualidade da Imagem</label>
               <select class="form-select {% if form.qualidade_da_imagem.errors %}is-invalid{% endif %}"
-                      id="qualidade_da_imagem" name="qualidade_da_imagem" required>
-                <option value="">Selecione...</option>
-                {% for value, label in form.fields.qualidade_da_imagem.choices %}
-                  <option value="{{ value }}">{{ label }}</option>
-                {% endfor %}
-              </select>
+        id="qualidade_da_imagem" name="qualidade_da_imagem" required>
+  <option value="">Selecione...</option>
+  {% for value, label in form.fields.qualidade_da_imagem.choices %}
+    <option value="{{ value }}"
+      {% if form.qualidade_da_imagem.value == value %}selected{% endif %}>
+      {{ label }}
+    </option>
+  {% endfor %}
+</select>
+
               {% if form.qualidade_da_imagem.errors %}
                 <div class="invalid-feedback">{{ form.qualidade_da_imagem.errors|first }}</div>
               {% endif %}
@@ -86,8 +102,12 @@
             <!-- Dose de Radiação -->
             <div class="form-group mb-3">
               <label for="dose_de_radiacao">Dose de Radiação (mSv)</label>
-              <input type="number" step="0.01" class="form-control {% if form.dose_de_radiacao.errors %}is-invalid{% endif %}"
-                     id="dose_de_radiacao" name="dose_de_radiacao">
+              <input type="number" step="0.01"
+                  class="form-control {% if form.dose_de_radiacao.errors %}is-invalid{% endif %}"
+                  id="dose_de_radiacao"
+                  name="dose_de_radiacao"
+                  value=0.1>
+
               {% if form.dose_de_radiacao.errors %}
                 <div class="invalid-feedback">{{ form.dose_de_radiacao.errors|first }}</div>
               {% endif %}

@@ -6,9 +6,13 @@ import uuid
 import os
 
 def paciente_foto_path(instance, filename):
+    """
+    Função otimizada para Cloudinary
+    """
     ext = filename.split('.')[-1]
     filename = f'{uuid.uuid4().hex}.{ext}'
-    return os.path.join('pacientes/fotos', filename)
+    # Use '/' ao invés de os.path.join para Cloudinary
+    return f'projectos/django/pulmovision/pacientes/fotos/{filename}'
 
 
 class Paciente(models.Model):

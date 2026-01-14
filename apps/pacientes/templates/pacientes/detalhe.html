@@ -81,10 +81,13 @@
         <div class="row align-items-center">
             <div class="col-md-2 text-center">
                 {% if paciente.foto %}
-                    <img src="/media/{{ paciente.foto }}" alt="Foto do Paciente" class="patient-avatar mb-3">
-                {% else %}
-                    <img src="/media/pacientes/fotos/pessoa.png" alt="Foto do Paciente" class="patient-avatar mb-3">
-                {% endif %}
+    <img src="{{ paciente.foto.url }}" alt="Foto do Paciente" class="patient-avatar mb-3">
+{% else %}
+    <div class="patient-avatar d-flex align-items-center justify-content-center mb-3 bg-light text-secondary">
+        <i class="fas fa-user fa-3x"></i>
+    </div>  
+{% endif %}
+
             </div>
             <div class="col-md-8">
                 <h2 class="text-success mb-1">{{ paciente.get_nome_completo }}</h2>

@@ -1,3 +1,45 @@
-django
-mysqlclient
-django-crispy-forms
+
+
+# Deep Learning
+numpy==1.26.3
+tensorflow==2.15.0
+python-dotenv==1.0.0
+
+
+# Django principal
+Django==5.1.5
+
+# REST API
+djangorestframework==3.16.0
+django-filter==25.1
+
+# PostgreSQL (Neon)
+psycopg2-binary==2.9.10
+dj-database-url==3.0.0
+
+# Armazenamento Cloudinary
+cloudinary==1.44.0
+django-cloudinary-storage==0.3.0
+
+# Variáveis de ambiente (configurações seguras)
+python-decouple==3.8
+
+# Gunicorn para deploy em produção (Render)
+gunicorn==22.0.0
+
+# WhiteNoise para servir arquivos estáticos
+whitenoise==6.6.0
+
+# Forms e UI
+django-crispy-forms==2.3
+crispy-bootstrap5==2024.10
+
+# Manipulação de imagens (opcional, mas comum em projetos com Cloudinary)
+Pillow==11.1.0
+
+# HTTP requests (caso uses APIs externas)
+requests==2.32.3
+
+# [opcional]
+# python-slugify==8.0.4
+# python-json-logger==3.2.1

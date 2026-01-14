@@ -124,14 +124,14 @@
                                        title="Ver detalhes da radiografia">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <button type="button"
+                                    {% comment %}<button type="button"
                                             class="btn btn-sm btn-outline-danger"
                                             onclick="confirmarRemocao('{{ radiografia.paciente.get_nome_completo }}', '{% url 'radiografias:remover' radiografia.pk %}')"
                                             data-bs-toggle="tooltip"
                                             data-bs-placement="top"
                                             title="Remover radiografia">
                                         <i class="fas fa-trash"></i>
-                                    </button>
+                                    </button>{% endcomment %}
                                 </div>
                             </td>
                         </tr>

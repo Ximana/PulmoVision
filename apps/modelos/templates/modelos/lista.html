@@ -235,14 +235,14 @@
                                             <i class="fas fa-play"></i>
                                         </a>
                                     {% endif %}
-                                    <button type="button"
+                                    {% comment %}<button type="button"
                                             class="btn btn-sm btn-outline-danger"
                                             onclick="confirmarRemocao('{{ modelo.nome }} v{{ modelo.versao }}', '{% url 'modelos:remover' modelo.pk %}')"
                                             data-bs-toggle="tooltip"
                                             data-bs-placement="top"
                                             title="Remover modelo">
                                         <i class="fas fa-trash"></i>
-                                    </button>
+                                    </button>{% endcomment %}
                                 </div>
                             </td>
                         </tr>

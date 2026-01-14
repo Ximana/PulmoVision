@@ -6,10 +6,21 @@ from apps.pacientes.models import Paciente
 import uuid
 import os
 
+""" upload na pasta do projecto
 def radiografia_imagem_path(instance, filename):
     ext = filename.split('.')[-1]
     filename = f'{uuid.uuid4().hex}.{ext}'
     return os.path.join('exames', filename)
+"""
+
+def radiografia_imagem_path(instance, filename):
+    """
+    Função otimizada para Cloudinary
+    """
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4().hex}.{ext}'
+    # Use '/' ao invés de os.path.join para Cloudinary
+    return f'projectos/django/pulmovision/radiografias/{filename}'
 
 class Radiografia(models.Model):
     TIPOS_EXAME_CHOICES = (

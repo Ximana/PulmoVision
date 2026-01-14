@@ -97,14 +97,14 @@
                                        title="Ver detalhes do paciente">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <button type="button"
+                                    {% comment %}<button type="button"
                                             class="btn btn-sm btn-outline-danger"
                                             onclick="confirmarRemocao('{{ paciente.get_nome_completo }}', '{% url 'pacientes:remover' paciente.pk %}')"
                                             data-bs-toggle="tooltip"
                                             data-bs-placement="top"
                                             title="Remover paciente">
                                         <i class="fas fa-trash"></i>
-                                    </button>
+                                    </button>{% endcomment %}
                                 </div>
                             </td>
                         </tr>

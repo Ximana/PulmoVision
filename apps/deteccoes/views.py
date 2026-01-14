@@ -97,19 +97,22 @@ class DeteccaoListView(LoginRequiredMixin, ListView):
                     return redirect('deteccoes:lista')
             
             # Analisar a radiografia e obter os resultados usando o modelo selecionado
-            #resultado = analisar_radiografia(deteccao.radiografia, deteccao.modelo)
-            resultado = analisar_radiografia(deteccao.radiografia)
+            try:
+                resultado = analisar_radiografia(deteccao.radiografia)
+                
+                # Colocar o resultado na detecao
+                deteccao.diagnostico = resultado['diagnostico']
+                deteccao.resultados_completos = resultado['resultados_completos']
+                deteccao.probabilidade = resultado['probabilidade']
+                
+                deteccao.save()
+                messages.success(request, f'Detecção registrada com sucesso usando o modelo {deteccao.modelo.nome}!')
+                return redirect(deteccao.get_absolute_url())
             
-            # Colocar o resultado na detecao
-            deteccao.diagnostico = resultado['diagnostico']
-            deteccao.resultados_completos = resultado['resultados_completos']
-            deteccao.probabilidade = resultado['probabilidade']
-            deteccao.descobertas = resultado['descobertas']
-            deteccao.interpretacao = resultado['interpretacao']
-            
-            deteccao.save()
-            messages.success(request, f'Detecção registrada com sucesso usando o modelo {deteccao.modelo.nome}!')
-            return redirect(deteccao.get_absolute_url())
+            except Exception as e:
+                messages.error(request, f'Erro ao analisar a radiografia: {str(e)}')
+                return redirect('deteccoes:lista')
+        
         else:
             context = self.get_context_data()
             context['form'] = form
@@ -129,60 +132,7 @@ class DeteccaoDetailView(LoginRequiredMixin, DetailView):
             usuario=self.request.user
         ).exists()
         
-        # Processar a interpretação para facilitar a exibição no template
-        interpretacao = self.object.interpretacao if self.object.interpretacao else ""
-        context['interpretacao_formatada'] = self._processar_interpretacao(interpretacao)
-        
         return context
-    
-    def _processar_interpretacao(self, interpretacao):
-        """
-        Processa a interpretação clínica, separando-a em seções para o template.
-
-        Args:
-            interpretacao (str): Texto completo da interpretação.
-
-        Returns:
-            dict: Dicionário com as seções separadas.
-        """
-        secoes = {
-            "titulo": None,
-            "caracteristicas": None,
-            "areas_afetadas": None,
-            "recomendacoes": None,
-            "confiabilidade": None,
-            "diferenciais": None,
-            "observacao": None,
-        }
-
-        # Mapeia os títulos para encontrar os trechos
-        partes = {
-            "• Características radiológicas:": "caracteristicas",
-            "• Áreas potencialmente afetadas:": "areas_afetadas",
-            "• Recomendações:": "recomendacoes",
-            "NÍVEL DE CONFIABILIDADE:": "confiabilidade",
-            "DIAGNÓSTICOS DIFERENCIAIS:": "diferenciais",
-            "OBSERVAÇÃO IMPORTANTE:": "observacao",
-        }
-
-        # Inicializa o título como a primeira linha
-        linhas = interpretacao.split("\n")
-        if linhas:
-            secoes["titulo"] = linhas[0]
-
-        # Processa as demais seções
-        atual = None
-        for linha in linhas:
-            for marcador, chave in partes.items():
-                if marcador in linha:
-                    atual = chave
-                    secoes[atual] = ""
-                    break
-
-            if atual and atual in secoes:
-                secoes[atual] += linha + "\n"
-
-        return secoes
     
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()

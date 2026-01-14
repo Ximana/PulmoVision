@@ -9,7 +9,12 @@
 
     <link href="{%  static 'core/css/bootstrap.min.css' %}" rel="stylesheet" />
     <link href="{% static 'core/css/all.min.css'  %}" rel="stylesheet" />
+
+    {% comment %}
     <link href="{% static 'core/css/estilo.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endcomment %}
     <style>
      :root {
   --sidebar-width: 280px;
@@ -212,13 +217,13 @@ main {
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'deteccoes:lista' %}">
-              <i class="fas fa-microscope"></i>Detecções
+            <a class="nav-link" href="{% url 'radiografias:lista' %}">
+              <i class="fas fa-x-ray"></i>Radiografias
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'radiografias:lista' %}">
-              <i class="fas fa-x-ray"></i>Radiografias
+            <a class="nav-link" href="{% url 'deteccoes:lista' %}">
+              <i class="fas fa-microscope"></i>Detecções
             </a>
           </li>
           <li class="nav-item">
@@ -227,13 +232,13 @@ main {
             </a>
           </li>
           
-          {% if user.is_admin %}
+          {% comment %}{% if user.is_admin %}{% endcomment %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'usuarios:lista' %}">
               <i class="fas fa-users"></i>Usuários
             </a>
           </li>
-          {% endif %}
+          {% comment %}{% endif %}{% endcomment %}
 
           <li class="nav-item mt-4">
             <a class="nav-link" href="{% url 'sobre' %}">
@@ -273,7 +278,7 @@ main {
             {% if user.is_authenticated %}
             <div class="ms-auto d-flex align-items-center">
               <!-- Notificacao -->
-              <div class="dropdown me-3">
+              {% comment %}<div class="dropdown me-3">
                 <button class="btn btn-light position-relative" type="button" id="notificationDropdown" 
                         data-bs-toggle="dropdown">
                   <i class="fas fa-bell"></i>
@@ -287,7 +292,7 @@ main {
                   <li><a class="dropdown-item" href="#">Notificação 3</a></li>
                   <li><a class="dropdown-item" href="#">Notificação 4</a></li>
                 </ul>
-              </div>
+              </div>{% endcomment %}
 
               <!-- Perfil Usuario -->
               <div class="dropdown">
@@ -337,13 +342,13 @@ main {
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'deteccoes:lista' %}">
-          <i class="fas fa-microscope me-2"></i>Detecções
+        <a class="nav-link" href="{% url 'radiografias:lista' %}">
+          <i class="fas fa-x-ray me-2"></i>Radiografias
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'radiografias:lista' %}">
-          <i class="fas fa-x-ray me-2"></i>Radiografias
+        <a class="nav-link" href="{% url 'deteccoes:lista' %}">
+          <i class="fas fa-microscope me-2"></i>Detecções
         </a>
       </li>
       <li class="nav-item">
@@ -352,13 +357,13 @@ main {
             </a>
       </li>
       
-      {% if user.is_admin %}
+      {% comment %}{% if user.is_admin %}{% endcomment %}
       <li class="nav-item">
         <a class="nav-link" href="{% url 'usuarios:lista' %}">
           <i class="fas fa-users me-2"></i>Usuários
         </a>
       </li>
-      {% endif %}
+      {% comment %}{% endif %}{% endcomment %}
 
       <li class="nav-item mt-4">
         <a class="nav-link" href="{% url 'sobre' %}">
@@ -400,7 +405,11 @@ main {
 
     <script src="{% static 'core/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'core/js/script.js' %}"></script>
+    {% comment %}
+    
     <script src="{% static 'core/js/foto_perfil.js' %}"></script>
-    {% block scriptJS %}{% endblock %}
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha384-pjaaA8dDz/..." crossorigin="anonymous"></script>
+{% endcomment %}
+   {% block scriptJS %}{% endblock %}
   </body>
 </html>

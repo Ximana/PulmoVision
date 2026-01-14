@@ -1,12 +1,16 @@
 #app/radiografia/forms.py
 from django import forms
+from django.utils import timezone
 from .models import Radiografia
 
 class RadiografiaCadastroForm(forms.ModelForm):
     class Meta:
         model = Radiografia
-        fields = ['paciente', 'data', 'tipo', 'equipamento_usado', 'qualidade_da_imagem', 
-                 'dose_de_radiacao', 'imagem', 'descricao', 'notas_tecnicas']
+        fields = [
+            'paciente', 'data', 'tipo', 'equipamento_usado',
+            'qualidade_da_imagem', 'dose_de_radiacao',
+            'imagem', 'descricao', 'notas_tecnicas'
+        ]
         widgets = {
             'paciente': forms.Select(attrs={'class': 'form-select'}),
             'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -16,8 +20,19 @@ class RadiografiaCadastroForm(forms.ModelForm):
             'dose_de_radiacao': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'notas_tecnicas': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'imagem': forms.FileInput(attrs={'class': 'form-control'})
+            'imagem': forms.FileInput(attrs={'class': 'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Valores padrão (somente no carregamento inicial)
+        if not self.is_bound:
+            self.initial['data'] = timezone.now().date()
+            self.initial['tipo'] = 'Raio-X'
+            self.initial['equipamento_usado'] = 'Radiografia Convencional'
+            self.initial['qualidade_da_imagem'] = 'Boa'
+            self.initial['dose_de_radiacao'] = 0.1
         
 
 class RadiografiaEdicaoForm(forms.ModelForm):

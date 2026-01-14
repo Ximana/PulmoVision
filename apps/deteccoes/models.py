@@ -57,18 +57,7 @@ class Deteccao(models.Model):
         decimal_places=2,
         help_text='Probabilidade em porcentagem (0-100)'
     )
-    descobertas = models.TextField(
-        'Descobertas',
-        help_text='Descobertas detalhadas da análise'
-    )
-    interpretacao = models.TextField(
-        'Interpretação',
-        help_text='Interpretação clínica dos resultados'
-    )
-    pontuacao_de_confianca = models.TextField(
-        'Pontuação de Confiança',
-        help_text='Pontuação de Confiança'
-    )
+    
     estado = models.CharField(
         'Estado',
         max_length=20,

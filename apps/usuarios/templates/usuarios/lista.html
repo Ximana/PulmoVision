@@ -198,14 +198,14 @@
                                     </a>
                                     {% endcomment %}
                                     
-                                    <button type="button"
+                                    {% comment %}<button type="button"
                                             class="btn btn-sm btn-outline-danger"
                                             onclick="confirmarRemocao('{{ usuario.get_nome_completo }}', '{% url 'usuarios:remover' usuario.pk %}')"
                                             data-bs-toggle="tooltip"
                                             data-bs-placement="top"
                                             title="Remover usuario">
                                         <i class="fas fa-trash"></i>
-                                    </button>
+                                    </button>{% endcomment %}
                                 </div>
                             </td>
                         </tr>
