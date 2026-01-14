@@ -20,7 +20,6 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 #ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 ALLOWED_HOSTS = ['.onrender.com', '127.0.0.1']
 
-
 # Configuração do Cloudinary 
 
 # Para compatibilidade com versões anteriores (opcional)
@@ -170,4 +169,3 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Messages settings
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-

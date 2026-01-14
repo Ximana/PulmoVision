@@ -1,1 +1,1 @@
-web: gunicorn ecommerce.wsgi:application --log-file -
+web: gunicorn PulmoVision.wsgi:application --log-file -

@@ -4,7 +4,7 @@ asgiref==3.8.1
 sqlparse==0.5.3
 whitenoise==6.9.0
 
-# Forms e UI
+# Forms e UI 
 django-crispy-forms==2.3
 crispy-bootstrap5==2024.10
 
