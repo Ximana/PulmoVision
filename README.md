@@ -34,7 +34,7 @@ O modelo de Deep Learning usado pelo PulmoVision é mantido em um repositório s
 🔹 **Django** - Framework web  
 🔹 **TensorFlow/Keras** - Treinamento do modelo de Deep Learning  
 🔹 **OpenCV** - Processamento de imagens  
-🔹 **MYSQL** - Banco de dados  
+🔹 **PostGreSQL** - Banco de dados  
 🔹 **Bootstrap** - Interface web responsiva  
 
 ## Instalação e Configuração  

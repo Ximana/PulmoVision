@@ -1,45 +1,41 @@
-
-
-# Deep Learning
-numpy==1.26.3
-tensorflow==2.15.0
-python-dotenv==1.0.0
-
-
-# Django principal
+# Django
 Django==5.1.5
-
-# REST API
-djangorestframework==3.16.0
-django-filter==25.1
-
-# PostgreSQL (Neon)
-psycopg2-binary==2.9.10
-dj-database-url==3.0.0
-
-# Armazenamento Cloudinary
-cloudinary==1.44.0
-django-cloudinary-storage==0.3.0
-
-# Variáveis de ambiente (configurações seguras)
-python-decouple==3.8
-
-# Gunicorn para deploy em produção (Render)
-gunicorn==22.0.0
-
-# WhiteNoise para servir arquivos estáticos
-whitenoise==6.6.0
+asgiref==3.8.1
+sqlparse==0.5.3
+whitenoise==6.9.0
 
 # Forms e UI
 django-crispy-forms==2.3
 crispy-bootstrap5==2024.10
 
-# Manipulação de imagens (opcional, mas comum em projetos com Cloudinary)
+# Banco de Dados (PostgreSQL / Neon)
+psycopg2-binary==2.9.10
+dj-database-url==3.0.0
+
+# Cloudinary (media storage)
+cloudinary==1.44.0
+django-cloudinary-storage==0.3.0
+
+# Deep Learning / TensorFlow
+tensorflow==2.18.0
+keras==3.7.0
+numpy==2.0.2
+h5py==3.12.1
+protobuf==5.29.3
+
+# Imagens (radiografias)
 Pillow==11.1.0
+opencv-python-headless==4.11.0.86
 
-# HTTP requests (caso uses APIs externas)
+# APIs
+djangorestframework==3.16.0
+
+# Configurações e ambiente
+python-dotenv==1.2.1
+python-decouple==3.8
+
+# Servidor WSGI (produção)
+gunicorn==23.0.0
+
+# HTTP requests (opcional - APIs externas)
 requests==2.32.3
-
-# [opcional]
-# python-slugify==8.0.4
-# python-json-logger==3.2.1
