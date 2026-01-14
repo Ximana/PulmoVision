@@ -10,7 +10,6 @@ __pycache__/
 # Configurações locais
 *.env
 .env
-#config.json
 pulmovision/settings_local.py
 
 # BD
@@ -18,11 +17,6 @@ pulmovision/settings_local.py
 *.sql.gz
 dump.sql
 backup/
-
-# Arquivos de configuração do MySQL
-my.cnf
-mysql-config.json
-config/db_settings.py
 
 # Logs e arquivos temporários
 *.log
