@@ -17,8 +17,8 @@ cloudinary==1.44.0
 django-cloudinary-storage==0.3.0
 
 # Deep Learning / TensorFlow
-tensorflow==2.20.0
-# keras==3.7.0
+tensorflow==2.18.0
+keras==3.7.0
 numpy==2.0.2
 h5py==3.12.1
 protobuf==5.29.3
