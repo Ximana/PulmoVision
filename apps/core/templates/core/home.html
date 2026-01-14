@@ -43,7 +43,7 @@
                             <h2 class="mb-0">{{ total_pacientes }}</h2>
                         </div>
                         <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                            <i class="fas fa-user-injured fa-2x text-success"></i>
+                            <i class="fas fa-user-injured fa-2x text-light"></i>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                             <h2 class="mb-0">{{ total_deteccoes }}</h2>
                         </div>
                         <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                            <i class="fas fa-microscope fa-2x text-primary"></i>
+                            <i class="fas fa-microscope fa-2x text-light"></i>
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                             <h2 class="mb-0">{{ total_radiografias }}</h2>
                         </div>
                         <div class="bg-warning bg-opacity-10 rounded-circle p-3">
-                            <i class="fas fa-x-ray fa-2x text-warning"></i>
+                            <i class="fas fa-x-ray fa-2x text-light"></i>
                         </div>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                             <h2 class="mb-0">{{ taxa_precisao }}%</h2>
                         </div>
                         <div class="bg-info bg-opacity-10 rounded-circle p-3">
-                            <i class="fas fa-chart-line fa-2x text-info"></i>
+                            <i class="fas fa-chart-line fa-2x text-light"></i>
                         </div>
                     </div>
                 </div>
@@ -98,15 +98,15 @@
 
     <!-- Main  -->
     <div class="row g-4">
-        <!-- Detecoes -->
+        <!-- Detecoes Recentes-->
         <div class="col-md-8">
             <div class="card shadow-sm">
-                <div class="card-header bg-white py-3">
+                <div class="card-header bg-dark">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Detecções Recentes</h5>
-                        <a href="{% url 'deteccoes:lista' %}" class="btn btn-sm btn-success">
+                        <h5 class="mb-0 h6 text-light">Detecções Recentes</h5>
+                        {% comment %}<a href="{% url 'deteccoes:lista' %}" class="btn btn-sm btn-light">
                             Ver Todas
-                        </a>
+                        </a>{% endcomment %}
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -186,7 +186,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start mb-3">
                         <div class="bg-success bg-opacity-10 rounded p-2 me-3">
-                            <i class="fas fa-robot text-success"></i>
+                            <i class="fas fa-robot text-light"></i>
                         </div>
                         <div>
                             <h6 class="mb-1">Modelo de IA</h6>
@@ -195,7 +195,7 @@
                     </div>
                     <div class="d-flex align-items-start mb-3">
                         <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
-                            <i class="fas fa-chart-bar text-primary"></i>
+                            <i class="fas fa-chart-bar text-light"></i>
                         </div>
                         <div>
                             <h6 class="mb-1">Diagnostico com Percentagem</h6>
@@ -204,7 +204,7 @@
                     </div>
                     <div class="d-flex align-items-start">
                         <div class="bg-warning bg-opacity-10 rounded p-2 me-3">
-                            <i class="fas fa-tools text-warning"></i>
+                            <i class="fas fa-tools text-light"></i>
                         </div>
                         <div>
                             <h6 class="mb-1">Interface</h6>

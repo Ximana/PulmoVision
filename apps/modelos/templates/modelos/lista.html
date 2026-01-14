@@ -152,14 +152,14 @@
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead>
-                        <tr class="bg-dark text-white">
+                        {% comment %}<tr class="">
                             <th colspan="8" class="ps-3">
                                 Modelos de IA Cadastrados
                                 <a href="" class="float-end text-success me-3" data-bs-toggle="tooltip" data-bs-placement="top" title="Imprimir Lista de Modelos">
                                     <i class="fas fa-print"></i>
                                 </a>
                             </th>
-                        </tr>
+                        </tr>{% endcomment %}
                         <tr class="bg-success text-white">
                             <th scope="col" class="ps-3">Modelo</th>
                             <th scope="col">Data Treino</th>
@@ -209,13 +209,13 @@
                             </td>
                             <td class="text-end pe-3">
                                 <div class="btn-group">
-                                    <a href="{% url 'modelos:detalhe' pk=modelo.pk %}" 
+                                    {% comment %}<a href="{% url 'modelos:detalhe' pk=modelo.pk %}" 
                                        class="btn btn-sm btn-outline-success"
                                        data-bs-toggle="tooltip"
                                        data-bs-placement="top"
                                        title="Ver detalhes do modelo">
                                         <i class="fas fa-eye"></i>
-                                    </a>
+                                    </a>{% endcomment %}
                                     {% if modelo.ativo %}
                                         <a href="{% url 'modelos:desativar' pk=modelo.pk %}" 
                                            class="btn btn-sm btn-outline-warning"
